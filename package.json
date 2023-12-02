@@ -1,0 +1,26 @@
+{
+  "name": "xingmeida",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@ant-design/icons-vue": "^7.0.1",
+    "@surely-vue/table": "^4.2.2",
+    "ant-design-vue": "^4.0.7",
+    "lodash-es": "^4.17.21",
+    "vue": "^3.3.4",
+    "vue-router": "^4.2.5",
+    "vuex": "^4.1.0"
+  },
+  "devDependencies": {
+    "@types/lodash-es": "^4.17.12",
+    "@vitejs/plugin-vue": "^4.3.4",
+    "less": "^4.2.0",
+    "unplugin-vue-components": "^0.25.2",
+    "vite": "^4.4.9"
+  }
+}
