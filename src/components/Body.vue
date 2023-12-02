@@ -89,12 +89,11 @@ const editRowStatus = ref(false);
 const fetchData = async () => {
   try {
     const response = await fetch('http://localhost:8080/getOverview');
-    if (response.ok) {
-      const data = await response.json();
-      // 假设后端返回的数据结构符合 DataItem 接口定义
-      dataSource.value = data;
+    const data = await response.json();
+    if (data.code === 200){
+      dataSource.value = data.data;
     } else {
-      console.error('Failed to fetch data:', response.statusText);
+      console.error('Failed to fetch data:', data.message);
     }
   } catch (error) {
     console.error('An error occurred during fetch:', error);
@@ -120,9 +119,10 @@ const onDelete = async (key: string) => {
     const response = await fetch(`http://localhost:8080/deleteOverview/${key}`, {
       method: 'DELETE',
     });
+    const data = await response.json();
 
-    if (!response.ok) {
-      console.error('Failed to delete data from backend:', response.statusText);
+    if (data.code !== 200) {
+      console.error('Failed to delete data from backend:', data.message);
     }
   } catch (error) {
     console.error('An error occurred during delete from backend:', error);

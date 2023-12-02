@@ -70,23 +70,15 @@ const submitForm = async () => {
       body: JSON.stringify(formState),
     });
 
-    if (response.ok) {
-      // 登录成功，处理后端返回的数据
-      const data = await response.json();
+    const data = await response.json();
+
+    if (data.code === 200) {
       const userFullName = data.userFullName;
       store.commit('setAuthentication', true);
       store.commit('setUsername', userFullName);
-
-
-      // 存储 auth token，例如使用 Vuex 或其他状态管理工具
-      // 这里只是示例，具体实现取决于你的应用架构
-      // store.commit('setAuthToken', authToken);
-
-      // 跳转到 Home.vue 或其他成功登录后的页面
       await router.push('/home');
     } else {
-      // 登录失败，处理错误信息
-      console.error('Login failed:', response.statusText);
+      console.error('Login failed:', data.message);
     }
   } catch (error) {
     console.error('An error occurred during login:', error);
