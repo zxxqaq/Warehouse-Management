@@ -31,7 +31,7 @@ POST http://localhost:8080/login
 			"userFullName": "张显"
         }
     },
-    "msg": "success"
+    "message": "success"
 }
 
 ```
@@ -57,25 +57,25 @@ GET http://localhost:8080/getOverview
 	"code": 200,
 	"data": [
 			{
-				key: '1',   
-				name: '嘉兴博羽股份有限公司',  
-				money: '20000',  
-				taxNum: '001',  
-				taxRate: '0.3',  
-				invoiceCode: '001',  
-				invoiceNum: '001'
+				"key": "1",   
+				"name": "嘉兴博羽股份有限公司",  
+				"money": "20000",  
+				"taxNum": "001",  
+				"taxRate": "0.3",  
+				"invoiceCode": "001",  
+				"invoiceNum": "001"
 			},
 			{
-				key: '2',   
-				name: '嘉兴猪猪股份有限公司',  
-				money: '20000',  
-				taxNum: '001',  
-				taxRate: '0.3',  
-				invoiceCode: '001',  
-				invoiceNum: '001'
-			},
+				"key": "2",   
+				"name": "嘉兴猪猪股份有限公司",  
+				"money": "20000",  
+				"taxNum": "001",  
+				"taxRate": "0.3",  
+				"invoiceCode": "001",  
+				"invoiceNum": "001"
+			}
 			],
-	"msg": "success"
+	"message": "success"
 }
 ```
 
@@ -94,7 +94,7 @@ DELETE http://localhost:8080/deleteOverview/${key}
 ```json
 { 
 	"code":200, 
-	"msg":"操作成功" 
+	"message":"操作成功" 
 }
 ```
 
