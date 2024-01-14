@@ -12,15 +12,11 @@
       </a-breadcrumb>
 
       <div :style="{ padding: '24px', background: '#fff', minHeight: '360px' }">
-        <a-button class="editable-add-btn" style="margin-bottom: 10px" @click="handleAdd">添加行</a-button>
+        <a-button class="editable-add-btn" style="margin-bottom: 10px" @click="handleAdd">添加公司</a-button>
         <a-table bordered :data-source="dataSource" :columns="columns">
           <template #bodyCell="{ column, text, record }" >
             <template v-if="column.dataIndex === 'name' ||
-                            column.dataIndex === 'money' ||
-                            column.dataIndex === 'taxNum' ||
-                            column.dataIndex === 'taxRate' ||
-                            column.dataIndex === 'invoiceCode' ||
-                            column.dataIndex === 'invoiceNum'">
+                            column.dataIndex === 'taxNum'">
               <div class="editable-cell">
                 <div v-if="editableData[record.key]" class="editable-cell-input-wrapper">
                   <a-input v-model:value="editableData[record.key][column.dataIndex]" @pressEnter="save(record.key)" />
@@ -81,7 +77,26 @@ const columns: TableColumnsType = [
   { title: '发票号码', dataIndex: 'invoiceNum', width: '15%',},
   { title: '操作', dataIndex: 'operation', fixed: "right",},
 ];
-const dataSource: Ref<DataItem[]> = ref([]);
+const dataSource: Ref<DataItem[]> = ref([
+  {
+    key: '1',
+    name: '嘉兴博羽股份有限公司',
+    money: '20000',
+    taxNum: '001',
+    taxRate: '0.3',
+    invoiceCode: '001',
+    invoiceNum: '001'
+  },
+  {
+    key: '2',
+    name: '嘉兴猪猪股份有限公司',
+    money: '20000',
+    taxNum: '001',
+    taxRate: '0.3',
+    invoiceCode: '001',
+    invoiceNum: '001'
+  },
+]);
 const count = computed(() => dataSource.value.length + 1);
 const editableData: UnwrapRef<Record<string, DataItem>> = reactive({});
 const editRowStatus = ref(false);
