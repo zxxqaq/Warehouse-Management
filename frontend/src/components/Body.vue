@@ -2,7 +2,10 @@
   <a-layout>
     <a-layout-header style="background: #fff; padding: 0">
       <div class="btn-group">
-
+        <a-button class="editable-add-btn" style="margin-bottom: 10px" @click="showDrawer">
+          <template #icon><PlusOutlined /></template>
+          添加公司
+        </a-button>
       </div>
     </a-layout-header>
     <a-layout-content style="margin: 0 16px">
@@ -12,7 +15,7 @@
       </a-breadcrumb>
 
       <div :style="{ padding: '24px', background: '#fff', minHeight: '360px' }">
-        <a-button class="editable-add-btn" style="margin-bottom: 10px" @click="handleAdd">添加公司</a-button>
+
         <a-table bordered :data-source="dataSource" :columns="columns">
           <template #bodyCell="{ column, text, record }" >
             <template v-if="column.dataIndex === 'name' ||
@@ -30,16 +33,15 @@
             </template>
 
             <template v-else-if="column.dataIndex === 'operation'">
-              <a-popconfirm
-                  v-if="dataSource.length"
-                  title="确定删除?"
-                  @confirm="onDelete(record.key)"
-              >
-                <a >删除</a>
-              </a-popconfirm>
-              <a v-if="editRowStatus" style="margin-left: 10px" @click="save(record.key)">保存</a>
-              <a v-else style="margin-left: 10px" @click="edit(record.key)">编辑</a>
-
+              <div class="editable-row-operations">
+                <span v-if="editableData[record.key]">
+                  <a-typography-link  @click="save(record.key)">保存</a-typography-link>
+                  <a-typography-link style="margin-left: 10px" @click="cancel(record.key)">取消</a-typography-link>
+                </span>
+                <span v-else>
+                  <a @click="edit(record.key)">编辑</a>
+                </span>
+              </div>
             </template>
           </template>
         </a-table>
@@ -48,53 +50,95 @@
     <a-layout-footer style="text-align: center">
       Ant Design ©2018 Created by Ant UED
     </a-layout-footer>
+    <a-drawer
+        title="添加新公司"
+        :width="720"
+        :open="open"
+        :body-style="{ paddingBottom: '80px' }"
+        :footer-style="{ textAlign: 'right' }"
+        @close="onClose"
+    >
+      <a-form :model="form" :rules="rules" layout="vertical">
+        <a-row :gutter="16">
+          <a-col :span="24">
+            <a-form-item label="名称" name="name">
+              <a-input v-model:value="form.name"  />
+            </a-form-item>
+          </a-col>
+        </a-row>
+        <a-row :gutter="16">
+          <a-col :span="24">
+            <a-form-item label="税号" name="taxNum">
+              <a-input v-model:value="form.taxNum"  />
+            </a-form-item>
+          </a-col>
+        </a-row>
+      </a-form>
+      <template #extra>
+        <a-space>
+          <a-button @click="onClose">取消</a-button>
+          <a-button :disabled="disabled" type="primary" @click="onSubmitCompany">确定</a-button>
+        </a-space>
+      </template>
+    </a-drawer>
   </a-layout>
+
 </template>
 <script lang="ts" setup>
+import { PlusOutlined } from '@ant-design/icons-vue';
+import type { Rule } from 'ant-design-vue/es/form';
 import {computed, onMounted, reactive, ref} from 'vue';
 import type { Ref, UnwrapRef } from 'vue';
 import { CheckOutlined, EditOutlined } from '@ant-design/icons-vue';
 import { cloneDeep } from 'lodash-es';
 import {TableColumnsType} from "ant-design-vue";
 
+const form = reactive({
+  name: null,
+  taxNum: null,
+});
+const rules: Record<string, Rule[]> = {
+  name: [{ required: true, message: '' }],
+};
+const open = ref<boolean>(false);
+
+const showDrawer = () => {
+  open.value = true;
+};
+
+const onClose = () => {
+  open.value = false;
+};
+
+const disabled = computed(() => {
+  return !(form.name);
+})
+const onSubmitCompany = () => {
+    //提交新公司表单
+};
+
 interface DataItem {
   key: string;
   name: string;
-  money: string;
   taxNum: string;
-  taxRate: string;
-  invoiceCode: string;
-  invoiceNum: string;
 }
 
 
 const columns: TableColumnsType = [
-  { title: '名称', dataIndex: 'name', fixed: 'left', width: '20%',},
-  { title: '金额', dataIndex: 'money', width: '10%'},
-  { title: '税号', dataIndex: 'taxNum', width: '10%',},
-  { title: '税率', dataIndex: 'taxRate', width: '8%'},
-  { title: '发票代码', dataIndex: 'invoiceCode', width: '15%',},
-  { title: '发票号码', dataIndex: 'invoiceNum', width: '15%',},
+  { title: '名称', dataIndex: 'name', fixed: 'left', width: '40%',},
+  { title: '税号', dataIndex: 'taxNum', width: '40%',},
   { title: '操作', dataIndex: 'operation', fixed: "right",},
 ];
 const dataSource: Ref<DataItem[]> = ref([
   {
     key: '1',
     name: '嘉兴博羽股份有限公司',
-    money: '20000',
     taxNum: '001',
-    taxRate: '0.3',
-    invoiceCode: '001',
-    invoiceNum: '001'
   },
   {
     key: '2',
     name: '嘉兴猪猪股份有限公司',
-    money: '20000',
     taxNum: '001',
-    taxRate: '0.3',
-    invoiceCode: '001',
-    invoiceNum: '001'
   },
 ]);
 const count = computed(() => dataSource.value.length + 1);
@@ -117,41 +161,21 @@ const fetchData = async () => {
 
 const edit = (key: string) => {
   editableData[key] = cloneDeep(dataSource.value.filter(item => key === item.key)[0]);
-  editRowStatus.value = !editRowStatus.value;
 };
 const save = (key: string) => {
   Object.assign(dataSource.value.filter(item => key === item.key)[0], editableData[key]);
   delete editableData[key];
-  editRowStatus.value = !editRowStatus.value;
+};
+const cancel = (key: string) => {
+  delete editableData[key];
 };
 
-const onDelete = async (key: string) => {
-  try {
-    // 在前端删除数据
-    dataSource.value = dataSource.value.filter(item => item.key !== key);
 
-    // 发送请求到后端删除数据
-    const response = await fetch(`http://localhost:8080/deleteOverview/${key}`, {
-      method: 'DELETE',
-    });
-    const data = await response.json();
-
-    if (data.code !== 200) {
-      console.error('Failed to delete data from backend:', data.message);
-    }
-  } catch (error) {
-    console.error('An error occurred during delete from backend:', error);
-  }
-};
 const handleAdd = () => {
   const newData = {
     key: `${count.value}`, //  自动生成的key
     name: null,
-    money: null,
     taxNum: null,
-    taxRate: null,
-    invoiceCode: null,
-    invoiceNum: null,
   };
   dataSource.value.push(newData);
 };
