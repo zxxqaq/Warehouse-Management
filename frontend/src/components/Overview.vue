@@ -1,13 +1,6 @@
 <template>
   <a-layout>
-    <a-layout-header style="background: #fff; padding: 0">
-      <div class="btn-group">
-        <a-button class="editable-add-btn" style="margin-bottom: 10px" @click="showDrawer">
-          <template #icon><PlusOutlined /></template>
-          添加公司
-        </a-button>
-      </div>
-    </a-layout-header>
+
     <a-layout-content style="margin: 0 16px">
       <a-breadcrumb style="margin: 16px 0">
         <a-breadcrumb-item></a-breadcrumb-item>
@@ -15,6 +8,10 @@
       </a-breadcrumb>
 
       <div :style="{ padding: '24px', background: '#fff', minHeight: '360px' }">
+        <a-button class="editable-add-btn" style="margin-bottom: 10px" @click="showDrawer">
+          <template #icon><PlusOutlined /></template>
+          添加公司
+        </a-button>
 
         <a-table bordered :data-source="dataSource" :columns="columns">
           <template #bodyCell="{ column, text, record }" >
@@ -40,6 +37,7 @@
                 </span>
                 <span v-else>
                   <a @click="edit(record.key)">编辑</a>
+                  <a style="margin-left: 10px" @click="handleMenuClick(record.key)">详情</a>
                 </span>
               </div>
             </template>
@@ -92,11 +90,15 @@ import type { Ref, UnwrapRef } from 'vue';
 import { CheckOutlined, EditOutlined } from '@ant-design/icons-vue';
 import { cloneDeep } from 'lodash-es';
 import {TableColumnsType} from "ant-design-vue";
+import { useStore} from "vuex";
+
+const store = useStore();
 
 const form = reactive({
   name: null,
   taxNum: null,
 });
+
 const rules: Record<string, Rule[]> = {
   name: [{ required: true, message: '' }],
 };
@@ -117,6 +119,11 @@ const onSubmitCompany = () => {
     //提交新公司表单
 };
 
+const handleMenuClick = (key: string) => {
+  store.commit('setSelectedMenuItem', "menu1");
+  store.commit('setSelectedCompany', key);
+
+}
 interface DataItem {
   key: string;
   name: string;

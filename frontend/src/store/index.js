@@ -4,7 +4,8 @@ const store = createStore({
     state: {
         isAuthenticated: true,
         userFullName: '',
-        selectedMenuItem: '0',
+        selectedMenuItem: 'menu0',
+        selectedCompany: '',
         boyuHistory: [],
 
     },
@@ -14,6 +15,7 @@ const store = createStore({
         getSelectedMenuItem(state) {
             return state.selectedMenuItem;
         },
+        getSelectedCompany: state => state.selectedCompany,
         getBoyuHistory: (state) => state.boyuHistory,
     },
     mutations: {
@@ -23,8 +25,11 @@ const store = createStore({
         setAuthentication(state, isAuthenticated) {
             state.isAuthenticated = isAuthenticated;
         },
-        setSelectedMenuItem(state, index) {
-            state.selectedMenuItem = index;
+        setSelectedMenuItem(state, menu) {
+            state.selectedMenuItem = menu;
+        },
+        setSelectedCompany(state, company) {
+            state.selectedCompany = company;
         },
         addBoyuHistory(state, firstForm) {
             state.boyuHistory.push(firstForm);

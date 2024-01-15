@@ -1,8 +1,8 @@
 <template>
   <a-layout style="min-height: 100vh">
     <Sider></Sider>
-    <Body v-if="selectedMenuItem === '0'"></Body>
-    <BoyuManagement v-if="selectedMenuItem === 'BoyuManagement'"></BoyuManagement>
+    <Overview v-if="selectedMenuItem === 'menu0'"></Overview>
+    <Management v-if="selectedMenuItem === 'menu1'"></Management>
     <BoyuHistory v-if="selectedMenuItem === 'BoyuHistory'"></BoyuHistory>
   </a-layout>
 </template>
@@ -10,8 +10,8 @@
 import Sider from "@/components/Sider.vue";
 import store from "@/store";
 import {ref, watch} from "vue";
-import BoyuManagement from "@/components/Management/BoyuManagement.vue";
 import BoyuHistory from "@/components/History/BoyuHistory.vue";
+import Overview from "@/components/Overview.vue";
 
 const selectedMenuItem = ref(store.getters.getSelectedMenuItem);
 

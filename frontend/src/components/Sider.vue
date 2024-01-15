@@ -3,30 +3,18 @@
   <a-layout-sider v-model:collapsed="collapsed" collapsible>
     <div class="logo" />
     <a-menu v-model:selectedKeys="selectedKeys" theme="dark" mode="inline" @click="handleMenuClick">
-      <a-menu-item key="0">
+      <a-menu-item key="menu0">
         <desktop-outlined />
         <span>总览</span>
       </a-menu-item>
-      <a-sub-menu key="sub1">
-        <template #title>
-            <span>
-              <team-outlined />
-              <span>库存管理</span>
-            </span>
-        </template>
-        <a-menu-item key="BoyuManagement">博羽</a-menu-item>
-        <a-menu-item key="1_2">斯迈欧</a-menu-item>
-      </a-sub-menu>
-      <a-sub-menu key="sub2">
-        <template #title>
-            <span>
-              <team-outlined />
-              <span>历史记录</span>
-            </span>
-        </template>
-        <a-menu-item key="BoyuHistory">博羽</a-menu-item>
-        <a-menu-item key="2_2">斯迈欧</a-menu-item>
-      </a-sub-menu>
+      <a-menu-item key="menu1">
+        <team-outlined />
+        <span>库存管理</span>
+      </a-menu-item>
+      <a-menu-item key="menu2">
+        <team-outlined />
+        <span>操作历史</span>
+      </a-menu-item>
     </a-menu>
   </a-layout-sider>
 </template>
@@ -38,7 +26,7 @@ import { useStore} from "vuex";
 
 const store = useStore();
 const collapsed = ref(false);
-const selectedKeys = ref(['0']);
+const selectedKeys = ref(['menu0']);
 
 const handleMenuClick = ({ key }) => {
   store.commit('setSelectedMenuItem', key);
