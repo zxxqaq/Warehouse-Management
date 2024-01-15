@@ -10,6 +10,7 @@
 import Sider from "@/components/Sider.vue";
 import store from "@/store";
 import {ref, watch} from "vue";
+import Management from "@/components/Management/Management.vue";
 import BoyuHistory from "@/components/History/BoyuHistory.vue";
 import Overview from "@/components/Overview.vue";
 
