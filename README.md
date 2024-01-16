@@ -109,4 +109,27 @@ POST http://localhost:7779/overview/addCompany
   "data": null
 }
 ```
+## update company
 
+```json
+  PUT http://localhost:7779/overview/updateCompany
+```
+### Request body
+
+```json
+{
+  "companyId": 3,
+  "companyName": "嘉兴海豹股份有限公司",
+  "taxNum": "20000005"
+}
+```
+
+### Response
+
+```json
+{
+  "code": 200,
+  "msg": "操作成功",
+  "data": null
+}
+```

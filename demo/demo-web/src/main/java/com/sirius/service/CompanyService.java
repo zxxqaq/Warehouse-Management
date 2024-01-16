@@ -3,6 +3,7 @@ package com.sirius.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.sirius.domain.ResponseResult;
 import com.sirius.domain.dto.AddCompanyDto;
+import com.sirius.domain.dto.UpdateCompanyDto;
 import com.sirius.domain.entity.Company;
 
 
@@ -19,4 +20,6 @@ public interface CompanyService extends IService<Company> {
     ResponseResult deleteCompany(long companyId);
 
     ResponseResult addCompany(AddCompanyDto addCompanyDto);
+
+    ResponseResult updateCompany(UpdateCompanyDto addCompanyDto);
 }
