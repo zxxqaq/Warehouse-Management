@@ -1,21 +1,19 @@
 # login
 
-| key | username | password | userFullName |
-| --- | -------- | -------- | ------------ |
-| 0   | zz       | 1234     | 张显         |
-| 1   | sun      | 666      | 孙敬轩       |
-|     |          |          |              |
+| key | name | password | 
+|-----|----------|----------| 
+| 1   | sjx      | 123abc   |
 
 ```
-POST http://localhost:8080/login
+POST http://localhost:7779/login
 ```
 
 #### Request body
 
 ```json
 {
-  "username": "example_user",
-  "password": "example_password"
+  "name": "sjx",
+  "password": "123abc"
 }
 ```
 
@@ -23,15 +21,9 @@ POST http://localhost:8080/login
 
 ```json
 {
-    "code": 200,
-    "data": {
-        "token": "eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiI0ODBmOThmYmJkNmI0NjM0OWUyZjY2NTM0NGNjZWY2NSIsInN1YiI6IjEiLCJpc3MiOiJzZyIsImlhdCI6MTY0Mzg3NDMxNiwiZXhwIjoxNjQzOTYwNzE2fQ.ldLBUvNIxQCGemkCoMgT_0YsjsWndTg5tqfJb77pabk",
-        "userInfo": {
-            "avatar": " ",
-			"userFullName": "张显"
-        }
-    },
-    "message": "success"
+  "code": 200,
+  "msg": "操作成功",
+  "data": null
 }
 
 ```
