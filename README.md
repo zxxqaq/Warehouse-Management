@@ -63,7 +63,7 @@ GET http://localhost:7779/overview/companyList
 }
 ```
 
-## delete company list
+## delete company
 
 ```
 DELETE http://localhost:7779/overview/${companyId}
