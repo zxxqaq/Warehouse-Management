@@ -85,3 +85,28 @@ DELETE http://localhost:7779/overview/${companyId}
 
 注意测试删除后在列表中是否查看不到该条数据
 数据库中该条数据还是存在的，只是修改了逻辑删除字段的值
+
+## add company 
+
+``` json
+POST http://localhost:7779/overview/addCompany
+```
+
+### Request body
+
+```json
+{
+  "companyName": "嘉兴海豹股份有限公司",
+  "taxNum": "20000003"
+}
+```
+### Response
+
+```json
+{
+  "code": 200,
+  "msg": "操作成功",
+  "data": null
+}
+```
+

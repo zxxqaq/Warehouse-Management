@@ -2,6 +2,7 @@ package com.sirius.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sirius.domain.ResponseResult;
+import com.sirius.domain.dto.AddCompanyDto;
 import com.sirius.domain.entity.Company;
 import com.sirius.domain.vo.CompanyListVo;
 import com.sirius.enums.AppHttpCodeEnum;
@@ -35,6 +36,16 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
     @Override
     public ResponseResult deleteCompany(long companyId) {
         if (this.removeById(companyId)) {
+            return ResponseResult.okResult();
+        } else {
+            return ResponseResult.errorResult(AppHttpCodeEnum.SYSTEM_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseResult addCompany(AddCompanyDto addCompanyDto) {
+        Company company = BeanCopyUtils.beanCopy(addCompanyDto, Company.class);
+        if (this.save(company)) {
             return ResponseResult.okResult();
         } else {
             return ResponseResult.errorResult(AppHttpCodeEnum.SYSTEM_ERROR);
