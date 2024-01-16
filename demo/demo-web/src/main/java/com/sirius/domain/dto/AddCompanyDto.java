@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoginUserDto {
-    private String userName;
-    private String password;
+public class AddCompanyDto {
+    private String companyName;
+    private String taxNum;
 }

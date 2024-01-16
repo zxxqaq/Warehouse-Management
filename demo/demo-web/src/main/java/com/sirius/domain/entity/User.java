@@ -11,7 +11,9 @@ import lombok.NoArgsConstructor;
 public class User {
     @TableId
     private long userId;
-    private String name;
+    private String userName;
     private String password;
+
+    private Integer delFlag;
 
 }

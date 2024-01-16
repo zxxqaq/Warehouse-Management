@@ -16,7 +16,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public ResponseResult login(LoginUserDto loginUserDto) {
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(User::getName, loginUserDto.getName());
+        queryWrapper.eq(User::getUserName, loginUserDto.getUserName());
         queryWrapper.eq(User::getPassword, loginUserDto.getPassword());
         User user = this.getOne(queryWrapper);
         if (user == null) {

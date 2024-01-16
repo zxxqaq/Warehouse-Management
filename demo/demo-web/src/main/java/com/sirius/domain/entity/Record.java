@@ -15,6 +15,7 @@ public class Record {
     private long recordId;
     private long userId;
 
+    private long itemId;
     private long companyId;
 
     private RecordType type;
@@ -25,16 +26,9 @@ public class Record {
 
     private String unit;
 
-    private String name;
+    private double totalWeight;
 
-    private String standard;
+    private String direction;
 
-    private String specifications;
-
-    private String material;
-
-    private String level;
-
-    private String surfaceTreatment;
-
+    private Integer delFlag;
 }

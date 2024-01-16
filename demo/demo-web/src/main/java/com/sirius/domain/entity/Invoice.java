@@ -14,11 +14,13 @@ public class Invoice {
     @TableId
     private long invoiceId;
     private long companyId;
-    private String invoiceNumber;
+    private String invoiceNum;
     private String invoiceCode;
     private long taxRate;
     private String comment;
-    private long amount;
+    private long money;
     private Date startDate;
     private Date endDate;
+
+    private Integer delFlag;
 }
