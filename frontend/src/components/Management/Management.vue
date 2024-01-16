@@ -122,7 +122,7 @@
       <template #extra>
         <a-space>
           <a-button @click="onClose">取消</a-button>
-          <a-button type="primary" @click="onClose">提交</a-button>
+          <a-button :disabled="inputSubmitDisabled" type="primary" @click="onClose">提交</a-button>
         </a-space>
       </template>
     </a-drawer>
@@ -144,6 +144,9 @@ import 'dayjs/locale/zh-cn';
 import zhCN from "ant-design-vue/es/locale/zh_CN";
 import locale from "ant-design-vue/es/vc-picker/locale/zh_CN";
 
+const inputSubmitDisabled = computed(() => {
+  return !(form.time);
+})
 dayjs.locale('zh-cn')
 const store = useStore();
 interface DataItem {
