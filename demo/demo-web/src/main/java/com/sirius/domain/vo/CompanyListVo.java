@@ -1,18 +1,15 @@
-package com.sirius.domain.entity;
+package com.sirius.domain.vo;
 
-import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Company {
-    @TableId
+public class CompanyListVo {
     private long companyId;
     private String companyName;
     private String taxNum;
-
-    private Integer delFlag;
 }

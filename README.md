@@ -28,17 +28,17 @@ POST http://localhost:7779/login
 
 ```
 
-# Overview
+# Company overview
 
-| key | name                 | money | taxNum | taxRate | invoiceCode | invoiceNum |
-| --- | -------------------- | ----- | ------ | ------- | ----------- | ---------- |
-| 0   | 嘉兴博羽股份有限公司 | 2000  | 001    | 0.3     |     001     |001            |
-|  1   |     嘉兴猪猪股份有限公司  | 2000  | 001    | 0.3 |  001   |  001          |
+| key | name                 | taxNum |
+| --- | -------------------- |--------|
+| 0   | 嘉兴博羽股份有限公司 | 10000000   |
+|  1   |     嘉兴猪猪股份有限公司  | 20000000   |
 
-## getOverview
+## get company list
 
 ```
-GET http://localhost:8080/getOverview
+GET http://localhost:7779/overview/companyList
 ```
 
 ### Response
@@ -46,47 +46,40 @@ GET http://localhost:8080/getOverview
 
 ```JSON
 {
-	"code": 200,
-	"data": [
-			{
-				"key": "1",   
-				"name": "嘉兴博羽股份有限公司",  
-				"money": "20000",  
-				"taxNum": "001",  
-				"taxRate": "0.3",  
-				"invoiceCode": "001",  
-				"invoiceNum": "001"
-			},
-			{
-				"key": "2",   
-				"name": "嘉兴猪猪股份有限公司",  
-				"money": "20000",  
-				"taxNum": "001",  
-				"taxRate": "0.3",  
-				"invoiceCode": "001",  
-				"invoiceNum": "001"
-			}
-			],
-	"message": "success"
+  "code": 200,
+  "msg": "操作成功",
+  "data": [
+    {
+      "companyId": 1,
+      "companyName": "嘉兴博羽股份有限公司",
+      "taxNum": "10000000"
+    },
+    {
+      "companyId": 2,
+      "companyName": "嘉兴猪猪股份有限公司",
+      "taxNum": "20000000"
+    }
+  ]
 }
 ```
 
-## deleteOverview
+## delete company list
 
 ```
-DELETE http://localhost:8080/deleteOverview/${key}
+DELETE http://localhost:7779/overview/${companyId}
 ```
 
 请求参数在path中
 
-例如： http://localhost:8080/deleteOverview/6 代表删除key=6的这条数据
+例如： http://localhost:7779/overview/2 代表删除companyId=2的这条数据
 
 ### Response
 
 ```json
-{ 
-	"code":200, 
-	"message":"操作成功" 
+{
+  "code": 200,
+  "msg": "操作成功",
+  "data": null
 }
 ```
 
