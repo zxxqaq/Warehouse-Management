@@ -20,11 +20,9 @@
               <div class="editable-cell">
                 <div v-if="editableData[record.key]" class="editable-cell-input-wrapper">
                   <a-input v-model:value="editableData[record.key][column.dataIndex]" @pressEnter="save(record.key)" />
-                  <!--                  <check-outlined class="editable-cell-icon-check" @click="save(record.key)" />-->
                 </div>
                 <div v-else class="editable-cell-text-wrapper">
                   {{ text || ' ' }}
-                  <!--                  <edit-outlined class="editable-cell-icon" @click="edit(record.key)" />-->
                 </div>
               </div>
             </template>

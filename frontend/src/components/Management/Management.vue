@@ -7,15 +7,15 @@
       </a-breadcrumb>
 
       <div :style="{ padding: '24px', background: '#fff', minHeight: '360px' }">
-          <a-space direction="vertical" style="margin-bottom: 10px">
-            <a-select
-                v-model:value="defaultSelectCompany"
-                size="middle"
-                style="width: 250px"
-                :options="options"
-                @change="handleCompanyChange"
-            ></a-select>
-          </a-space>
+        <a-space direction="vertical" style="margin-bottom: 10px">
+          <a-select
+              v-model:value="defaultSelectCompany"
+              size="middle"
+              style="width: 250px"
+              :options="options"
+              @change="handleCompanyChange"
+          ></a-select>
+        </a-space>
 
 
         <a-table bordered :data-source="dataSource" :columns="columns" :scroll="{x: 1500, y: 500}">
@@ -60,41 +60,51 @@
         <a-row :gutter="16">
           <a-col :span="6">
             <a-form-item label="名称" name="name" >
-              <a-input  v-model:value="form.name" :placeholder="form.name"></a-input>
+              <a-input disabled  v-model:value="form.name" :placeholder="form.name"></a-input>
             </a-form-item>
           </a-col>
           <a-col :span="6">
             <a-form-item label="标准" name="standard" >
-              <a-input  v-model:value="form.standard" :placeholder="form.standard"></a-input>
+              <a-input disabled  v-model:value="form.standard" :placeholder="form.standard"></a-input>
             </a-form-item>
           </a-col>
           <a-col :span="6">
             <a-form-item label="规格" name="specification" >
-              <a-input  v-model:value="form.specification" :placeholder="form.specification"></a-input>
+              <a-input disabled  v-model:value="form.specification" :placeholder="form.specification"></a-input>
             </a-form-item>
           </a-col>
           <a-col :span="6">
             <a-form-item label="表面处理" name="surface" >
-              <a-input  v-model:value="form.surface" :placeholder="form.surface"></a-input>
+              <a-input disabled  v-model:value="form.surface" :placeholder="form.surface"></a-input>
             </a-form-item>
           </a-col>
         </a-row>
         <a-row :gutter="16">
+          <a-col :span="6">
+            <a-form-item label="材质" name="material" >
+              <a-input disabled  v-model:value="form.material" :placeholder="form.material"></a-input>
+            </a-form-item>
+          </a-col>
           <a-col :span="6">
             <a-form-item label="等级" name="level" >
-              <a-input  v-model:value="form.level" :placeholder="form.level"></a-input>
+              <a-input disabled  v-model:value="form.level" :placeholder="form.level"></a-input>
             </a-form-item>
           </a-col>
           <a-col :span="6">
-            <a-form-item label="入库时间" name="time" >
-              <a-input  v-model:value="form.time" :placeholder="form.time"></a-input>
+            <a-form-item label="当前库存数量" name="totalCount" >
+              <a-input disabled  v-model:value="form.totalCount" :placeholder="form.totalCount"></a-input>
             </a-form-item>
           </a-col>
+
         </a-row>
         <a-row :gutter="16">
           <a-col :span="6">
-            <a-form-item label="当前库存数量" name="totalCount" >
-              <a-input  v-model:value="form.totalCount" :placeholder="form.totalCount"></a-input>
+            <a-form-item label="入库时间" name="time" >
+              <a-space direction="vertical" :size="12">
+                <a-config-provider :locale="zhCN">
+                  <a-date-picker v-model:value="form.time" />
+                </a-config-provider>
+              </a-space>
             </a-form-item>
           </a-col>
           <a-col :span="6">
@@ -129,7 +139,12 @@ import { InboxOutlined } from '@ant-design/icons-vue';
 import type { Rule } from 'ant-design-vue/es/form';
 import { useStore} from "vuex";
 import {SelectValue} from "ant-design-vue/es/select";
+import dayjs from 'dayjs';
+import 'dayjs/locale/zh-cn';
+import zhCN from "ant-design-vue/es/locale/zh_CN";
+import locale from "ant-design-vue/es/vc-picker/locale/zh_CN";
 
+dayjs.locale('zh-cn')
 const store = useStore();
 interface DataItem {
   key: string;
@@ -258,6 +273,7 @@ const form = reactive({
   standard: null,
   specification: null,
   surface: null,
+  material: null,
   level: null,
   unit: null,
   inCount: null,
@@ -267,7 +283,7 @@ const form = reactive({
   singlePrice: null,
   totalCount: null,
   inOut: null,
-  time: new Date().toLocaleString('zh-CN'),
+  time: dayjs(),
   singleCount: null
 });
 

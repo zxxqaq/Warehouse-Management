@@ -13,10 +13,10 @@
       >
         <a-form-item
             label="用户名"
-            name="username"
+            name="name"
             :rules="[{ required: true, message: '请输入用户名!' }]"
         >
-          <a-input v-model:value="formState.username" />
+          <a-input v-model:value="formState.name" />
         </a-form-item>
 
         <a-form-item
@@ -41,15 +41,15 @@ import router from "../router";
 
 const store = useStore();
 interface FormState {
-  username: string;
+  name: string;
   password: string;
 }
 
 const disabled = computed(() => {
-  return !(formState.username && formState.password);
+  return !(formState.name && formState.password);
 })
 const formState = reactive<FormState>({
-  username: '',
+  name: '',
   password: '',
 });
 const onFinish = (values: any) => {
@@ -62,9 +62,10 @@ const onFinishFailed = (errorInfo: any) => {
 
 const submitForm = async () => {
   try {
-    const response = await fetch('http://localhost:8080/login', {
+    const response = await fetch('http://localhost:7779/login', {
       method: 'POST',
       headers: {
+
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(formState),
@@ -73,9 +74,8 @@ const submitForm = async () => {
     const data = await response.json();
 
     if (data.code === 200) {
-      const userFullName = data.userFullName;
       store.commit('setAuthentication', true);
-      store.commit('setUsername', userFullName);
+      store.commit('setUsername', formState.name);
       await router.push('/home');
     } else {
       console.error('Login failed:', data.message);
@@ -92,7 +92,7 @@ const submitForm = async () => {
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background-image: url("src/assets/img/bg.png");
+  background-image: url('src/assets/img/bg.png');
   background-size: cover;
 }
 </style>
