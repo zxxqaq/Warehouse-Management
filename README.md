@@ -167,3 +167,11 @@ POST http://localhost:7779/overview/addCompany
 }
 ```
 
+
+TODO:
+1. 初始化入库（创建Item+创建Record）
+2. 添加Record（入库+出库）
+3. 删除Record
+4. Record List（按照公司ID查询，按照itemId+companyId查询）
+
+
