@@ -15,11 +15,11 @@
 
         <a-table bordered :data-source="dataSource" :columns="columns">
           <template #bodyCell="{ column, text, record }" >
-            <template v-if="column.dataIndex === 'name' ||
+            <template v-if="column.dataIndex === 'companyName' ||
                             column.dataIndex === 'taxNum'">
               <div class="editable-cell">
-                <div v-if="editableData[record.key]" class="editable-cell-input-wrapper">
-                  <a-input v-model:value="editableData[record.key][column.dataIndex]" @pressEnter="save(record.key)" />
+                <div v-if="editableData[record.companyId]" class="editable-cell-input-wrapper">
+                  <a-input v-model:value="editableData[record.companyId][column.dataIndex]" @pressEnter="save(record.companyId)" />
                 </div>
                 <div v-else class="editable-cell-text-wrapper">
                   {{ text || ' ' }}
@@ -29,13 +29,13 @@
 
             <template v-else-if="column.dataIndex === 'operation'">
               <div class="editable-row-operations">
-                <span v-if="editableData[record.key]">
-                  <a-typography-link  @click="save(record.key)">保存</a-typography-link>
-                  <a-typography-link style="margin-left: 10px" @click="cancel(record.key)">取消</a-typography-link>
+                <span v-if="editableData[record.companyId]">
+                  <a-typography-link  @click="save(record.companyId)">保存</a-typography-link>
+                  <a-typography-link style="margin-left: 10px" @click="cancel(record.companyId)">取消</a-typography-link>
                 </span>
                 <span v-else>
-                  <a @click="edit(record.key)">编辑</a>
-                  <a style="margin-left: 10px" @click="handleMenuClick(record.key)">详情</a>
+                  <a @click="edit(record.companyId)">编辑</a>
+                  <a style="margin-left: 10px" @click="handleCompanyClick(record.companyId)">详情</a>
                 </span>
               </div>
             </template>
@@ -52,27 +52,27 @@
         :open="open"
         :body-style="{ paddingBottom: '80px' }"
         :footer-style="{ textAlign: 'right' }"
-        @close="onClose"
+        @close="onCloseCompany"
     >
-      <a-form :model="form" :rules="rules" layout="vertical">
+      <a-form :model="companyForm" :rules="rules" layout="vertical">
         <a-row :gutter="16">
           <a-col :span="24">
-            <a-form-item label="名称" name="name">
-              <a-input v-model:value="form.name"  />
+            <a-form-item label="名称" name="companyName">
+              <a-input v-model:value="companyForm.companyName"  />
             </a-form-item>
           </a-col>
         </a-row>
         <a-row :gutter="16">
           <a-col :span="24">
-            <a-form-item label="税号" name="taxNum">
-              <a-input v-model:value="form.taxNum"  />
+            <a-form-item label="税号（如果暂时没有，请填写0）" name="taxNum">
+              <a-input v-model:value="companyForm.taxNum"  />
             </a-form-item>
           </a-col>
         </a-row>
       </a-form>
       <template #extra>
         <a-space>
-          <a-button @click="onClose">取消</a-button>
+          <a-button @click="onCloseCompany">取消</a-button>
           <a-button :disabled="disabled" type="primary" @click="onSubmitCompany">确定</a-button>
         </a-space>
       </template>
@@ -83,22 +83,22 @@
 <script lang="ts" setup>
 import { PlusOutlined } from '@ant-design/icons-vue';
 import type { Rule } from 'ant-design-vue/es/form';
-import {computed, onMounted, reactive, ref} from 'vue';
+import {computed, onBeforeUnmount, onMounted, reactive, ref} from 'vue';
 import type { Ref, UnwrapRef } from 'vue';
 import { CheckOutlined, EditOutlined } from '@ant-design/icons-vue';
-import { cloneDeep } from 'lodash-es';
+import {before, cloneDeep} from 'lodash-es';
 import {TableColumnsType} from "ant-design-vue";
 import { useStore} from "vuex";
-
+import { message } from 'ant-design-vue';
 const store = useStore();
 
-const form = reactive({
-  name: null,
+const companyForm = reactive({
+  companyName: null,
   taxNum: null,
 });
 
 const rules: Record<string, Rule[]> = {
-  name: [{ required: true, message: '' }],
+  // name: [{ required: true, message: '' }],
 };
 const open = ref<boolean>(false);
 
@@ -106,87 +106,119 @@ const showDrawer = () => {
   open.value = true;
 };
 
-const onClose = () => {
+const onCloseCompany = () => {
   open.value = false;
 };
 
 const disabled = computed(() => {
-  return !(form.name);
+  return !(companyForm.companyName);
 })
-const onSubmitCompany = () => {
-    //提交新公司表单
+const onSubmitCompany = async () => {
+  try {
+    const response = await fetch('http://localhost:7779/overview/addCompany',{
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(companyForm),
+    });
+    const data = await response.json();
+    if (data.code === 200){
+      message.success('添加公司成功');
+      handleAdd(companyForm.companyName, companyForm.taxNum);
+      companyForm.companyName = null;
+      companyForm.taxNum = null;
+      onCloseCompany();
+    }else {
+      message.error('添加公司失败');
+    }
+  }catch (error){
+    console.error('An error occurred during add new company:',error);
+  }
 };
 
-const handleMenuClick = (key: string) => {
-  store.commit('setSelectedMenuItem', "menu1");
-  store.commit('setSelectedCompany', key);
 
+const handleCompanyClick = (companyId: string) => {
+  store.commit('setSelectedMenuItem', "menu1");
+  store.commit('setSelectedCompany', cloneDeep(dataSource.value.filter(item => companyId === item.companyId)[0]));
+  console.log(store.getters.getSelectedCompany);
 }
-interface DataItem {
-  key: string;
-  name: string;
+
+interface Company {
+  companyId: number;
+  companyName: string;
   taxNum: string;
 }
 
 
 const columns: TableColumnsType = [
-  { title: '名称', dataIndex: 'name', fixed: 'left', width: '40%',},
+  { title: '名称', dataIndex: 'companyName', fixed: 'left', width: '40%',},
   { title: '税号', dataIndex: 'taxNum', width: '40%',},
   { title: '操作', dataIndex: 'operation', fixed: "right",},
 ];
-const dataSource: Ref<DataItem[]> = ref([
-  {
-    key: '1',
-    name: '嘉兴博羽股份有限公司',
-    taxNum: '001',
-  },
-  {
-    key: '2',
-    name: '嘉兴猪猪股份有限公司',
-    taxNum: '001',
-  },
-]);
+const dataSource: Ref<Company[]> = ref([]);
 const count = computed(() => dataSource.value.length + 1);
-const editableData: UnwrapRef<Record<string, DataItem>> = reactive({});
-const editRowStatus = ref(false);
+const editableData: UnwrapRef<Record<string, Company>> = reactive({});
+
 
 const fetchData = async () => {
   try {
-    const response = await fetch('http://localhost:8080/getOverview');
+    const response = await fetch('http://localhost:7779/overview/companyList');
     const data = await response.json();
     if (data.code === 200){
       dataSource.value = data.data;
+      store.commit('setCompanyList',dataSource.value);
     } else {
-      console.error('Failed to fetch data:', data.message);
+      console.log('Failed to fetch data:', data.message);
     }
   } catch (error) {
     console.error('An error occurred during fetch:', error);
   }
 };
 
-const edit = (key: string) => {
-  editableData[key] = cloneDeep(dataSource.value.filter(item => key === item.key)[0]);
+const edit = (companyId: string) => {
+  editableData[companyId] = cloneDeep(dataSource.value.filter(item => companyId === item.companyId)[0]);
 };
-const save = (key: string) => {
-  Object.assign(dataSource.value.filter(item => key === item.key)[0], editableData[key]);
-  delete editableData[key];
+const save = async (companyId: string) => {
+  try {
+    const response = await fetch('http://localhost:7779/overview/updateCompany', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body:JSON.stringify(editableData[companyId])
+    })
+    const data = await response.json();
+    if (data.code === 200){
+      message.success('编辑公司信息成功');
+      Object.assign(dataSource.value.filter(item => companyId === item.companyId)[0], editableData[companyId]);
+      delete editableData[companyId];
+    }else {
+      message.error('编辑公司信息失败');
+    }
+  } catch (error) {
+    console.error('An error occurred in saving edited company:', error);
+  }
 };
-const cancel = (key: string) => {
-  delete editableData[key];
+const cancel = (companyId: string) => {
+  delete editableData[companyId];
 };
 
 
-const handleAdd = () => {
+const handleAdd = (companyName: string, taxNum: string) => {
   const newData = {
-    key: `${count.value}`, //  自动生成的key
-    name: null,
-    taxNum: null,
+    companyId: 1, //  自动生成的key
+    companyName: companyName,
+    taxNum: taxNum,
   };
   dataSource.value.push(newData);
 };
 
 onMounted(() => {
   fetchData();
+})
+onBeforeUnmount(() => {
+  store.commit('setCompanyList',dataSource.value)
 })
 </script>
 

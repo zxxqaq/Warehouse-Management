@@ -13,10 +13,10 @@
       >
         <a-form-item
             label="用户名"
-            name="name"
+            name="userName"
             :rules="[{ required: true, message: '请输入用户名!' }]"
         >
-          <a-input v-model:value="formState.name" />
+          <a-input v-model:value="formState.userName" />
         </a-form-item>
 
         <a-form-item
@@ -41,15 +41,15 @@ import router from "../router";
 
 const store = useStore();
 interface FormState {
-  name: string;
+  userName: string;
   password: string;
 }
 
 const disabled = computed(() => {
-  return !(formState.name && formState.password);
+  return !(formState.userName && formState.password);
 })
 const formState = reactive<FormState>({
-  name: '',
+  userName: '',
   password: '',
 });
 const onFinish = (values: any) => {
@@ -65,7 +65,6 @@ const submitForm = async () => {
     const response = await fetch('http://localhost:7779/login', {
       method: 'POST',
       headers: {
-
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(formState),
@@ -75,7 +74,7 @@ const submitForm = async () => {
 
     if (data.code === 200) {
       store.commit('setAuthentication', true);
-      store.commit('setUsername', formState.name);
+      store.commit('setUsername', formState.userName);
       await router.push('/home');
     } else {
       console.error('Login failed:', data.message);

@@ -102,6 +102,8 @@ POST http://localhost:7779/overview/addCompany
 ```
 ### Response
 
+在成功后还要传回来新建公司的companyId，不然前端怎么知道
+
 ```json
 {
   "code": 200,
@@ -133,3 +135,35 @@ POST http://localhost:7779/overview/addCompany
   "data": null
 }
 ```
+# Management
+
+1. 向后端发送companyId，查询对应的itemId和信息
+
+需要取得的数据：
+
+```JSON
+{
+  "code": 200,
+  "msg": "操作成功",
+  "data": [
+    { //Item
+      "itemId": 1,
+      "itemName": "六角螺栓",
+      "standard": "GB/T 5783-2016",
+      "specification": "M8*35",
+      "surface": "35K 光身",
+      "material": "铁",
+      "level": "6.8",
+      "unitWeight": 16.2, //kg
+      "unit": "个",
+      // 统计的结果
+      "inCount": 200,
+      "outCount": 100,
+      "weightCount": 1620, //totalCount * unitWeight
+      "totalCount": 100, //inCount-outCount
+    },
+
+  ]
+}
+```
+
