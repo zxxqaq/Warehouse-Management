@@ -31,4 +31,6 @@ public class Record {
     private String direction;
 
     private Integer delFlag;
+
+    private double unitPrice;
 }

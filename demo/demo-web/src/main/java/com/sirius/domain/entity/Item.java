@@ -18,7 +18,5 @@ public class Item {
 
     private double unitWeight;
 
-    private double unitPrice;
-
     private Integer delFlag;
 }
