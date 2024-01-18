@@ -1,7 +1,8 @@
 package com.sirius.enums;
 
-public enum RecordType {
+import com.baomidou.mybatisplus.annotation.EnumValue;
 
+public enum RecordType {
     Initialization,
     Input,
     Output;

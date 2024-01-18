@@ -1,5 +1,6 @@
 package com.sirius.domain.entity;
 
+import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.sirius.enums.RecordType;
 import lombok.AllArgsConstructor;
@@ -18,6 +19,7 @@ public class Record {
     private long itemId;
     private long companyId;
 
+    @EnumValue
     private RecordType type;
 
     private Date date;
