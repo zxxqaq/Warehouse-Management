@@ -167,6 +167,45 @@ POST http://localhost:7779/overview/addCompany
 }
 ```
 
+## initialize item
+
+TODO LIST 1
+
+```JSON
+POST http://localhost:7779/management/initializeItem
+```
+
+### Request body
+
+```JSON
+{
+  "companyId": 1,
+  "itemName": "六角螺栓",
+  "standard": "GB/T 5783-2016",
+  "specification": "M8*35",
+  "surface": "35K 光身",
+  "material": "铁",
+  "level": "6.8",
+  "unitWeight": 16.2, //kg
+  "unit": "个",
+  "amount": 200,
+  "date": "2020-01-01"
+}
+```
+
+### Response
+
+```JSON
+{
+  "code": 200,
+  "msg": "操作成功",
+  "data": null
+}
+```
+
+
+
+
 
 TODO:
 1. 初始化入库（创建Item+创建Record）
