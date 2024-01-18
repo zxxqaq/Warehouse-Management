@@ -290,7 +290,7 @@ const initializeItem = () =>{
   if (defaultSelectCompany.value === '选择公司'){
     message.warn("请先选择公司");
   }else {
-    message.warn(defaultSelectCompany.value)
+    message.warn(companyId.value)
     // showInitializaDrawer(defaultSelectCompany);
   }
 }
