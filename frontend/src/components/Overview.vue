@@ -111,7 +111,7 @@ const onCloseCompany = () => {
 };
 
 const disabled = computed(() => {
-  return !(companyForm.companyName);
+  return !(companyForm.companyName && companyForm.taxNum);
 })
 const onSubmitCompany = async () => {
   try {
@@ -125,7 +125,7 @@ const onSubmitCompany = async () => {
     const data = await response.json();
     if (data.code === 200){
       message.success('添加公司成功');
-      handleAdd(companyForm.companyName, companyForm.taxNum);
+      await fetchData();
       companyForm.companyName = null;
       companyForm.taxNum = null;
       onCloseCompany();
@@ -141,7 +141,6 @@ const onSubmitCompany = async () => {
 const handleCompanyClick = (companyId: string) => {
   store.commit('setSelectedMenuItem', "menu1");
   store.commit('setSelectedCompany', cloneDeep(dataSource.value.filter(item => companyId === item.companyId)[0]));
-  console.log(store.getters.getSelectedCompany);
 }
 
 interface Company {
@@ -204,15 +203,6 @@ const cancel = (companyId: string) => {
   delete editableData[companyId];
 };
 
-
-const handleAdd = (companyName: string, taxNum: string) => {
-  const newData = {
-    companyId: 1, //  自动生成的key
-    companyName: companyName,
-    taxNum: taxNum,
-  };
-  dataSource.value.push(newData);
-};
 
 onMounted(() => {
   fetchData();

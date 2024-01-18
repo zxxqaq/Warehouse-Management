@@ -13,9 +13,12 @@
               size="middle"
               style="width: 250px"
               :options="options"
-              @change="handleCompanyChange"
+              @select="handleCompanyChange"
           ></a-select>
         </a-space>
+        <a-button class="editable-add-btn" style="margin-left: 20px" @click="initializeItem">
+          初始化/新建
+        </a-button>
 
 
         <a-table bordered :data-source="dataSource" :columns="columns" :scroll="{x: 1500, y: 500}">
@@ -34,6 +37,83 @@
       </div>
     </a-layout-content>
 
+    <a-drawer
+        title="初始化/新建"
+        :width="720"
+        :open="openInitializeForm"
+        :body-style="{ paddingBottom: '80px' }"
+        :footer-style="{ textAlign: 'right' }"
+        @close="onCloseInitializeDrawer"
+    >
+      <a-form :model="initializeForm"  layout="vertical">
+        <a-row :gutter="16">
+          <a-col :span="6">
+            <a-form-item label="名称" name="itemName" >
+              <a-input  v-model:value="initializeForm.itemName" ></a-input>
+            </a-form-item>
+          </a-col>
+          <a-col :span="6">
+            <a-form-item label="标准" name="standard" >
+              <a-input  v-model:value="initializeForm.standard" ></a-input>
+            </a-form-item>
+          </a-col>
+          <a-col :span="6">
+            <a-form-item label="规格" name="specification" >
+              <a-input  v-model:value="initializeForm.specification" ></a-input>
+            </a-form-item>
+          </a-col>
+          <a-col :span="6">
+            <a-form-item label="表面处理" name="surface" >
+              <a-input  v-model:value="initializeForm.surface" ></a-input>
+            </a-form-item>
+          </a-col>
+        </a-row>
+        <a-row :gutter="16">
+          <a-col :span="6">
+            <a-form-item label="材质" name="material" >
+              <a-input  v-model:value="initializeForm.material" ></a-input>
+            </a-form-item>
+          </a-col>
+          <a-col :span="6">
+            <a-form-item label="等级" name="level" >
+              <a-input  v-model:value="initializeForm.level" ></a-input>
+            </a-form-item>
+          </a-col>
+          <a-col :span="6">
+            <a-form-item label="单重" name="unitWeight" >
+              <a-input  v-model:value="initializeForm.unitWeight" ></a-input>
+            </a-form-item>
+          </a-col>
+          <a-col :span="6">
+            <a-form-item label="单位" name="unit" >
+              <a-input  v-model:value="initializeForm.unit" ></a-input>
+            </a-form-item>
+          </a-col>
+        </a-row>
+        <a-row :gutter="16">
+          <a-col :span="12">
+            <a-form-item label="时间" name="date" >
+              <a-space direction="vertical" :size="12">
+                <a-config-provider :locale="zhCN">
+                  <a-date-picker style="width: 20.5rem" v-model:value="initializeForm.date" />
+                </a-config-provider>
+              </a-space>
+            </a-form-item>
+          </a-col>
+          <a-col :span="12">
+            <a-form-item label="数量" name="amount">
+              <a-input-number v-model:value="initializeForm.amount" placeholder="请输入整数" style="width: 100%" />
+            </a-form-item>
+          </a-col>
+        </a-row>
+      </a-form>
+      <template #extra>
+        <a-space>
+          <a-button @click="onCloseInitializeDrawer">取消</a-button>
+          <a-button :disabled="submitInitializeDisabled" type="primary" @click="onCloseDrawer">提交</a-button>
+        </a-space>
+      </template>
+    </a-drawer>
     <a-drawer
         title="库存管理"
         :width="720"
@@ -175,8 +255,8 @@
 <script lang="ts" setup>
 import type {Ref, UnwrapRef} from 'vue';
 import {computed, onMounted, reactive, ref} from 'vue';
-import {SelectProps, TableColumnsType} from "ant-design-vue";
-import {InboxOutlined, MoneyCollectOutlined} from '@ant-design/icons-vue';
+import {message, SelectProps, TableColumnsType} from "ant-design-vue";
+import {InboxOutlined, MoneyCollectOutlined, PlusOutlined} from '@ant-design/icons-vue';
 import type {Rule} from 'ant-design-vue/es/form';
 import {useStore} from "vuex";
 import dayjs from 'dayjs';
@@ -192,19 +272,19 @@ const options = ref<SelectProps['options']>(companyList.map(item => ({
 
 let defaultSelectCompany = ref('选择公司');
 const company = store.getters.getSelectedCompany;
-
-
+store.commit("setSelectedCompany",null)
+const companyId = ref()
 onMounted( () => {
   if (company !== null) {
     defaultSelectCompany.value = company.companyName;
-    handleCompanyChange(company.companyId);
+    handleCompanyChange(company.companyId)
   }
 })
 
-const handleCompanyChange  = (companyId: number) => {
-  console.log(defaultSelectCompany.value);
+const handleCompanyChange  = (id: number) => {
+  companyId.value = id;
   // 向后端发送companyId，查询对应的itemId和信息
-  pushCompanyDataSource(companyId); //这里是模仿获取到了信息
+  pushCompanyDataSource(id); //这里是模仿获取到了信息
 }
 interface ItemSummary {
   itemId: number;
@@ -262,19 +342,14 @@ const dataSource: Ref<ItemSummary[]> = ref([
 
 
 
-
-
-
-
-
 const form = reactive({
   userName: null,
   companyId: null,
   recordType: null,
-  date: dayjs(),
-  amount: null as number,
+  date: null,
+  amount: null,
   unitPrice: null,
-  totalWeight: null as number,
+  totalWeight: null,
   direction: null,
 
   itemId: null,
@@ -287,6 +362,42 @@ const form = reactive({
   unitWeight: null,
   unit: null,
 });
+
+const initializeForm = reactive({
+  companyId: null,
+  itemName: null,
+  standard: null,
+  specification: null,
+  surface: null,
+  material: null,
+  level: null,
+  unitWeight: null,
+  unit: null,
+  amount: null,
+  date: null,
+});
+
+const initializeItem = () =>{
+  if (defaultSelectCompany.value === '选择公司'){
+    message.warn("请先选择公司");
+  }else {
+    showInitializeDrawer();
+  }
+}
+const openInitializeForm = ref<boolean>(false);
+const onCloseInitializeDrawer = () =>{
+  openInitializeForm.value = false;
+}
+const showInitializeDrawer = () => {
+  openInitializeForm.value = true;
+}
+
+const submitInitializeDisabled = computed(() => {
+  return !(initializeForm.itemName && initializeForm.standard && initializeForm.specification && initializeForm.surface
+  && initializeForm.material && initializeForm.level && initializeForm.unitWeight && initializeForm.unit && initializeForm.date
+  && initializeForm.amount);
+})
+
 const isWeight = ref();
 
 const weightOrAmount = computed(() => {
