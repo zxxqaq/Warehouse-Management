@@ -13,9 +13,12 @@
               size="middle"
               style="width: 250px"
               :options="options"
-              @change="handleCompanyChange"
+              @select="handleCompanyChange"
           ></a-select>
         </a-space>
+        <a-button class="editable-add-btn" style="margin-left: 20px" @click="initializeItem">
+          初始化/新建
+        </a-button>
 
 
         <a-table bordered :data-source="dataSource" :columns="columns" :scroll="{x: 1500, y: 500}">
@@ -175,8 +178,8 @@
 <script lang="ts" setup>
 import type {Ref, UnwrapRef} from 'vue';
 import {computed, onMounted, reactive, ref} from 'vue';
-import {SelectProps, TableColumnsType} from "ant-design-vue";
-import {InboxOutlined, MoneyCollectOutlined} from '@ant-design/icons-vue';
+import {message, SelectProps, TableColumnsType} from "ant-design-vue";
+import {InboxOutlined, MoneyCollectOutlined, PlusOutlined} from '@ant-design/icons-vue';
 import type {Rule} from 'ant-design-vue/es/form';
 import {useStore} from "vuex";
 import dayjs from 'dayjs';
@@ -192,19 +195,19 @@ const options = ref<SelectProps['options']>(companyList.map(item => ({
 
 let defaultSelectCompany = ref('选择公司');
 const company = store.getters.getSelectedCompany;
-
-
+store.commit("setSelectedCompany",null)
+const companyId = ref()
 onMounted( () => {
   if (company !== null) {
     defaultSelectCompany.value = company.companyName;
-    handleCompanyChange(company.companyId);
+    companyId.value = company.companyId;
   }
 })
 
-const handleCompanyChange  = (companyId: number) => {
-  console.log(defaultSelectCompany.value);
+const handleCompanyChange  = (id: number) => {
+  companyId.value = id;
   // 向后端发送companyId，查询对应的itemId和信息
-  pushCompanyDataSource(companyId); //这里是模仿获取到了信息
+  pushCompanyDataSource(id); //这里是模仿获取到了信息
 }
 interface ItemSummary {
   itemId: number;
@@ -262,11 +265,6 @@ const dataSource: Ref<ItemSummary[]> = ref([
 
 
 
-
-
-
-
-
 const form = reactive({
   userName: null,
   companyId: null,
@@ -287,6 +285,18 @@ const form = reactive({
   unitWeight: null,
   unit: null,
 });
+
+const initializeItem = () =>{
+  if (defaultSelectCompany.value === '选择公司'){
+    message.warn("请先选择公司");
+  }else {
+    message.warn(defaultSelectCompany.value)
+    // showInitializaDrawer(defaultSelectCompany);
+  }
+}
+
+
+
 const isWeight = ref();
 
 const weightOrAmount = computed(() => {

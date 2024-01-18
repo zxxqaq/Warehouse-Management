@@ -21,13 +21,15 @@
 <script setup>
 
 import {DesktopOutlined, FileOutlined, PieChartOutlined, TeamOutlined, UserOutlined} from "@ant-design/icons-vue";
-import {ref} from "vue";
+import {ref, watch} from "vue";
 import { useStore} from "vuex";
 
 const store = useStore();
 const collapsed = ref(false);
 const selectedKeys = ref(['menu0']);
-
+watch(() => store.state.selectedMenuItem, (newValue) => {
+  selectedKeys.value = [newValue];
+});
 const handleMenuClick = ({ key }) => {
   store.commit('setSelectedMenuItem', key);
   console.log(key);
