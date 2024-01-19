@@ -5,6 +5,7 @@ import com.sirius.domain.ResponseResult;
 import com.sirius.domain.dto.InitializeItemDto;
 import com.sirius.domain.entity.Item;
 import com.sirius.domain.entity.Record;
+import com.sirius.enums.AppHttpCodeEnum;
 import com.sirius.enums.RecordType;
 import com.sirius.mapper.ItemMapper;
 import com.sirius.mapper.RecordMapper;
@@ -26,11 +27,18 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
     @Autowired
     private ItemMapper itemMapper;
 
+    @Autowired
+    private ItemService itemService;
+
     @Override
     public ResponseResult initializeItem(InitializeItemDto initializeItemDto) {
 
         Item item = BeanCopyUtils.beanCopy(initializeItemDto, Item.class);
         //TODO 查询是否存在该零件
+        if(itemService.isExist(item)){
+            return ResponseResult.errorResult(AppHttpCodeEnum.ITEM_EXIST);
+        }
+
         itemMapper.insert(item);
         Record record = BeanCopyUtils.beanCopy(initializeItemDto, Record.class);
         record.setItemId(item.getItemId());
