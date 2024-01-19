@@ -20,7 +20,7 @@ public class OverviewController {
     }
 
     @DeleteMapping("/{companyId}")
-    public ResponseResult deleteCompany(@PathVariable("companyId") long companyId) {
+    public ResponseResult deleteCompany(@PathVariable("companyId") Long companyId) {
         return companyService.deleteCompany(companyId);
     }
 

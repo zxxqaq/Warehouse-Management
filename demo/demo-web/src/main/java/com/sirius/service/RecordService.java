@@ -16,5 +16,7 @@ public interface RecordService extends IService<Record> {
 
     ResponseResult initializeItem(InitializeItemDto initializeItemDto);
 
-    ResponseResult getHistoryRecordByCompanyId(long companyId);
+    ResponseResult getHistoryRecordByCompanyId(Long companyId);
+
+    ResponseResult getHistoryRecordByItemId(Long companyId, Long itemId);
 }
