@@ -44,7 +44,6 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
     public ResponseResult initializeItem(InitializeItemDto initializeItemDto) {
 
         Item item = BeanCopyUtils.beanCopy(initializeItemDto, Item.class);
-        //TODO 查询是否存在该零件
         if(itemService.isExist(item)){
             return ResponseResult.errorResult(AppHttpCodeEnum.ITEM_EXIST);
         }
@@ -71,11 +70,16 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
 
     @Override
     public ResponseResult getHistoryRecordByItemId(Long companyId, Long itemId) {
-        return null;
+        LambdaQueryWrapper<Record> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Record::getCompanyId, companyId);
+        queryWrapper.eq(Record::getItemId, itemId);
+        List<Record> list = this.list(queryWrapper);
+        List<HistoryRecordVo> voList = this.getHistoryRecordVoList(list);
+        return ResponseResult.okResult(voList);
     }
 
     private List<HistoryRecordVo> getHistoryRecordVoList(List<Record> list) {
-        List<HistoryRecordVo> historyRecordVoList = list.stream().map(record -> {
+        return list.stream().map(record -> {
             HistoryRecordVo vo = BeanCopyUtils.beanCopy(record, HistoryRecordVo.class);
             Item item = itemService.getById(record.getItemId());
             User user = userService.getById(record.getUserId());
@@ -83,7 +87,6 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
             this.setVoUser(vo, user);
             return vo;
         }).collect(Collectors.toList());
-        return historyRecordVoList;
     }
 
     private void setVoUser(HistoryRecordVo vo, User user) {

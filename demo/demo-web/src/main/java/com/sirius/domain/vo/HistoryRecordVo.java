@@ -11,6 +11,8 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class HistoryRecordVo {
+    private Long recordId;
+
     private String itemName;
 
     private String standard;
