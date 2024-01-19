@@ -429,13 +429,13 @@ const onSubmitInitializeForm = async () => {
       body: JSON.stringify(initializeForm),
     });
     const data = await response.json();
+    onCloseInitializeDrawer();
+    clearInitializeForm();
     if (data.code === 200){
-      onCloseInitializeDrawer();
       message.success('初始化/新建成功');
       // get到itemList， 刷新
-      clearInitializeForm();
     }else if (data.code === 501){
-      message.error('初始化/新建失败，数据已存在');
+      message.error('初始化/新建失败，零件已存在');
     }
     else {
       message.error('初始化/新建失败,请重试');

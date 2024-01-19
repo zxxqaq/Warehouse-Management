@@ -12,7 +12,7 @@
         <span>库存管理</span>
       </a-menu-item>
       <a-menu-item key="menu2">
-        <team-outlined />
+        <HistoryOutlined />
         <span>操作历史</span>
       </a-menu-item>
     </a-menu>
@@ -20,7 +20,7 @@
 </template>
 <script setup>
 
-import {DesktopOutlined, FileOutlined, PieChartOutlined, TeamOutlined, UserOutlined} from "@ant-design/icons-vue";
+import {DesktopOutlined, HistoryOutlined, TeamOutlined, UserOutlined} from "@ant-design/icons-vue";
 import {ref, watch} from "vue";
 import { useStore} from "vuex";
 
