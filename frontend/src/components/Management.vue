@@ -335,15 +335,14 @@ const columns: TableColumnsType = [
   { title: '单重', dataIndex: 'unitWeight', width: 100},
   { title: '单位', dataIndex: 'unit', width: 80},
 
-  { title: '总进库数量', dataIndex: 'inCount', width: 100},
-  { title: '总出库数量', dataIndex: 'outCount', width: 100},
+  { title: '总进库数', dataIndex: 'inCount', width: 100},
+  { title: '总出库数', dataIndex: 'outCount', width: 100},
+  { title: '初始化数', dataIndex: 'outCount', width: 100},
   { title: '总公斤', dataIndex: 'weightCount', width: 100},
-  { title: '总库存数量', dataIndex: 'totalCount', fixed: "right"},
+  { title: '总库存数', dataIndex: 'totalCount', fixed: "right"},
   { title: '操作', dataIndex: 'operation', fixed: "right",},
 ];
-const dataSource: Ref<ItemSummary[]> = ref([
-
-]);
+const dataSource: Ref<ItemSummary[]> = ref([]);
 
 
 

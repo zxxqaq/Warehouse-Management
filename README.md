@@ -139,32 +139,26 @@ POST http://localhost:7779/overview/addCompany
 
 1. 向后端发送companyId，查询对应的itemId和信息
 
-需要取得的数据：
+需要返回的数据：
 
-```JSON
-{
-  "code": 200,
-  "msg": "操作成功",
-  "data": [
-    { //Item
-      "itemId": 1,
-      "itemName": "六角螺栓",
-      "standard": "GB/T 5783-2016",
-      "specification": "M8*35",
-      "surface": "35K 光身",
-      "material": "铁",
-      "level": "6.8",
-      "unitWeight": 16.2, //kg
-      "unit": "个",
-      // 统计的结果
-      "inCount": 200,
-      "outCount": 100,
-      "weightCount": 1620, //totalCount * unitWeight
-      "totalCount": 100, //inCount-outCount
-    },
+```json
+const columns: TableColumnsType = [
+{ title: '名称', dataIndex: 'itemName', fixed: 'left',},
+{ title: '标准', dataIndex: 'standard', fixed: 'left'},
+{ title: '规格', dataIndex: 'specification', width: 100},
+{ title: '表面处理', dataIndex: 'surface', width: 100},
+{ title: '材质', dataIndex: 'material', width: 100},
+{ title: '等级', dataIndex: 'level', width: 100},
+{ title: '单重', dataIndex: 'unitWeight', width: 100},
+{ title: '单位', dataIndex: 'unit', width: 80},
 
-  ]
-}
+{ title: '总进库数', dataIndex: 'inCount', width: 100},
+{ title: '总出库数', dataIndex: 'outCount', width: 100},
+{ title: '初始化数', dataIndex: 'outCount', width: 100},
+{ title: '总公斤', dataIndex: 'weightCount', width: 100},
+{ title: '总库存数', dataIndex: 'totalCount', fixed: "right"},
+{ title: '操作', dataIndex: 'operation', fixed: "right",},
+];
 ```
 
 ## initialize item
@@ -300,6 +294,7 @@ GET http://localhost:7779/historyRecord/${companyId}
     ]
 }
 ```
+
 
 
 
