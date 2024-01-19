@@ -204,7 +204,7 @@ POST http://localhost:7779/management/initializeItem
 }
 ```
 #### 零件重复
-
+零件重复是根据哪几个数据决定的？
 ```JSON
 {
   "code": 501,
