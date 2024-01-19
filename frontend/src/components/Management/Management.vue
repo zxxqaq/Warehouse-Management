@@ -106,6 +106,11 @@
             </a-form-item>
           </a-col>
         </a-row>
+        <a-row :gutter="16">
+          <a-col :span="24">
+            <a-alert message="如果暂无数据，请输入-1" type="warning" show-icon />
+          </a-col>
+        </a-row>
       </a-form>
       <template #extra>
         <a-space>
@@ -377,6 +382,22 @@ const initializeForm = reactive({
   date: null,
 });
 
+const clearInitializeForm = () => {
+  initializeForm.companyId = null;
+  initializeForm.itemName = null;
+  initializeForm.standard = null;
+  initializeForm.specification = null;
+  initializeForm.surface = null;
+  initializeForm.material = null;
+  initializeForm.level = null;
+  initializeForm.unitWeight = null;
+  initializeForm.unit = null;
+  initializeForm.amount = null;
+  initializeForm.date = null;
+};
+
+
+
 const initializeItem = () =>{
   if (defaultSelectCompany.value === '选择公司'){
     message.warn("请先选择公司");
@@ -409,10 +430,15 @@ const onSubmitInitializeForm = async () => {
     });
     const data = await response.json();
     if (data.code === 200){
+      onCloseInitializeDrawer();
       message.success('初始化/新建成功');
-      // get到itemList
-      // 提交后清空原表单
-      // 关闭drawer
+      // get到itemList， 刷新
+      clearInitializeForm();
+    }else if (data.code === 501){
+      message.error('初始化/新建失败，数据已存在');
+    }
+    else {
+      message.error('初始化/新建失败,请重试');
     }
   }catch (error){
     console.error('An error occurred when submit initialize form:', error)
