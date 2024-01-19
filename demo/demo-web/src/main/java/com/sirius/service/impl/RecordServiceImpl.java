@@ -61,12 +61,17 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
     }
 
     @Override
-    public ResponseResult getHistoryRecordByCompanyId(long companyId) {
+    public ResponseResult getHistoryRecordByCompanyId(Long companyId) {
         LambdaQueryWrapper<Record> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Record::getCompanyId, companyId);
         List<Record> list = this.list(queryWrapper);
         List<HistoryRecordVo> voList = this.getHistoryRecordVoList(list);
         return ResponseResult.okResult(voList);
+    }
+
+    @Override
+    public ResponseResult getHistoryRecordByItemId(Long companyId, Long itemId) {
+        return null;
     }
 
     private List<HistoryRecordVo> getHistoryRecordVoList(List<Record> list) {

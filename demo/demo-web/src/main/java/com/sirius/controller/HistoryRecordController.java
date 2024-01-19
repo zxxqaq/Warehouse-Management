@@ -16,8 +16,13 @@ public class HistoryRecordController {
     private RecordService recordService;
 
     @GetMapping("/{companyId}")
-    public ResponseResult getHistoryRecordByCompanyId(@PathVariable("companyId") long companyId){
+    public ResponseResult getHistoryRecordByCompanyId(@PathVariable("companyId") Long companyId) {
         return recordService.getHistoryRecordByCompanyId(companyId);
     }
 
+    @GetMapping("/{companyId}/{itemId}")
+    public ResponseResult getHistoryRecordByItemId(@PathVariable("companyId") Long companyId,
+                                                   @PathVariable("itemId") Long itemId) {
+        return recordService.getHistoryRecordByItemId(companyId, itemId);
+    }
 }

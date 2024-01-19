@@ -35,7 +35,7 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
     }
 
     @Override
-    public ResponseResult deleteCompany(long companyId) {
+    public ResponseResult deleteCompany(Long companyId) {
         if (this.removeById(companyId)) {
             return ResponseResult.okResult();
         } else {

@@ -17,7 +17,7 @@ public interface CompanyService extends IService<Company> {
 
     ResponseResult companyList();
 
-    ResponseResult deleteCompany(long companyId);
+    ResponseResult deleteCompany(Long companyId);
 
     ResponseResult addCompany(AddCompanyDto addCompanyDto);
 
