@@ -12,4 +12,5 @@ import com.sirius.domain.entity.Item;
  */
 public interface ItemService extends IService<Item> {
 
+    boolean isExist(Item item);
 }

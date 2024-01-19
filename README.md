@@ -195,6 +195,7 @@ POST http://localhost:7779/management/initializeItem
 
 ### Response
 
+#### 添加成功
 ```JSON
 {
   "code": 200,
@@ -202,15 +203,22 @@ POST http://localhost:7779/management/initializeItem
   "data": null
 }
 ```
+#### 零件重复
 
-
-
+```JSON
+{
+  "code": 501,
+  "msg": "零件已存在",
+  "data": null
+}
+```
 
 
 TODO:
-1. 初始化入库（创建Item+创建Record）
+1. 初始化入库（创建Item+创建Record） Done
+2. Record List（按照公司ID查询，按照itemId+companyId查询）
 2. 添加Record（入库+出库）
-3. 删除Record
-4. Record List（按照公司ID查询，按照itemId+companyId查询）
+3. 修改Record
+
 
 
