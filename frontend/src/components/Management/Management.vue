@@ -110,7 +110,7 @@
       <template #extra>
         <a-space>
           <a-button @click="onCloseInitializeDrawer">取消</a-button>
-          <a-button :disabled="submitInitializeDisabled" type="primary" @click="onCloseDrawer">提交</a-button>
+          <a-button :disabled="submitInitializeDisabled" type="primary" @click="onSubmitInitializeForm">提交</a-button>
         </a-space>
       </template>
     </a-drawer>
@@ -397,6 +397,28 @@ const submitInitializeDisabled = computed(() => {
   && initializeForm.material && initializeForm.level && initializeForm.unitWeight && initializeForm.unit && initializeForm.date
   && initializeForm.amount);
 })
+const onSubmitInitializeForm = async () => {
+  initializeForm.companyId = companyId.value;
+  try {
+    const response = await fetch('http://localhost:7779/management/initializeItem',{
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(initializeForm),
+    });
+    const data = await response.json();
+    if (data.code === 200){
+      message.success('初始化/新建成功');
+      // get到itemList
+      // 提交后清空原表单
+      // 关闭drawer
+    }
+  }catch (error){
+    console.error('An error occurred when submit initialize form:', error)
+  }
+
+}
 
 const isWeight = ref();
 
