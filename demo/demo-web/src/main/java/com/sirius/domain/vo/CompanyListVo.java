@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CompanyListVo {
-    private long companyId;
+    private Long companyId;
     private String companyName;
     private String taxNum;
 }

@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Item {
     @TableId(type = IdType.AUTO)
-    private long itemId;
+    private Long itemId;
 
     private String itemName;
 
@@ -25,7 +25,7 @@ public class Item {
 
     private String surface;
 
-    private double unitWeight;
+    private Double unitWeight;
 
     private Integer delFlag;
 }

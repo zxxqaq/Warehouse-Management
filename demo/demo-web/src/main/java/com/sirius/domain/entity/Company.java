@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Company {
     @TableId
-    private long companyId;
+    private Long companyId;
     private String companyName;
     private String taxNum;
 

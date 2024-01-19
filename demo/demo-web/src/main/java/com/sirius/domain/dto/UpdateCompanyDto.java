@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UpdateCompanyDto {
-    private long companyId;
+    private Long companyId;
     private String companyName;
     private String taxNum;
 }

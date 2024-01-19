@@ -12,13 +12,13 @@ import java.util.Date;
 @NoArgsConstructor
 public class Invoice {
     @TableId
-    private long invoiceId;
-    private long companyId;
+    private Long invoiceId;
+    private Long companyId;
     private String invoiceNum;
     private String invoiceCode;
-    private long taxRate;
+    private Long taxRate;
     private String comment;
-    private long money;
+    private Long money;
     private Date startDate;
     private Date endDate;
 

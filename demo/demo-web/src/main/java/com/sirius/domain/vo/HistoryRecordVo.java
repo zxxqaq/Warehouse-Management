@@ -1,4 +1,4 @@
-package com.sirius.domain.dto;
+package com.sirius.domain.vo;
 
 import com.sirius.enums.RecordType;
 import lombok.AllArgsConstructor;
@@ -10,10 +10,7 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class InitializeItemDto {
-
-
-    //Item
+public class HistoryRecordVo {
     private String itemName;
 
     private String standard;
@@ -26,20 +23,22 @@ public class InitializeItemDto {
 
     private String surface;
 
-    private double unitWeight;
+    private Double unitWeight;
 
-
-
-    //Record
+    private RecordType type;
 
     private Date date;
-
-    private Long companyId;
 
     private Long amount;
 
     private String unit;
 
-    private Integer delFlag;
+    private Double totalWeight;
+
+    private String direction;
+
+    private String userName;
+
+    private double unitPrice;
 
 }

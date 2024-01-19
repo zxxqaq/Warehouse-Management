@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 public class User {
     @TableId
-    private long userId;
+    private Long userId;
     private String userName;
     private String password;
 

@@ -13,26 +13,26 @@ import java.util.Date;
 @NoArgsConstructor
 public class Record {
     @TableId
-    private long recordId;
-    private long userId;
+    private Long recordId;
+    private Long userId;
 
-    private long itemId;
-    private long companyId;
+    private Long itemId;
+    private Long companyId;
 
     @EnumValue
     private RecordType type;
 
     private Date date;
 
-    private long amount;
+    private Long amount;
 
     private String unit;
 
-    private double totalWeight;
+    private Double totalWeight;
 
     private String direction;
 
     private Integer delFlag;
 
-    private double unitPrice;
+    private Double unitPrice;
 }

@@ -15,4 +15,6 @@ import com.sirius.domain.entity.Record;
 public interface RecordService extends IService<Record> {
 
     ResponseResult initializeItem(InitializeItemDto initializeItemDto);
+
+    ResponseResult getHistoryRecordByCompanyId(long companyId);
 }
