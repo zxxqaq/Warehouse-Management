@@ -9,6 +9,7 @@ import com.sirius.domain.entity.Item;
 import com.sirius.domain.entity.Record;
 import com.sirius.domain.entity.User;
 import com.sirius.domain.vo.HistoryRecordVo;
+import com.sirius.domain.vo.ItemVo;
 import com.sirius.enums.AppHttpCodeEnum;
 import com.sirius.enums.RecordType;
 import com.sirius.mapper.ItemMapper;
@@ -86,8 +87,26 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
         queryWrapper.eq(Record::getType, RecordType.Initialization);
         List<Record> list = this.list(queryWrapper);
 
+        List<ItemVo> voList = this.getItemVoList(list);
 
-        return ResponseResult.okResult();
+        this.setStatistics(voList);
+
+        return ResponseResult.okResult(voList);
+    }
+
+    private void setStatistics(List<ItemVo> voList) {
+        //TODO count inCount, outCount, totalCount.
+    }
+
+    private List<ItemVo> getItemVoList(List<Record> list) {
+        return list.stream().map(record -> {
+            ItemVo itemVo = new ItemVo();
+            Item item = itemService.getById(record.getItemId());
+            itemVo.setItemId(item.getItemId());
+            this.setVoItem(itemVo, item);
+            itemVo.setInitialCount(record.getAmount());
+            return itemVo;
+        }).collect(Collectors.toList());
     }
 
     private List<HistoryRecordVo> getHistoryRecordVoList(List<Record> list) {
@@ -114,6 +133,7 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
         itemVo.setSpecification(item.getSpecification());
         itemVo.setSurface(item.getSurface());
         itemVo.setUnitWeight(item.getUnitWeight());
+        itemVo.setUnit(item.getUnit());
     }
 }
 

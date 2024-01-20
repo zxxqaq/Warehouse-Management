@@ -154,12 +154,91 @@ const columns: TableColumnsType = [
 
 { title: '总进库数', dataIndex: 'inCount', width: 100},
 { title: '总出库数', dataIndex: 'outCount', width: 100},
-{ title: '初始化数', dataIndex: 'outCount', width: 100},
-{ title: '总公斤', dataIndex: 'weightCount', width: 100},
+{ title: '初始化数', dataIndex: 'initialCount', width: 100},
 { title: '总库存数', dataIndex: 'totalCount', fixed: "right"},
 
 ];
 ```
+
+## get item list
+
+```JSON
+GET http://localhost:7779/management/${companyId}
+```
+
+### Response
+
+```JSON
+{
+    "code": 200,
+    "msg": "操作成功",
+    "data": [
+        {
+            "itemId": 4,
+            "itemName": "六角螺栓",
+            "standard": "GB/T 5783-2016",
+            "specification": "M8*15",
+            "material": "铁",
+            "level": "6.8",
+            "surface": "35K 光身",
+            "unitWeight": 16.2,
+            "unit": "个",
+            "inCount": null,
+            "outCount": null,
+            "initialCount": 200,
+            "totalCount": null
+        },
+        {
+            "itemId": 5,
+            "itemName": "螺母",
+            "standard": "GB6170",
+            "specification": "M8*30",
+            "material": "-1",
+            "level": "5级",
+            "surface": "热镀锌",
+            "unitWeight": -1.0,
+            "unit": "个",
+            "inCount": null,
+            "outCount": null,
+            "initialCount": 18500,
+            "totalCount": null
+        },
+        {
+            "itemId": 6,
+            "itemName": "螺母",
+            "standard": "GB6170",
+            "specification": "M8*31",
+            "material": "-1",
+            "level": "5级",
+            "surface": "热镀锌",
+            "unitWeight": -1.0,
+            "unit": "个",
+            "inCount": null,
+            "outCount": null,
+            "initialCount": 200,
+            "totalCount": null
+        },
+        {
+            "itemId": 7,
+            "itemName": "八角螺栓",
+            "standard": "GB/T 5783-2016",
+            "specification": "M8*35",
+            "material": "铁",
+            "level": "6.8",
+            "surface": "35K 光身",
+            "unitWeight": 16.2,
+            "unit": "个",
+            "inCount": null,
+            "outCount": null,
+            "initialCount": 200,
+            "totalCount": null
+        }
+    ]
+}
+```
+
+
+
 
 ## initialize item
 
@@ -333,6 +412,9 @@ GET http://localhost:7779/historyRecord/${companyId}/${itemId}
   ]
 }
 ```
+
+
+
 
 
 

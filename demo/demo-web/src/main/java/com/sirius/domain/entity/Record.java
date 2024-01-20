@@ -26,8 +26,6 @@ public class Record {
 
     private Long amount;
 
-    private String unit;
-
     private Double totalWeight;
 
     private String direction;

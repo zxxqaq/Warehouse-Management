@@ -12,7 +12,9 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ItemVo implements ContainItem {
+
     private Long itemId;
+
     private String itemName;
 
     private String standard;
@@ -27,19 +29,12 @@ public class ItemVo implements ContainItem {
 
     private Double unitWeight;
 
-    private RecordType type;
-
-    private Date date;
-
-    private Long amount;
-
     private String unit;
-    private String userName;
 
-    private Integer inCount;
-    private Integer outCount;
+    private Long inCount;
+    private Long outCount;
 
-    private Integer initialCount;
-    private Integer totalCount;
+    private Long initialCount;
+    private Long totalCount;
 
 }

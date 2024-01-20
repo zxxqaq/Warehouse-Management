@@ -27,5 +27,7 @@ public class Item {
 
     private Double unitWeight;
 
+    private String unit;
+
     private Integer delFlag;
 }

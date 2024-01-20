@@ -2,33 +2,37 @@ package com.sirius.domain;
 
 public interface ContainItem {
 
-    public String getItemName();
+    String getItemName();
 
-    public String getStandard();
+    String getStandard();
 
-    public String getSpecification();
+    String getSpecification();
 
-    public String getMaterial();
+    String getMaterial();
 
-    public String getLevel();
+    String getLevel();
 
-    public String getSurface();
+    String getSurface();
 
-    public Double getUnitWeight();
+    Double getUnitWeight();
 
-    public void setItemName(String itemName);
+    void setItemName(String itemName);
 
     public void setStandard(String standard);
 
-    public void setSpecification(String specification);
+    void setSpecification(String specification);
 
-    public void setMaterial(String material);
+    void setMaterial(String material);
 
-    public void setLevel(String level);
+    void setLevel(String level);
 
-    public void setSurface(String surface);
+    void setSurface(String surface);
 
-    public void setUnitWeight(Double unitWeight);
+    void setUnitWeight(Double unitWeight);
+
+    String getUnit();
+
+    void setUnit(String unit);
 
 
 }
