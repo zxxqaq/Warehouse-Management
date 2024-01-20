@@ -26,10 +26,17 @@
           </template>
 
           <template #bodyCell="{ column, text, record }" >
-
-            <template v-if="column.dataIndex === 'operation'">
-              <a @click="showDrawer(record.itemId)">入库</a>
+            <template v-if="column.dataIndex === 'type'">
+              <span>
+                <a-tag
+                    :color="getTagColor(text)"
+                >
+                  {{ text }}
+                </a-tag>
+              </span>
             </template>
+
+
           </template>
         </a-table>
       </div>
@@ -39,13 +46,11 @@
   </a-layout>
 </template>
 <script lang="ts" setup>
-import type {Ref, UnwrapRef} from 'vue';
-import {computed, onMounted, reactive, ref} from 'vue';
-import {message, SelectProps, TableColumnsType} from "ant-design-vue";
-import {InboxOutlined, MoneyCollectOutlined, PlusOutlined} from '@ant-design/icons-vue';
-import type {Rule} from 'ant-design-vue/es/form';
+import type {Ref} from 'vue';
+import {ref} from 'vue';
+import {SelectProps, TableColumnsType} from "ant-design-vue";
+import {InboxOutlined} from '@ant-design/icons-vue';
 import {useStore} from "vuex";
-import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
 
 const store = useStore();
@@ -57,8 +62,26 @@ const options = ref<SelectProps['options']>(companyList.map(item => ({
 })));
 
 const handleCompanyChange  = (id: number) => {
-  // 向后端发送companyId，查询对应的itemId和信息
+  fetchData(id);
 }
+
+const columns: TableColumnsType = [
+  { title: '类型', dataIndex: 'type', fixed: 'left',},
+  { title: '时间', dataIndex: 'date', fixed: 'left',},
+  { title: '出库方向', dataIndex: 'direction',},
+  { title: '名称', dataIndex: 'itemName', },
+  { title: '标准', dataIndex: 'standard', },
+  { title: '规格', dataIndex: 'specification', width: 100},
+  { title: '表面处理', dataIndex: 'surface', width: 100},
+  { title: '材质', dataIndex: 'material', width: 100},
+  { title: '等级', dataIndex: 'level', width: 100},
+  { title: '单重', dataIndex: 'unitWeight', width: 100},
+  { title: '单位', dataIndex: 'unit', width: 80},
+  { title: '单价', dataIndex: 'unitPrice', width: 80},
+  { title: '重量', dataIndex: 'totalWeight', width: 80},
+  { title: '操作人', dataIndex: 'userName', width: 80},
+  { title: '数量', dataIndex: 'amount', width: 80,fixed:'right'},
+];
 
 interface Record {
   recordId: number
@@ -79,7 +102,45 @@ interface Record {
   unitPrice: number
 }
 const dataSource: Ref<Record[]> = ref([]);
-
+const fetchData = async (companyId: number) => {
+  try {
+    const response = await fetch(`http://localhost:7779/historyRecord/${companyId}`);
+    const data = await response.json();
+    if (data.code === 200){
+      dataSource.value = data.data.map(item => {
+        if (item.type === 'Initialization') {
+          item.type = '新建';
+        }else if (item.type === 'Output') {
+          item.type = '出库';
+        }else if (item.type === 'Input') {
+          item.type = '入库';
+        }
+        // 检查 totalWeight 和 unitPrice 的值是否为 0.0，如果是则设置为 null
+        if (item.totalWeight === 0.0) {
+          item.totalWeight = null;
+        }
+        if (item.unitPrice === 0.0) {
+          item.unitPrice = null;
+        }
+        return item;
+      });
+    } else {
+      console.log('Failed to fetch data:', data.message);
+    }
+  } catch (error) {
+    console.error('An error occurred during fetch:', error);
+  }
+}
+const getTagColor = (text:string) => {
+  switch (text){
+    case '新建':
+      return 'orange';
+    case '入库':
+      return 'blue';
+    case '出库':
+      return 'pink';
+  }
+}
 </script>
 
 <style lang="less" scoped>

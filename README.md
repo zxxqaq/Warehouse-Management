@@ -157,7 +157,7 @@ const columns: TableColumnsType = [
 { title: '初始化数', dataIndex: 'outCount', width: 100},
 { title: '总公斤', dataIndex: 'weightCount', width: 100},
 { title: '总库存数', dataIndex: 'totalCount', fixed: "right"},
-{ title: '操作', dataIndex: 'operation', fixed: "right",},
+
 ];
 ```
 
