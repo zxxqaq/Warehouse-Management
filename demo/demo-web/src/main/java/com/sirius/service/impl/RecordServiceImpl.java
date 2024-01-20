@@ -2,6 +2,7 @@ package com.sirius.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.sirius.domain.ContainItem;
 import com.sirius.domain.ResponseResult;
 import com.sirius.domain.dto.InitializeItemDto;
 import com.sirius.domain.entity.Item;
@@ -78,6 +79,17 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
         return ResponseResult.okResult(voList);
     }
 
+    @Override
+    public ResponseResult getItemList(Long companyId) {
+        LambdaQueryWrapper<Record> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Record::getCompanyId, companyId);
+        queryWrapper.eq(Record::getType, RecordType.Initialization);
+        List<Record> list = this.list(queryWrapper);
+
+
+        return ResponseResult.okResult();
+    }
+
     private List<HistoryRecordVo> getHistoryRecordVoList(List<Record> list) {
         return list.stream().map(record -> {
             HistoryRecordVo vo = BeanCopyUtils.beanCopy(record, HistoryRecordVo.class);
@@ -93,15 +105,15 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
         vo.setUserName(user.getUserName());
     }
 
-    private void setVoItem(HistoryRecordVo historyRecordVo, Item item){
-        historyRecordVo.setItemName(item.getItemName());
-        historyRecordVo.setLevel(item.getLevel());
-        historyRecordVo.setMaterial(item.getMaterial());
-        historyRecordVo.setSpecification(item.getSpecification());
-        historyRecordVo.setStandard(item.getStandard());
-        historyRecordVo.setSpecification(item.getSpecification());
-        historyRecordVo.setSurface(item.getSurface());
-        historyRecordVo.setUnitWeight(item.getUnitWeight());
+    private void setVoItem(ContainItem itemVo, Item item){
+        itemVo.setItemName(item.getItemName());
+        itemVo.setLevel(item.getLevel());
+        itemVo.setMaterial(item.getMaterial());
+        itemVo.setSpecification(item.getSpecification());
+        itemVo.setStandard(item.getStandard());
+        itemVo.setSpecification(item.getSpecification());
+        itemVo.setSurface(item.getSurface());
+        itemVo.setUnitWeight(item.getUnitWeight());
     }
 }
 

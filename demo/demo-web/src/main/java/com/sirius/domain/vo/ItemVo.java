@@ -11,26 +11,8 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class HistoryRecordVo implements ContainItem {
-    private Long recordId;
-
-    private RecordType type;
-
-    private Date date;
-
-    private Long amount;
-
-    private String unit;
-
-    private Double totalWeight;
-
-    private String direction;
-
-    private String userName;
-
-    private Double unitPrice;
-
-
+public class ItemVo implements ContainItem {
+    private Long itemId;
     private String itemName;
 
     private String standard;
@@ -44,4 +26,20 @@ public class HistoryRecordVo implements ContainItem {
     private String surface;
 
     private Double unitWeight;
+
+    private RecordType type;
+
+    private Date date;
+
+    private Long amount;
+
+    private String unit;
+    private String userName;
+
+    private Integer inCount;
+    private Integer outCount;
+
+    private Integer initialCount;
+    private Integer totalCount;
+
 }

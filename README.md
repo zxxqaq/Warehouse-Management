@@ -220,90 +220,130 @@ GET http://localhost:7779/historyRecord/${companyId}
 
 ```JSON
 {
-    "code": 200,
-    "msg": "操作成功",
-    "data": [
-        {
-            "itemName": "六角螺栓",
-            "standard": "GB/T 5783-2016",
-            "specification": "M8*15",
-            "material": "铁",
-            "level": "6.8",
-            "surface": "35K 光身",
-            "unitWeight": 16.2,
-            "type": "Initialization",
-            "date": "2020-01-01",
-            "amount": 200,
-            "unit": "个",
-            "totalWeight": 0.0,
-            "direction": null,
-            "userName": "sjx",
-            "unitPrice": 0.0
-        },
-        {
-            "itemName": "螺母",
-            "standard": "GB6170",
-            "specification": "M8*30",
-            "material": "-1",
-            "level": "5级",
-            "surface": "热镀锌",
-            "unitWeight": -1.0,
-            "type": "Initialization",
-            "date": "2024-01-19",
-            "amount": 18500,
-            "unit": "个",
-            "totalWeight": 0.0,
-            "direction": null,
-            "userName": "sjx",
-            "unitPrice": 0.0
-        },
-        {
-            "itemName": "螺母",
-            "standard": "GB6170",
-            "specification": "M8*31",
-            "material": "-1",
-            "level": "5级",
-            "surface": "热镀锌",
-            "unitWeight": -1.0,
-            "type": "Initialization",
-            "date": "2024-01-19",
-            "amount": 200,
-            "unit": "个",
-            "totalWeight": 0.0,
-            "direction": null,
-            "userName": "sjx",
-            "unitPrice": 0.0
-        },
-        {
-            "itemName": "八角螺栓",
-            "standard": "GB/T 5783-2016",
-            "specification": "M8*35",
-            "material": "铁",
-            "level": "6.8",
-            "surface": "35K 光身",
-            "unitWeight": 16.2,
-            "type": "Initialization",
-            "date": "2020-01-01",
-            "amount": 200,
-            "unit": "个",
-            "totalWeight": 0.0,
-            "direction": null,
-            "userName": "sjx",
-            "unitPrice": 0.0
-        }
-    ]
+  "code": 200,
+  "msg": "操作成功",
+  "data": [
+    {
+      "recordId": 1,
+      "itemName": "六角螺栓",
+      "standard": "GB/T 5783-2016",
+      "specification": "M8*15",
+      "material": "铁",
+      "level": "6.8",
+      "surface": "35K 光身",
+      "unitWeight": 16.2,
+      "type": "Initialization",
+      "date": "2020-01-01",
+      "amount": 200,
+      "unit": "个",
+      "totalWeight": 0.0,
+      "direction": null,
+      "userName": "sjx",
+      "unitPrice": 0.0
+    },
+    {
+      "recordId": 2,
+      "itemName": "螺母",
+      "standard": "GB6170",
+      "specification": "M8*30",
+      "material": "-1",
+      "level": "5级",
+      "surface": "热镀锌",
+      "unitWeight": -1.0,
+      "type": "Initialization",
+      "date": "2024-01-19",
+      "amount": 18500,
+      "unit": "个",
+      "totalWeight": 0.0,
+      "direction": null,
+      "userName": "sjx",
+      "unitPrice": 0.0
+    },
+    {
+      "recordId": 3,
+      "itemName": "螺母",
+      "standard": "GB6170",
+      "specification": "M8*31",
+      "material": "-1",
+      "level": "5级",
+      "surface": "热镀锌",
+      "unitWeight": -1.0,
+      "type": "Initialization",
+      "date": "2024-01-19",
+      "amount": 200,
+      "unit": "个",
+      "totalWeight": 0.0,
+      "direction": null,
+      "userName": "sjx",
+      "unitPrice": 0.0
+    },
+    {
+      "recordId": 4,
+      "itemName": "八角螺栓",
+      "standard": "GB/T 5783-2016",
+      "specification": "M8*35",
+      "material": "铁",
+      "level": "6.8",
+      "surface": "35K 光身",
+      "unitWeight": 16.2,
+      "type": "Initialization",
+      "date": "2020-01-01",
+      "amount": 200,
+      "unit": "个",
+      "totalWeight": 0.0,
+      "direction": null,
+      "userName": "sjx",
+      "unitPrice": 0.0
+    }
+  ]
+}
+```
+
+## get record list by company Id and item Id
+
+```JSON
+GET http://localhost:7779/historyRecord/${companyId}/${itemId}
+```
+
+### Response
+
+```JSON
+{
+  "code": 200,
+  "msg": "操作成功",
+  "data": [
+    {
+      "recordId": 1,
+      "itemName": "六角螺栓",
+      "standard": "GB/T 5783-2016",
+      "specification": "M8*15",
+      "material": "铁",
+      "level": "6.8",
+      "surface": "35K 光身",
+      "unitWeight": 16.2,
+      "type": "Initialization",
+      "date": "2020-01-01",
+      "amount": 200,
+      "unit": "个",
+      "totalWeight": 0.0,
+      "direction": null,
+      "userName": "sjx",
+      "unitPrice": 0.0
+    }
+  ]
 }
 ```
 
 
 
-
-
 TODO:
 1. 初始化入库（创建Item+创建Record） Done
-2. Record List（按照公司ID查询，按照itemId+companyId查询）
-2. 添加Record（入库+出库）
+2. Record List（按照公司ID查询，按照itemId+companyId查询）Done
+2. 添加Record（入库+出库）(入库直接用公斤数来算amount)
 3. 修改Record
+4. 发票统计
+5. excel导入导出
+6. 用户登录
 
 
 
