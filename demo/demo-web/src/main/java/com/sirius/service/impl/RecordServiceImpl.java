@@ -91,7 +91,7 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
 
         List<ItemVo> voList = this.getItemVoList(list);
 
-        this.setStatistics(voList);
+        this.setStatistics(voList, companyId);
 
         return ResponseResult.okResult(voList);
     }
@@ -118,8 +118,37 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
         return ResponseResult.okResult();
     }
 
-    private void setStatistics(List<ItemVo> voList) {
-        //TODO count inCount, outCount, totalCount.
+    @Override
+    public ResponseResult deleteRecord(Long recordId) {
+        this.removeById(recordId);
+        return ResponseResult.okResult();
+    }
+
+    private void setStatistics(List<ItemVo> voList, Long companyId) {
+        voList.forEach(itemVo -> {
+            itemVo.setTotalCount(0L);
+            itemVo.setInCount(0L);
+            itemVo.setOutCount(0L);
+            LambdaQueryWrapper<Record> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(Record::getItemId, itemVo.getItemId());
+            queryWrapper.eq(Record::getCompanyId, companyId);
+            queryWrapper.eq(Record::getType, RecordType.Input);
+            List<Record> list = this.list(queryWrapper);
+            list.forEach(record -> {
+                itemVo.setInCount(itemVo.getInCount() + record.getAmount());
+            });
+
+            queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(Record::getItemId, itemVo.getItemId());
+            queryWrapper.eq(Record::getCompanyId, companyId);
+            queryWrapper.eq(Record::getType, RecordType.Output);
+            list = this.list(queryWrapper);
+            list.forEach(record -> {
+                itemVo.setOutCount(itemVo.getOutCount() + record.getAmount());
+            });
+
+            itemVo.setTotalCount(itemVo.getInCount() - itemVo.getOutCount() + itemVo.getInitialCount());
+        });
     }
 
     private List<ItemVo> getItemVoList(List<Record> list) {

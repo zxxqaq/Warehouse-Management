@@ -27,4 +27,6 @@ public interface RecordService extends IService<Record> {
     ResponseResult inputItem(InputItemDto inputItemDto);
 
     ResponseResult outputItem(OutputItemDto outputItemDto);
+
+    ResponseResult deleteRecord(Long recordId);
 }

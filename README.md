@@ -468,16 +468,28 @@ GET http://localhost:7779/historyRecord/${companyId}/${itemId}
 }
 ```
 
+## delete the latest record
 
+```JSON
+DELETE http://localhost:7779/historyRecord/${recordId}
+```
 
+### Response 
 
+```JSON
+{
+    "code": 200,
+    "msg": "操作成功",
+    "data": null
+}
+```
 
 
 TODO:
 1. 初始化入库（创建Item+创建Record） Done
 2. Record List（按照公司ID查询，按照itemId+companyId查询）Done
-2. 添加Record（入库+出库）(入库直接用公斤数来算amount)
-3. 修改Record
+2. 添加Record（入库+出库）(入库直接用公斤数来算amount) Done
+3. 删除Record（只能删除第一个） Done
 4. 发票统计
 5. excel导入导出
 6. 用户登录
