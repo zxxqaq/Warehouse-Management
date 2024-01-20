@@ -53,10 +53,9 @@ import {InboxOutlined} from '@ant-design/icons-vue';
 import {useStore} from "vuex";
 import 'dayjs/locale/zh-cn';
 
-const visibleAlert = ref<boolean>(false);
-const alertMessage = ref();
+
 const store = useStore();
-const defaultSelectCompany = ref('选择公司')
+let defaultSelectCompany = ref('选择公司')
 const companyList = store.getters.getCompanyList;
 const options = ref<SelectProps['options']>(companyList.map(item => ({
   value: String(item.companyId),
@@ -67,13 +66,10 @@ const companyId = ref();
 const itemId = ref();
 onMounted( () => {
   itemId.value = store.getters.getItemId;
-  console.log(itemId.value);
   if (itemId.value !== null) {
     companyId.value = store.getters.getSelectedCompany
-    console.log(companyId.value)
     for (const company of companyList){
-      if (company.companyId === companyId.value){
-        // 把选项设置为公司名字
+      if (companyId.value == company.companyId){
         defaultSelectCompany.value = company.companyName;
       }
     }

@@ -417,6 +417,8 @@ const onSubmitInitializeForm = async () => {
 const checkItemHistory = (itemId: number) =>{
   store.commit('setItemId',itemId);
   store.commit('setSelectedCompany', companyId.value);
+  console.log('company');
+  console.log(companyId.value);
   store.commit('setSelectedMenuItem', 'menu2');
 }
 
