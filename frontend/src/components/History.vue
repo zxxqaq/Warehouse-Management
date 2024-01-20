@@ -7,7 +7,7 @@
       </a-breadcrumb>
 
       <div :style="{ padding: '24px', background: '#fff', minHeight: '360px' }">
-        <a-space direction="vertical" style="margin-bottom: 10px">
+        <a-space direction="horizontal" style="margin-bottom: 10px">
           <a-select
               v-model:value="defaultSelectCompany"
               size="middle"
@@ -47,12 +47,14 @@
 </template>
 <script lang="ts" setup>
 import type {Ref} from 'vue';
-import {ref} from 'vue';
-import {SelectProps, TableColumnsType} from "ant-design-vue";
+import {onMounted, ref} from 'vue';
+import {message, SelectProps, TableColumnsType} from "ant-design-vue";
 import {InboxOutlined} from '@ant-design/icons-vue';
 import {useStore} from "vuex";
 import 'dayjs/locale/zh-cn';
 
+const visibleAlert = ref<boolean>(false);
+const alertMessage = ref();
 const store = useStore();
 const defaultSelectCompany = ref('选择公司')
 const companyList = store.getters.getCompanyList;
@@ -61,7 +63,35 @@ const options = ref<SelectProps['options']>(companyList.map(item => ({
   label: item.companyName,
 })));
 
+const companyId = ref();
+const itemId = ref();
+onMounted( () => {
+  itemId.value = store.getters.getItemId;
+  console.log(itemId.value);
+  if (itemId.value !== null) {
+    companyId.value = store.getters.getSelectedCompany
+    console.log(companyId.value)
+    for (const company of companyList){
+      if (company.companyId === companyId.value){
+        // 把选项设置为公司名字
+        defaultSelectCompany.value = company.companyName;
+      }
+    }
+    message.warning({
+      content: () => '现在显示的是您刚刚点击的零件，在该公司的历史记录。点击关闭这条提示信息',
+      duration: 0,
+      key: 1,
+      onClick: e => {message.destroy(1)}
+    });
+    fetchItemData(companyId.value,itemId.value);
+  }
+  store.commit('setItemId',null);
+  store.commit('setSelectedCompany',null);
+})
+
+
 const handleCompanyChange  = (id: number) => {
+  companyId.value = id;
   fetchData(id);
 }
 
@@ -102,6 +132,35 @@ interface Record {
   unitPrice: number
 }
 const dataSource: Ref<Record[]> = ref([]);
+const fetchItemData = async (companyId: number, itemId:number) => {
+  try {
+    const response = await fetch(`http://localhost:7779/historyRecord/${companyId}/${itemId}`);
+    const data = await response.json();
+    if (data.code === 200){
+      dataSource.value = data.data.map(item => {
+        if (item.type === 'Initialization') {
+          item.type = '新建';
+        }else if (item.type === 'Output') {
+          item.type = '出库';
+        }else if (item.type === 'Input') {
+          item.type = '入库';
+        }
+        // 检查 totalWeight 和 unitPrice 的值是否为 0.0，如果是则设置为 null
+        if (item.totalWeight === 0.0) {
+          item.totalWeight = null;
+        }
+        if (item.unitPrice === 0.0) {
+          item.unitPrice = null;
+        }
+        return item;
+      });
+    } else {
+      console.log('Failed to fetch data:', data.message);
+    }
+  } catch (error) {
+    console.error('An error occurred during fetch:', error);
+  }
+}
 const fetchData = async (companyId: number) => {
   try {
     const response = await fetch(`http://localhost:7779/historyRecord/${companyId}`);

@@ -140,7 +140,7 @@ const onSubmitCompany = async () => {
 
 const handleCompanyClick = (companyId: string) => {
   store.commit('setSelectedMenuItem', "menu1");
-  store.commit('setSelectedCompany', cloneDeep(dataSource.value.filter(item => companyId === item.companyId)[0]));
+  store.commit('setSelectedCompany', companyId);
 }
 
 interface Company {

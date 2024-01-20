@@ -30,7 +30,8 @@
           <template #bodyCell="{ column, text, record }" >
 
             <template v-if="column.dataIndex === 'operation'">
-              <a @click="showDrawer(record.itemId)">入库</a>
+              <a @click="showDrawer(record.itemId)">入/出库</a>
+              <a style="margin-left: 10px" @click="checkItemHistory(record.itemId)">历史</a>
             </template>
           </template>
         </a-table>
@@ -208,44 +209,7 @@
             </a-form-item>
           </a-col>
         </a-row>
-        <a-row :gutter="16">
-          <a-col :span="12">
-            <a-form-item label="方式" name="">
-              <a-select
-                  ref="select"
-                  v-model:value="isWeight"
-              >
-                <a-select-option value="1">称重（kg）</a-select-option>
-                <a-select-option value="0">数量</a-select-option>
-              </a-select>
-            </a-form-item>
-          </a-col>
-            <a-col v-if="isWeight === '1'" :span="12">
-              <a-form-item label="重量" name="totalWeight">
-                <a-input v-model:value="form.totalWeight" placeholder=""></a-input>
-              </a-form-item>
-            </a-col>
 
-            <a-col v-else-if="isWeight === '0'" :span="12">
-              <a-form-item label="数量" name="amount">
-                <a-input v-model:value="form.amount" placeholder="请输入数量"></a-input>
-              </a-form-item>
-            </a-col>
-
-
-        </a-row>
-        <a-row :gutter="16">
-          <a-col v-if="isWeight === '1'" :span="12">
-            <a-form-item label="数量" name="amount">
-              <a-input disabled  :placeholder="form.amount"></a-input>
-            </a-form-item>
-          </a-col>
-          <a-col v-else-if="isWeight === '0'"  :span="12">
-            <a-form-item label="重量" name="totalWeight">
-              <a-input disabled  :placeholder="form.totalWeight"></a-input>
-            </a-form-item>
-          </a-col>
-        </a-row>
       </a-form>
       <template #extra>
         <a-space>
@@ -276,13 +240,19 @@ const options = ref<SelectProps['options']>(companyList.map(item => ({
 })));
 
 let defaultSelectCompany = ref('选择公司');
-const company = store.getters.getSelectedCompany;
-store.commit("setSelectedCompany",null)
-const companyId = ref()
+const companyId = ref();
+
+
+
 onMounted( () => {
-  if (company !== null) {
-    defaultSelectCompany.value = company.companyName;
-    handleCompanyChange(company.companyId)
+  companyId.value = store.getters.getSelectedCompany
+  if (companyId.value !== null) {
+    for (const company of companyList){
+      if (company.companyId === companyId.value){
+        defaultSelectCompany.value = company.companyName;
+      }
+    }
+    handleCompanyChange(companyId.value)
   }
 })
 
@@ -442,19 +412,17 @@ const onSubmitInitializeForm = async () => {
   }catch (error){
     console.error('An error occurred when submit initialize form:', error)
   }
-
 }
 
-const isWeight = ref();
+const checkItemHistory = (itemId: number) =>{
+  store.commit('setItemId',itemId);
+  store.commit('setSelectedCompany', companyId.value);
+  store.commit('setSelectedMenuItem', 'menu2');
+}
 
-const weightOrAmount = computed(() => {
-  if (isWeight.value === '1'){
-    form.amount = form.totalWeight/form.unitWeight;
-  }
-  if (isWeight.value === '0'){
-    form.totalWeight = form.amount*form.unitWeight;
-  }
-})
+
+
+// -------上面已检查---------
 const openForm = ref<boolean>(false);
 const showDrawer = (itemId: number) => {
   dataSource.value = dataSource.value.filter(item => item.itemId === itemId);

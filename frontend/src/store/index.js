@@ -6,8 +6,8 @@ const store = createStore({
         userName: '',
         selectedMenuItem: 'menu0',
         selectedCompany: null,
+        itemId: null,
         companyList: [],
-        boyuHistory: [],
     },
     getters: {
         isAuthenticated: state => state.isAuthenticated,
@@ -17,7 +17,7 @@ const store = createStore({
         },
         getSelectedCompany: state => state.selectedCompany,
         getCompanyList: (state) => state.companyList,
-        getBoyuHistory: (state) => state.boyuHistory,
+        getItemId: state => state.itemId,
     },
     mutations: {
         setUsername(state, userName) {
@@ -29,22 +29,17 @@ const store = createStore({
         setSelectedMenuItem(state, menu) {
             state.selectedMenuItem = menu;
         },
-        setSelectedCompany(state, company) {
-            state.selectedCompany = company;
+        setSelectedCompany(state, companyId) {
+            state.selectedCompany = companyId;
         },
         setCompanyList(state, companyList) {
             state.companyList = companyList;
         },
-        addBoyuHistory(state, firstForm) {
-            state.boyuHistory.push(firstForm);
-        }
+        setItemId(state, itemId) {
+            state.itemId = itemId;
+        },
     },
-    actions: {
-        saveBoyuHistory({ commit }, formArray) {
-            const firstForm = formArray[0];
-            commit('addBoyuHistory', { ...firstForm });
-        }
-    }
+    actions: {}
 });
 
 export default store;
