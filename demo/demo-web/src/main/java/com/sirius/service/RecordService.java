@@ -3,6 +3,8 @@ package com.sirius.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.sirius.domain.ResponseResult;
 import com.sirius.domain.dto.InitializeItemDto;
+import com.sirius.domain.dto.InputItemDto;
+import com.sirius.domain.dto.OutputItemDto;
 import com.sirius.domain.entity.Record;
 
 
@@ -21,4 +23,8 @@ public interface RecordService extends IService<Record> {
     ResponseResult getHistoryRecordByItemId(Long companyId, Long itemId);
 
     ResponseResult getItemList(Long companyId);
+
+    ResponseResult inputItem(InputItemDto inputItemDto);
+
+    ResponseResult outputItem(OutputItemDto outputItemDto);
 }

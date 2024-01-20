@@ -239,7 +239,6 @@ GET http://localhost:7779/management/${companyId}
 
 
 
-
 ## initialize item
 
 TODO LIST 1
@@ -285,6 +284,62 @@ POST http://localhost:7779/management/initializeItem
   "data": null
 }
 ```
+
+
+## input item
+
+```JSON
+POST http://localhost:7779/management/inputItem
+```
+
+### Request Body
+
+```JSON
+{
+  "companyId": 1,
+  "itemId": 1,
+  "totalWeight": 1620,
+  "unitPrice": 500,
+  "date": "2020-01-02"
+}
+```
+
+### Response Body
+
+```JSON
+{
+    "code": 200,
+    "msg": "操作成功",
+    "data": null
+}
+```
+
+## output item
+
+```JSON
+POST http://localhost:7779/management/outputItem
+```
+### Request Body
+
+```JSON
+{
+  "companyId": 1,
+  "itemId": 1,
+  "amount": 20,
+  "date": "2020-01-03",
+  "direction": "北京"
+}
+```
+### Response Body
+
+```JSON
+{
+    "code": 200,
+    "msg": "操作成功",
+    "data": null
+}
+```
+
 
 
 # History Record

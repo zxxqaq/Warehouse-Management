@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sirius.domain.ContainItem;
 import com.sirius.domain.ResponseResult;
 import com.sirius.domain.dto.InitializeItemDto;
+import com.sirius.domain.dto.InputItemDto;
+import com.sirius.domain.dto.OutputItemDto;
 import com.sirius.domain.entity.Item;
 import com.sirius.domain.entity.Record;
 import com.sirius.domain.entity.User;
@@ -92,6 +94,28 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
         this.setStatistics(voList);
 
         return ResponseResult.okResult(voList);
+    }
+
+    @Override
+    public ResponseResult inputItem(InputItemDto inputItemDto) {
+        Record record = BeanCopyUtils.beanCopy(inputItemDto, Record.class);
+        record.setType(RecordType.Input);
+        //TODO 用户ID设置
+        record.setUserId(1L);
+        Item item = itemMapper.selectById(inputItemDto.getItemId());
+        record.setAmount((long)(inputItemDto.getTotalWeight()/item.getUnitWeight()));
+        save(record);
+        return ResponseResult.okResult();
+    }
+
+    @Override
+    public ResponseResult outputItem(OutputItemDto outputItemDto) {
+        Record record = BeanCopyUtils.beanCopy(outputItemDto, Record.class);
+        record.setType(RecordType.Output);
+        //TODO 用户ID设置
+        record.setUserId(1L);
+        save(record);
+        return ResponseResult.okResult();
     }
 
     private void setStatistics(List<ItemVo> voList) {

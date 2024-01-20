@@ -28,6 +28,8 @@ public class InitializeItemDto {
 
     private double unitWeight;
 
+    private String unit;
+
 
 
     //Record
@@ -37,9 +39,5 @@ public class InitializeItemDto {
     private Long companyId;
 
     private Long amount;
-
-    private String unit;
-
-    private Integer delFlag;
 
 }
