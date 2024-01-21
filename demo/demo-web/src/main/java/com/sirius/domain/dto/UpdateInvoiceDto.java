@@ -1,17 +1,14 @@
-package com.sirius.domain.entity;
+package com.sirius.domain.dto;
 
-import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Invoice {
-    @TableId
+public class UpdateInvoiceDto {
     private Long invoiceId;
     private Long companyId;
     private String invoiceNum;
@@ -21,6 +18,4 @@ public class Invoice {
     private Double money;
     private Date startDate;
     private Date endDate;
-
-    private Integer delFlag;
 }

@@ -485,14 +485,100 @@ DELETE http://localhost:7779/historyRecord/${recordId}
 ```
 
 
+# Invoice
+
+## add invoice
+
+```JSON
+POST http://localhost:7779/invoice/addInvoice
+```
+
+### Request Body
+
+```JSON
+{
+  "companyId": 1,
+  "invoiceNum": "1234",
+  "invoiceCode": "abcd",
+  "taxRate": 0.45,
+  "comment": "123",
+  "startDate": "2020-1-1",
+  "endDate": "2020-1-5"
+}
+```
+
+### Response
+
+```JSON
+{
+    "code": 200,
+    "msg": "操作成功",
+    "data": 100000.0
+}
+```
+
+## update invoice
+
+```JSON
+PUT http://localhost:7779/invoice/updateInvoice
+```
+
+### Request Body
+
+```JSON
+{
+  "invoiceId": 1,
+  "companyId": 1,
+  "invoiceNum": "1234",
+  "invoiceCode": "abcd",
+  "taxRate": 0.45,
+  "comment": "123",
+  "startDate": "2020-1-1",
+  "endDate": "2020-1-5",
+  "money": 200000.0
+}
+``` 
+
+### Response
+
+```JSON
+{
+    "code": 200,
+    "msg": "操作成功",
+    "data": null
+}
+```
+
+
+## delete invoce
+
+```JSON
+DELETE http://localhost:7779/invoice/${invoiceId}
+``` 
+
+### Response
+
+```JSON
+{
+    "code": 200,
+    "msg": "操作成功",
+    "data": null
+}
+```
+
+
+
+
+
 TODO:
 1. 初始化入库（创建Item+创建Record） Done
 2. Record List（按照公司ID查询，按照itemId+companyId查询）Done
 2. 添加Record（入库+出库）(入库直接用公斤数来算amount) Done
 3. 删除Record（只能删除第一个） Done
-4. 发票统计
+4. 发票添加、删除、更新、列表
 5. excel导入导出
 6. 用户登录
+7. 潜在的删除数据导致的查询bug
 
 
 
