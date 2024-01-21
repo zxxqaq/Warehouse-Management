@@ -21,14 +21,16 @@
         </a-button>
 
 
-        <a-table :pagination="pagination" loading="true" bordered :data-source="dataSource" :columns="columns" :scroll="{x: 1500, y: 500}">
+        <a-table :pagination="pagination" bordered :data-source="dataSource" :columns="columns" :scroll="{x: 1500, y: 500}">
           <template #emptyText>
-            <InboxOutlined style="font-size: xxx-large" />
-            <p style="margin-top: 10px; margin-bottom: 0">没有数据，请先选择公司名称</p>
+            <a-skeleton active v-if="isLoading" />
+            <div v-else>
+              <InboxOutlined style="font-size: xxx-large" />
+              <p style="margin-top: 10px; margin-bottom: 0">暂无数据</p>
+            </div>
           </template>
 
           <template #bodyCell="{ column, text, record }" >
-
             <template v-if="column.dataIndex === 'operation'">
               <a @click="showInputDrawer(record.itemId)">入库</a>
               <a style="margin-left: 10px" @click="showOutputDrawer(record.itemId)">出库</a>
@@ -300,7 +302,7 @@
 import type {Ref, UnwrapRef} from 'vue';
 import {computed, onMounted, reactive, ref} from 'vue';
 import {message, SelectProps, TableColumnsType} from "ant-design-vue";
-import {InboxOutlined, MoneyCollectOutlined, PlusOutlined} from '@ant-design/icons-vue';
+import {FallOutlined, InboxOutlined, MoneyCollectOutlined, PlusOutlined} from '@ant-design/icons-vue';
 import type {Rule} from 'ant-design-vue/es/form';
 import {useStore} from "vuex";
 import dayjs from 'dayjs';
@@ -308,6 +310,7 @@ import 'dayjs/locale/zh-cn';
 import zhCN from "ant-design-vue/es/locale/zh_CN";
 import {paginationConfig} from "ant-design-vue/es/pagination";
 
+const isLoading = ref<boolean>(false);
 const pagination = ref({
   disabled: true,
 })
@@ -336,9 +339,9 @@ const companyId = ref();
 
 
 
-onMounted( () => {
-  if (companyList.length === 0){
-    fetchCompanyList();
+onMounted( async () => {
+  if (companyList.length === 0) {
+    await fetchCompanyList();
     companyList = store.getters.getCompanyList;
     options.value = companyList.map(item => ({
       value: String(item.companyId),
@@ -347,8 +350,8 @@ onMounted( () => {
   }
   companyId.value = store.getters.getSelectedCompany
   if (companyId.value !== null) {
-    for (const company of companyList){
-      if (company.companyId === companyId.value){
+    for (const company of companyList) {
+      if (company.companyId === companyId.value) {
         defaultSelectCompany.value = company.companyName;
       }
     }
@@ -363,10 +366,12 @@ const handleCompanyChange  = (id: number) => {
 
 const fetchData = async (companyId: number) => {
   try {
+    isLoading.value = true;
     const response = await fetch(`http://localhost:7779/management/${companyId}`);
     const data = await response.json();
     if (data.code === 200){
       dataSource.value = data.data
+      isLoading.value = false;
     } else {
       console.log('Failed to fetch data:', data.message);
     }

@@ -14,6 +14,14 @@
         </a-button>
 
         <a-table bordered :data-source="dataSource" :columns="columns">
+          <template #emptyText>
+            <a-skeleton active v-if="isLoading" />
+            <div v-else>
+              <InboxOutlined style="font-size: xxx-large" />
+              <p style="margin-top: 10px; margin-bottom: 0">没有数据，请先选择公司名称</p>
+            </div>
+          </template>
+
           <template #bodyCell="{ column, text, record }" >
             <template v-if="column.dataIndex === 'companyName' ||
                             column.dataIndex === 'taxNum'">
@@ -81,7 +89,7 @@
 
 </template>
 <script lang="ts" setup>
-import { PlusOutlined } from '@ant-design/icons-vue';
+import {InboxOutlined, PlusOutlined} from '@ant-design/icons-vue';
 import type { Rule } from 'ant-design-vue/es/form';
 import {computed, onBeforeUnmount, onMounted, reactive, ref} from 'vue';
 import type { Ref, UnwrapRef } from 'vue';
@@ -92,6 +100,7 @@ import { useStore} from "vuex";
 import { message } from 'ant-design-vue';
 const store = useStore();
 
+const isLoading = ref<boolean>(false);
 const companyForm = reactive({
   companyName: null,
   taxNum: null,
@@ -162,10 +171,12 @@ const editableData: UnwrapRef<Record<string, Company>> = reactive({});
 
 const fetchData = async () => {
   try {
+    isLoading.value = true;
     const response = await fetch('http://localhost:7779/overview/companyList');
     const data = await response.json();
     if (data.code === 200){
       dataSource.value = data.data;
+      isLoading.value = false;
       store.commit('setCompanyList',dataSource.value);
     } else {
       console.log('Failed to fetch data:', data.message);

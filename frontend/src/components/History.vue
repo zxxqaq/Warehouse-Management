@@ -21,8 +21,11 @@
 
         <a-table bordered :data-source="dataSource" :columns="columns" :scroll="{x: 1500, y: 500}">
           <template #emptyText>
-            <InboxOutlined style="font-size: xxx-large" />
-            <p style="margin-top: 10px; margin-bottom: 0">没有数据，请先选择公司名称</p>
+            <a-skeleton active v-if="isLoading" />
+            <div v-else>
+              <InboxOutlined style="font-size: xxx-large" />
+              <p style="margin-top: 10px; margin-bottom: 0">暂无数据</p>
+            </div>
           </template>
 
           <template #bodyCell="{ column, text, record }" >
@@ -64,7 +67,7 @@ import 'dayjs/locale/zh-cn';
 import type { Ref } from 'vue';
 import {cloneDeep} from "lodash-es";
 
-
+const isLoading = ref<boolean>(false);
 const store = useStore();
 const editableData: UnwrapRef<Record<string, Records>> = reactive({});
 const fetchCompanyList = async () => {
@@ -89,9 +92,9 @@ const options = ref<SelectProps['options']>(companyList.map(item => ({
 
 const companyId = ref();
 const itemId = ref();
-onMounted( () => {
-  if (companyList.length === 0){
-    fetchCompanyList();
+onMounted( async () => {
+  if (companyList.length === 0) {
+    await fetchCompanyList();
     companyList = store.getters.getCompanyList;
     options.value = companyList.map(item => ({
       value: String(item.companyId),
@@ -101,8 +104,8 @@ onMounted( () => {
   itemId.value = store.getters.getItemId;
   if (itemId.value !== null) {
     companyId.value = store.getters.getSelectedCompany
-    for (const company of companyList){
-      if (companyId.value == company.companyId){
+    for (const company of companyList) {
+      if (companyId.value == company.companyId) {
         defaultSelectCompany.value = company.companyName;
       }
     }
@@ -110,12 +113,14 @@ onMounted( () => {
       content: () => '现在显示的是您刚刚点击的零件，在该公司的历史记录。点击关闭这条提示信息',
       duration: 0,
       key: 1,
-      onClick: e => {message.destroy(1)}
+      onClick: e => {
+        message.destroy(1)
+      }
     });
-    fetchItemData(companyId.value,itemId.value);
+    await fetchItemData(companyId.value, itemId.value);
   }
-  store.commit('setItemId',null);
-  store.commit('setSelectedCompany',null);
+  store.commit('setItemId', null);
+  store.commit('setSelectedCompany', null);
 })
 
 
@@ -165,6 +170,7 @@ interface Records {
 const dataSource: Ref<Records[]> = ref([]);
 const fetchItemData = async (companyId: number, itemId:number) => {
   try {
+    isLoading.value = true;
     const response = await fetch(`http://localhost:7779/historyRecord/${companyId}/${itemId}`);
     const data = await response.json();
     if (data.code === 200){
@@ -185,6 +191,7 @@ const fetchItemData = async (companyId: number, itemId:number) => {
         }
         return item;
       });
+      isLoading.value = false;
     } else {
       console.log('Failed to fetch data:', data.message);
     }
@@ -194,6 +201,7 @@ const fetchItemData = async (companyId: number, itemId:number) => {
 }
 const fetchData = async (companyId: number) => {
   try {
+    isLoading.value = true;
     const response = await fetch(`http://localhost:7779/historyRecord/${companyId}`);
     const data = await response.json();
     if (data.code === 200){
@@ -214,6 +222,7 @@ const fetchData = async (companyId: number) => {
         }
         return item;
       });
+      isLoading.value = false;
     } else {
       console.log('Failed to fetch data:', data.message);
     }
