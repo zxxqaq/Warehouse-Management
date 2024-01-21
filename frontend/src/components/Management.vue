@@ -232,8 +232,21 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
 import zhCN from "ant-design-vue/es/locale/zh_CN";
 
+const fetchCompanyList = async () => {
+  try {
+    const response = await fetch('http://localhost:7779/overview/companyList');
+    const data = await response.json();
+    if (data.code === 200){
+      store.commit('setCompanyList',data.data);
+    } else {
+      console.log('Failed to fetch data:', data.message);
+    }
+  } catch (error) {
+    console.error('An error occurred during fetch:', error);
+  }
+};
 const store = useStore();
-const companyList = store.getters.getCompanyList;
+let companyList = store.getters.getCompanyList;
 const options = ref<SelectProps['options']>(companyList.map(item => ({
   value: String(item.companyId),
   label: item.companyName,
@@ -245,6 +258,14 @@ const companyId = ref();
 
 
 onMounted( () => {
+  if (companyList.length === 0){
+    fetchCompanyList();
+    companyList = store.getters.getCompanyList;
+    options.value = companyList.map(item => ({
+      value: String(item.companyId),
+      label: item.companyName,
+    }));
+  }
   companyId.value = store.getters.getSelectedCompany
   if (companyId.value !== null) {
     for (const company of companyList){
