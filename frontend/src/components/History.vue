@@ -36,7 +36,17 @@
               </span>
             </template>
 
-
+            <template v-else-if="column.dataIndex === 'operation'">
+              <div class="editable-row-operations">
+                <span v-if="editableData[record.recordId]">
+                  <a-typography-link  @click="saveDeletion(record.recordId)">保存</a-typography-link>
+                  <a-typography-link style="margin-left: 10px" @click="cancelDeletion(record.recordId)">取消</a-typography-link>
+                </span>
+                <span v-else>
+                  <a @click="deleteRecord(record.recordId)">删除</a>
+                </span>
+              </div>
+            </template>
           </template>
         </a-table>
       </div>
@@ -46,17 +56,32 @@
   </a-layout>
 </template>
 <script lang="ts" setup>
-import type {Ref} from 'vue';
-import {onMounted, ref} from 'vue';
+import {onBeforeUnmount, onMounted, reactive, ref, UnwrapRef} from 'vue';
 import {message, SelectProps, TableColumnsType} from "ant-design-vue";
 import {InboxOutlined} from '@ant-design/icons-vue';
 import {useStore} from "vuex";
 import 'dayjs/locale/zh-cn';
+import type { Ref } from 'vue';
+import {cloneDeep} from "lodash-es";
 
 
 const store = useStore();
+const editableData: UnwrapRef<Record<string, Records>> = reactive({});
+const fetchCompanyList = async () => {
+  try {
+    const response = await fetch('http://localhost:7779/overview/companyList');
+    const data = await response.json();
+    if (data.code === 200){
+      store.commit('setCompanyList',data.data);
+    } else {
+      console.log('Failed to fetch data:', data.message);
+    }
+  } catch (error) {
+    console.error('An error occurred during fetch:', error);
+  }
+};
 let defaultSelectCompany = ref('选择公司')
-const companyList = store.getters.getCompanyList;
+let companyList = store.getters.getCompanyList;
 const options = ref<SelectProps['options']>(companyList.map(item => ({
   value: String(item.companyId),
   label: item.companyName,
@@ -65,6 +90,14 @@ const options = ref<SelectProps['options']>(companyList.map(item => ({
 const companyId = ref();
 const itemId = ref();
 onMounted( () => {
+  if (companyList.length === 0){
+    fetchCompanyList();
+    companyList = store.getters.getCompanyList;
+    options.value = companyList.map(item => ({
+      value: String(item.companyId),
+      label: item.companyName,
+    }));
+  }
   itemId.value = store.getters.getItemId;
   if (itemId.value !== null) {
     companyId.value = store.getters.getSelectedCompany
@@ -87,29 +120,31 @@ onMounted( () => {
 
 
 const handleCompanyChange  = (id: number) => {
+  message.destroy(1);
   companyId.value = id;
   fetchData(id);
 }
 
 const columns: TableColumnsType = [
-  { title: '类型', dataIndex: 'type', fixed: 'left',},
-  { title: '时间', dataIndex: 'date', fixed: 'left',},
-  { title: '出库方向', dataIndex: 'direction',},
-  { title: '名称', dataIndex: 'itemName', },
+  { title: '类型', dataIndex: 'type',width: 80, fixed: 'left',},
+  { title: '时间', dataIndex: 'date', fixed: 'left',width: 120},
+  { title: '出库方向', dataIndex: 'direction',width: 100},
+  { title: '名称', dataIndex: 'itemName',width: 110 },
   { title: '标准', dataIndex: 'standard', },
   { title: '规格', dataIndex: 'specification', width: 100},
   { title: '表面处理', dataIndex: 'surface', width: 100},
-  { title: '材质', dataIndex: 'material', width: 100},
-  { title: '等级', dataIndex: 'level', width: 100},
-  { title: '单重', dataIndex: 'unitWeight', width: 100},
+  { title: '材质', dataIndex: 'material', width: 80},
+  { title: '等级', dataIndex: 'level', width: 80},
+  { title: '单重', dataIndex: 'unitWeight', width: 80},
   { title: '单位', dataIndex: 'unit', width: 80},
   { title: '单价', dataIndex: 'unitPrice', width: 80},
   { title: '重量', dataIndex: 'totalWeight', width: 80},
   { title: '操作人', dataIndex: 'userName', width: 80},
   { title: '数量', dataIndex: 'amount', width: 80,fixed:'right'},
+  { title: '操作', dataIndex: 'operation', fixed: "right",},
 ];
 
-interface Record {
+interface Records {
   recordId: number
   itemName: string,
   standard: string,
@@ -127,7 +162,7 @@ interface Record {
   userName: string,
   unitPrice: number
 }
-const dataSource: Ref<Record[]> = ref([]);
+const dataSource: Ref<Records[]> = ref([]);
 const fetchItemData = async (companyId: number, itemId:number) => {
   try {
     const response = await fetch(`http://localhost:7779/historyRecord/${companyId}/${itemId}`);
@@ -196,6 +231,37 @@ const getTagColor = (text:string) => {
       return 'pink';
   }
 }
+onBeforeUnmount(() => {
+  message.destroy(1);
+})
+
+const deleteRecord = (recordId: number) => {
+  editableData[recordId] = cloneDeep(dataSource.value.filter(item => recordId === item.recordId)[0]);
+};
+const cancelDeletion = (recordId: number) => {
+  delete editableData[recordId];
+};
+
+const saveDeletion = async (recordId: number) => {
+  try {
+    const response = await fetch(`http://localhost:7779/historyRecord/${recordId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    const data = await response.json();
+    if (data.code === 200){
+      await fetchData(companyId.value);
+      message.success('删除历史成功');
+      delete editableData[companyId];
+    }else {
+      message.error('删除历史失败');
+    }
+  } catch (error) {
+    console.error('An error occurred in saving edited company:', error);
+  }
+};
 </script>
 
 <style lang="less" scoped>
