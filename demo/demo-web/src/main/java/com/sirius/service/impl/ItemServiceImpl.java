@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 public class ItemServiceImpl extends ServiceImpl<ItemMapper, Item> implements ItemService {
 
     @Override
-    public boolean isExist(Item item) {
+    public Long isExist(Item item) {
 
         LambdaQueryWrapper<Item> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Item::getItemName, item.getItemName());
@@ -30,10 +30,10 @@ public class ItemServiceImpl extends ServiceImpl<ItemMapper, Item> implements It
         Item item1 = this.getOne(queryWrapper);
 
         if(item1 == null){
-            return false;
+            return -1L;
         }
 
-        return true;
+        return item1.getItemId();
     }
 }
 

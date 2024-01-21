@@ -48,11 +48,14 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
     public ResponseResult initializeItem(InitializeItemDto initializeItemDto) {
 
         Item item = BeanCopyUtils.beanCopy(initializeItemDto, Item.class);
-        if(itemService.isExist(item)){
+        Long itemId = itemService.isExist(item);
+        if(itemId == -1){
+            itemMapper.insert(item);
+        } else if (containItem(itemId, initializeItemDto.getCompanyId())){
             return ResponseResult.errorResult(AppHttpCodeEnum.ITEM_EXIST);
+        } else {
+            item.setItemId(itemId);
         }
-
-        itemMapper.insert(item);
         Record record = BeanCopyUtils.beanCopy(initializeItemDto, Record.class);
         record.setItemId(item.getItemId());
         //TODO 用户ID设置
@@ -61,6 +64,15 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
         this.save(record);
 
         return ResponseResult.okResult();
+    }
+
+    private boolean containItem(Long itemId, Long companyId) {
+        LambdaQueryWrapper<Record> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Record::getItemId, itemId);
+        queryWrapper.eq(Record::getCompanyId, companyId);
+        queryWrapper.eq(Record::getType, RecordType.Initialization);
+        Record record = this.getOne(queryWrapper);
+        return record != null;
     }
 
     @Override
