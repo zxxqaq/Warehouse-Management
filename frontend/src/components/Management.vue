@@ -483,7 +483,8 @@ const onSubmitInitializeForm = async () => {
     clearInitializeForm();
     if (data.code === 200){
       message.success('初始化/新建成功');
-      // get到itemList， 刷新
+      await fetchData(companyId.value);
+      //TODO get到itemList， 刷新
     }else if (data.code === 501){
       message.error('初始化/新建失败，零件已存在');
     }
