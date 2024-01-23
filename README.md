@@ -580,18 +580,19 @@ PUT http://localhost:7779/historyRecord/updateRecord
 
 
 Feedback:
-1. 初始化有bug
-2. 出库/入库可以改（自己输入的数据） Done
 
-入库改：时间 单价 重量
-出库改：时间 数量 出库方向
+1. 初始化有bug done
+2. 出库/入库可以改（自己输入的数据）done
+3. 历史可以删除 done
+4. 分页 done
 
-3. 历史可以删除 Done
-4. 分页
-5. 一种零件可以看到从哪些公司进货 Done
-6. 入库可以选择输入重量还是数量 Done
+---
+5. 一种零件可以看到从哪些公司进货(所有都要加一个公司字段)
+7. item可以编辑 
+8. 发票check 
+9. loading效果（登录，修改的时候）
 
-后端：2 5 6
+
 
 TODO:
 1. 初始化入库（创建Item+创建Record） Done

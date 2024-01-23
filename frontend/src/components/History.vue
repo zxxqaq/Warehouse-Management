@@ -29,6 +29,8 @@
           </template>
 
           <template #bodyCell="{ column, text, record }" >
+
+
             <template v-if="column.dataIndex === 'type'">
               <span>
                 <a-tag
@@ -41,19 +43,191 @@
 
             <template v-else-if="column.dataIndex === 'operation'">
               <div class="editable-row-operations">
-                <span v-if="editableData[record.recordId]">
-                  <a-typography-link  @click="saveDeletion(record.recordId)">保存</a-typography-link>
-                  <a-typography-link style="margin-left: 10px" @click="cancelDeletion(record.recordId)">取消</a-typography-link>
-                </span>
-                <span v-else>
-                  <a @click="deleteRecord(record.recordId)">删除</a>
-                </span>
+
+                  <a @click="editRecord(record.recordId)">编辑</a>
+
+                  <a-config-provider :locale="zhCN">
+                    <a-popconfirm
+                        v-if="dataSource.length"
+                        title="确定删除?"
+                        @confirm="saveDeletion(record.recordId)"
+                        @cancel="cancelDeletion(record.recordId)"
+                    >
+                      <a style="margin-left: 10px" @click="deleteRecord(record.recordId)" >删除</a>
+                    </a-popconfirm>
+                  </a-config-provider>
+
               </div>
             </template>
           </template>
         </a-table>
       </div>
     </a-layout-content>
+
+    <a-drawer
+        title="入库修改"
+        :width="720"
+        :open="openInputForm"
+        :body-style="{ paddingBottom: '80px' }"
+        :footer-style="{ textAlign: 'right' }"
+        @close="onCloseInputDrawer"
+    >
+      <a-form :model="inputForm"  layout="vertical">
+        <a-row :gutter="16">
+          <a-col :span="6">
+            <a-form-item label="名称" name="itemName" >
+              <a-input disabled v-model:value="inputForm.itemName" :placeholder="inputForm.itemName"></a-input>
+            </a-form-item>
+          </a-col>
+          <a-col :span="6">
+            <a-form-item label="标准" name="standard" >
+              <a-input disabled v-model:value="inputForm.standard" :placeholder="inputForm.standard"></a-input>
+            </a-form-item>
+          </a-col>
+          <a-col :span="6">
+            <a-form-item label="规格" name="specification" >
+              <a-input disabled v-model:value="inputForm.specification" :placeholder="inputForm.specification"></a-input>
+            </a-form-item>
+          </a-col>
+          <a-col :span="6">
+            <a-form-item label="表面处理" name="surface" >
+              <a-input disabled v-model:value="inputForm.surface" :placeholder="inputForm.surface"></a-input>
+            </a-form-item>
+          </a-col>
+        </a-row>
+        <a-row :gutter="16">
+          <a-col :span="6">
+            <a-form-item label="材质" name="material" >
+              <a-input disabled v-model:value="inputForm.material" :placeholder="inputForm.material"></a-input>
+            </a-form-item>
+          </a-col>
+          <a-col :span="6">
+            <a-form-item label="等级" name="level" >
+              <a-input disabled v-model:value="inputForm.level" :placeholder="inputForm.level"></a-input>
+            </a-form-item>
+          </a-col>
+          <a-col :span="6">
+            <a-form-item label="单重" name="unitWeight" >
+              <a-input disabled v-model:value="inputForm.unitWeight" :placeholder="inputForm.unitWeight"></a-input>
+            </a-form-item>
+          </a-col>
+          <a-col :span="6">
+            <a-form-item label="单位" name="unit" >
+              <a-input disabled v-model:value="inputForm.unit" :placeholder="inputForm.unit"></a-input>
+            </a-form-item>
+          </a-col>
+        </a-row>
+        <a-row :gutter="16">
+          <a-col :span="12">
+            <a-form-item label="时间" name="date">
+              <a-input v-model:value="inputForm.date"  style="width: 100%" />
+            </a-form-item>
+          </a-col>
+          <a-col :span="12">
+            <a-form-item label="单价" name="unitPrice">
+              <a-input v-model:value="inputForm.unitPrice" prefix="￥" style="width: 100%" />
+            </a-form-item>
+          </a-col>
+        </a-row>
+        <a-row :gutter="16">
+          <a-col :span="12">
+            <a-form-item label="重量（kg）" name="totalWeight">
+              <a-input v-model:value="inputForm.totalWeight" style="width: 100%" />
+            </a-form-item>
+          </a-col>
+        </a-row>
+
+
+      </a-form>
+      <template #extra>
+        <a-space>
+          <a-button @click="onCloseInputDrawer">取消</a-button>
+          <a-button  type="primary" @click="onSubmitInputDrawer">提交</a-button>
+        </a-space>
+      </template>
+    </a-drawer>
+    <a-drawer
+        title="出库修改"
+        :width="720"
+        :open="openOutputForm"
+        :body-style="{ paddingBottom: '80px' }"
+        :footer-style="{ textAlign: 'right' }"
+        @close="onCloseOutputDrawer"
+    >
+      <a-form :model="outputForm" layout="vertical">
+        <a-row :gutter="16">
+          <a-col :span="6">
+            <a-form-item label="名称" name="itemName" >
+              <a-input disabled v-model:value="outputForm.itemName" :placeholder="outputForm.itemName"></a-input>
+            </a-form-item>
+          </a-col>
+          <a-col :span="6">
+            <a-form-item label="标准" name="standard" >
+              <a-input disabled v-model:value="outputForm.standard" :placeholder="outputForm.standard"></a-input>
+            </a-form-item>
+          </a-col>
+          <a-col :span="6">
+            <a-form-item label="规格" name="specification" >
+              <a-input disabled v-model:value="outputForm.specification" :placeholder="outputForm.specification"></a-input>
+            </a-form-item>
+          </a-col>
+          <a-col :span="6">
+            <a-form-item label="表面处理" name="surface" >
+              <a-input disabled v-model:value="outputForm.surface" :placeholder="outputForm.surface"></a-input>
+            </a-form-item>
+          </a-col>
+        </a-row>
+        <a-row :gutter="16">
+          <a-col :span="6">
+            <a-form-item label="材质" name="material" >
+              <a-input disabled v-model:value="outputForm.material" :placeholder="outputForm.material"></a-input>
+            </a-form-item>
+          </a-col>
+          <a-col :span="6">
+            <a-form-item label="等级" name="level" >
+              <a-input disabled v-model:value="outputForm.level" :placeholder="outputForm.level"></a-input>
+            </a-form-item>
+          </a-col>
+          <a-col :span="6">
+            <a-form-item label="单重" name="unitWeight" >
+              <a-input disabled v-model:value="outputForm.unitWeight" :placeholder="outputForm.unitWeight"></a-input>
+            </a-form-item>
+          </a-col>
+          <a-col :span="6">
+            <a-form-item label="单位" name="unit" >
+              <a-input disabled v-model:value="outputForm.unit" :placeholder="outputForm.unit"></a-input>
+            </a-form-item>
+          </a-col>
+        </a-row>
+        <a-row :gutter="16">
+          <a-col :span="12">
+            <a-form-item label="时间" name="date">
+              <a-input v-model:value="outputForm.date"  style="width: 100%" />
+            </a-form-item>
+          </a-col>
+          <a-col :span="12">
+            <a-form-item label="数量" name="amount">
+              <a-input v-model:value="outputForm.amount"  style="width: 100%" />
+            </a-form-item>
+          </a-col>
+        </a-row>
+        <a-row :gutter="16">
+          <a-col :span="12">
+            <a-form-item label="出库方向" name="direction">
+              <a-input v-model:value="outputForm.direction" style="width: 100%" />
+            </a-form-item>
+          </a-col>
+        </a-row>
+
+
+      </a-form>
+      <template #extra>
+        <a-space>
+          <a-button @click="onCloseOutputDrawer">取消</a-button>
+          <a-button type="primary" @click="onSubmitOutputDrawer">提交</a-button>
+        </a-space>
+      </template>
+    </a-drawer>
 
 
   </a-layout>
@@ -66,7 +240,165 @@ import {useStore} from "vuex";
 import 'dayjs/locale/zh-cn';
 import type { Ref } from 'vue';
 import {cloneDeep} from "lodash-es";
+import zhCN from "ant-design-vue/es/locale/zh_CN";
+import dayjs, { Dayjs } from 'dayjs';
 
+const openInputForm = ref<boolean>(false);
+const openOutputForm = ref<boolean>(false);
+const inputForm = reactive({
+  date: null,
+  unitPrice: null,
+  totalWeight: null,
+
+  recordId: null,
+  itemName: null,
+  standard: null,
+  specification: null,
+  surface: null,
+  material: null,
+  level: null,
+  unitWeight: null,
+  unit: null,
+});
+const outputForm = reactive({
+  date: null,
+  direction: null,
+  amount: null,
+
+  recordId: null,
+  itemName: null,
+  standard: null,
+  specification: null,
+  surface: null,
+  material: null,
+  level: null,
+  unitWeight: null,
+  unit: null,
+});
+const clearOutputForm = () => {
+  Object.keys(outputForm).forEach(key => {
+    outputForm[key] = null;
+  });
+}
+const formSource: Ref<Records[]> = ref([]);
+const showInputDrawer = (recordId: number) => {
+  formSource.value = dataSource.value.filter(item => item.recordId === recordId);
+  const firstItem = formSource.value[0];
+  for (const key in firstItem) {
+    if (Object.prototype.hasOwnProperty.call(firstItem, key)) {
+      inputForm[key] = firstItem[key];
+    }
+  }
+  openInputForm.value = true;
+};
+const showOutputDrawer = (recordId: number) => {
+  formSource.value = dataSource.value.filter(item => item.recordId === recordId);
+  const firstItem = formSource.value[0];
+  for (const key in firstItem) {
+    if (Object.prototype.hasOwnProperty.call(firstItem, key)) {
+      outputForm[key] = firstItem[key];
+    }
+  }
+  openOutputForm.value = true;
+};
+const inputSubmitForm = reactive({
+  recordId: null,
+  totalWeight: null,
+  unitPrice: null,
+  date: null,
+})
+const outputSubmitForm = reactive({
+  recordId: null,
+  amount: null,
+  direction: null,
+  date: null,
+})
+const clearInputForm = () => {
+  Object.keys(inputForm).forEach(key => {
+    inputForm[key] = null;
+  });
+}
+const clearInputSubmitForm = () => {
+  Object.keys(inputSubmitForm).forEach(key => {
+    inputSubmitForm[key] = null;
+  });
+}
+const clearOutputSubmitForm = () => {
+  Object.keys(outputSubmitForm).forEach(key => {
+    outputSubmitForm[key] = null;
+  });
+}
+const onCloseOutputDrawer = () => {
+  openOutputForm.value = false;
+};
+const onSubmitOutputDrawer = async () => {
+  Object.assign(outputSubmitForm, outputForm);
+  try {
+    const response = await fetch('http://localhost:7779/historyRecord/updateRecord', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(outputSubmitForm)
+    })
+    const data = await response.json();
+    if (data.code === 200) {
+      await fetchData(companyId.value);
+      onCloseOutputDrawer();
+      message.success('修改历史成功');
+      //清空两个表
+      clearOutputForm();
+      clearOutputSubmitForm();
+      await fetchData(companyId.value);
+    } else {
+      message.error('修改历史失败，请重试');
+    }
+  } catch (error) {
+    console.error('An error occurred in saving edited company:', error);
+  }
+}
+const onSubmitInputDrawer = async () => {
+  Object.assign(inputSubmitForm, inputForm);
+  try {
+    const response = await fetch('http://localhost:7779/historyRecord/updateRecord', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(inputSubmitForm)
+    })
+    const data = await response.json();
+    if (data.code === 200) {
+      await fetchData(companyId.value);
+      onCloseInputDrawer();
+      message.success('修改历史成功');
+      //清空两个表
+      clearInputForm();
+      clearInputSubmitForm();
+      await fetchData(companyId.value);
+    } else {
+      message.error('修改历史失败，请重试');
+    }
+  } catch (error) {
+    console.error('An error occurred in saving edited company:', error);
+  }
+}
+
+const onCloseInputDrawer = () => {
+  openInputForm.value = false;
+};
+
+const editRecord = (recordId: number) => {
+  const record = dataSource.value.find(item => item.recordId === recordId);
+  if (record) {
+    console.log(record.type);
+    if (record.type === '入库'){
+      showInputDrawer(recordId);
+    }else if (record.type === '出库') {
+      showOutputDrawer(recordId);
+    }
+  }
+}
 const pagination = ref({
   defaultPageSize: 50,
   hideOnSinglePage: false,
@@ -145,7 +477,7 @@ const columns: TableColumnsType = [
   { title: '材质', dataIndex: 'material', width: 80},
   { title: '等级', dataIndex: 'level', width: 80},
   { title: '单重', dataIndex: 'unitWeight', width: 80},
-  { title: '单位', dataIndex: 'unit', width: 80},
+  { title: '单位', dataIndex: 'unit', width: 70},
   { title: '单价', dataIndex: 'unitPrice', width: 80},
   { title: '重量', dataIndex: 'totalWeight', width: 80},
   { title: '操作人', dataIndex: 'userName', width: 80},
@@ -169,7 +501,8 @@ interface Records {
   totalWeight: number,
   direction: string,
   userName: string,
-  unitPrice: number
+  unitPrice: number,
+  companyName: string
 }
 const dataSource: Ref<Records[]> = ref([]);
 const fetchItemData = async (companyId: number, itemId:number) => {
@@ -206,7 +539,7 @@ const fetchItemData = async (companyId: number, itemId:number) => {
 const fetchData = async (companyId: number) => {
   try {
     isLoading.value = true;
-    const response = await fetch(`http://localhost:7779/historyRecord/${companyId}`);
+    const response = await fetch(`http://localhost:7779/historyRecord/companyId/${companyId}`);
     const data = await response.json();
     if (data.code === 200){
       dataSource.value = data.data.map(item => {

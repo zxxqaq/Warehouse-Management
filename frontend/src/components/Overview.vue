@@ -190,7 +190,7 @@ const fetchData = async () => {
   }
 };
 
-const edit = (companyId: string) => {
+const edit = (companyId: number) => {
   editableData[companyId] = cloneDeep(dataSource.value.filter(item => companyId === item.companyId)[0]);
 };
 const save = async (companyId: string) => {
