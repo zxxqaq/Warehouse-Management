@@ -19,7 +19,7 @@
 
 
 
-        <a-table bordered :data-source="dataSource" :columns="columns" :scroll="{x: 1500, y: 500}">
+        <a-table  :pagination="pagination" bordered :data-source="dataSource" :columns="columns" :scroll="{x: 1500, y: 600}">
           <template #emptyText>
             <a-skeleton active v-if="isLoading" />
             <div v-else>
@@ -67,6 +67,10 @@ import 'dayjs/locale/zh-cn';
 import type { Ref } from 'vue';
 import {cloneDeep} from "lodash-es";
 
+const pagination = ref({
+  defaultPageSize: 50,
+  hideOnSinglePage: false,
+})
 const isLoading = ref<boolean>(false);
 const store = useStore();
 const editableData: UnwrapRef<Record<string, Records>> = reactive({});
@@ -319,5 +323,8 @@ const saveDeletion = async (recordId: number) => {
 }
 .editable-cell:hover .editable-cell-icon {
   display: inline-block;
+}
+:where(.css-dev-only-do-not-override-1qb1s0s).ant-table-wrapper .ant-table-pagination.ant-pagination {
+  margin: 16px 0 0 0;
 }
 </style>
