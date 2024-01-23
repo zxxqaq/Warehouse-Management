@@ -468,7 +468,7 @@ GET http://localhost:7779/historyRecord/${companyId}/${itemId}
 }
 ```
 
-## delete the latest record
+## delete record
 
 ```JSON
 DELETE http://localhost:7779/historyRecord/${recordId}
@@ -484,6 +484,32 @@ DELETE http://localhost:7779/historyRecord/${recordId}
 }
 ```
 
+
+## update record
+
+```JSON
+PUT http://localhost:7779/historyRecord/updateRecord
+```
+
+### Request Body
+
+这里的JSON需要更新哪些字段就添加进来哪些字段。
+```JSON
+{
+  "recordId": 5,
+  "totalWeight": 100
+}
+```
+
+### Response
+
+```JSON
+{
+    "code": 200,
+    "msg": "操作成功",
+    "data": null
+}
+```
 
 # Invoice
 
@@ -568,12 +594,12 @@ DELETE http://localhost:7779/invoice/${invoiceId}
 
 Feedback:
 1. 初始化有bug
-2. 出库/入库可以改（自己输入的数据）
+2. 出库/入库可以改（自己输入的数据） Done
 
 入库改：时间 单价 重量
 出库改：时间 数量 出库方向
 
-3. 历史可以删除
+3. 历史可以删除 Done
 4. 分页
 5. 一种零件可以看到从哪些公司进货
 6. 入库可以选择输入重量还是数量
@@ -584,9 +610,8 @@ TODO:
 1. 初始化入库（创建Item+创建Record） Done
 2. Record List（按照公司ID查询，按照itemId+companyId查询）Done
 2. 添加Record（入库+出库）(入库直接用公斤数来算amount) Done
-3. 删除Record（只能删除第一个） Done
-4. 发票添加、删除、更新、列表
-5. excel导入导出
+3. 删除Record（只能删除第一个） Done 
+4. excel导入导出
 6. 用户登录
 7. 潜在的删除数据导致的查询bug
 

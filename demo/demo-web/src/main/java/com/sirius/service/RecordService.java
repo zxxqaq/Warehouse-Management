@@ -5,6 +5,7 @@ import com.sirius.domain.ResponseResult;
 import com.sirius.domain.dto.InitializeItemDto;
 import com.sirius.domain.dto.InputItemDto;
 import com.sirius.domain.dto.OutputItemDto;
+import com.sirius.domain.dto.UpdateRecordDto;
 import com.sirius.domain.entity.Record;
 
 
@@ -29,4 +30,6 @@ public interface RecordService extends IService<Record> {
     ResponseResult outputItem(OutputItemDto outputItemDto);
 
     ResponseResult deleteRecord(Long recordId);
+
+    ResponseResult updateRecord(UpdateRecordDto updateRecordDto);
 }

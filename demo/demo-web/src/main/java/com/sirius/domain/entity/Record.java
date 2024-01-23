@@ -33,4 +33,5 @@ public class Record {
     private Integer delFlag;
 
     private Double unitPrice;
+    private Boolean isCheck;
 }

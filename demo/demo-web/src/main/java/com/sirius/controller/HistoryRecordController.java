@@ -1,6 +1,7 @@
 package com.sirius.controller;
 
 import com.sirius.domain.ResponseResult;
+import com.sirius.domain.dto.UpdateRecordDto;
 import com.sirius.service.RecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -26,5 +27,10 @@ public class HistoryRecordController {
     @DeleteMapping("/{recordId}")
     public ResponseResult deleteRecord(@PathVariable("recordId") Long recordId) {
         return recordService.deleteRecord(recordId);
+    }
+
+    @PutMapping("/updateRecord")
+    public ResponseResult updateRecord(@RequestBody UpdateRecordDto updateRecordDto) {
+        return recordService.updateRecord(updateRecordDto);
     }
 }

@@ -44,4 +44,6 @@ public class HistoryRecordVo implements ContainItem {
     private String surface;
 
     private Double unitWeight;
+
+    private Boolean isCheck;
 }

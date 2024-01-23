@@ -7,6 +7,7 @@ import com.sirius.domain.ResponseResult;
 import com.sirius.domain.dto.InitializeItemDto;
 import com.sirius.domain.dto.InputItemDto;
 import com.sirius.domain.dto.OutputItemDto;
+import com.sirius.domain.dto.UpdateRecordDto;
 import com.sirius.domain.entity.Item;
 import com.sirius.domain.entity.Record;
 import com.sirius.domain.entity.User;
@@ -134,6 +135,18 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
     public ResponseResult deleteRecord(Long recordId) {
         this.removeById(recordId);
         return ResponseResult.okResult();
+    }
+
+    @Override
+    public ResponseResult updateRecord(UpdateRecordDto updateRecordDto) {
+        Record record = BeanCopyUtils.beanCopy(updateRecordDto, Record.class);
+        //TODO: 用户ID设置
+        record.setUserId(1L);
+        if(this.updateById(record)){
+            return ResponseResult.okResult();
+        } else {
+            return ResponseResult.errorResult(AppHttpCodeEnum.SYSTEM_ERROR);
+        }
     }
 
     private void setStatistics(List<ItemVo> voList, Long companyId) {
