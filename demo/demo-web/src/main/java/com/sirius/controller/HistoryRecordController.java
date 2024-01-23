@@ -13,15 +13,20 @@ public class HistoryRecordController {
     @Autowired
     private RecordService recordService;
 
-    @GetMapping("/{companyId}")
+    @GetMapping("/companyId/{companyId}")
     public ResponseResult getHistoryRecordByCompanyId(@PathVariable("companyId") Long companyId) {
         return recordService.getHistoryRecordByCompanyId(companyId);
     }
 
     @GetMapping("/{companyId}/{itemId}")
-    public ResponseResult getHistoryRecordByItemId(@PathVariable("companyId") Long companyId,
-                                                   @PathVariable("itemId") Long itemId) {
-        return recordService.getHistoryRecordByItemId(companyId, itemId);
+    public ResponseResult getHistoryRecordByItemIdAndCompanyId(@PathVariable("companyId") Long companyId,
+                                                               @PathVariable("itemId") Long itemId) {
+        return recordService.getHistoryRecordByItemIdAndCompanyId(companyId, itemId);
+    }
+
+    @GetMapping("/itemId/{itemId}")
+    public ResponseResult getHistoryRecordByItemId(@PathVariable("itemId") Long itemId) {
+        return recordService.getHistoryRecordByItemId(itemId);
     }
 
     @DeleteMapping("/{recordId}")

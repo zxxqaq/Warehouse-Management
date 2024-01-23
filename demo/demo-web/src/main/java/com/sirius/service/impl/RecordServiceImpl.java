@@ -8,6 +8,7 @@ import com.sirius.domain.dto.InitializeItemDto;
 import com.sirius.domain.dto.InputItemDto;
 import com.sirius.domain.dto.OutputItemDto;
 import com.sirius.domain.dto.UpdateRecordDto;
+import com.sirius.domain.entity.Company;
 import com.sirius.domain.entity.Item;
 import com.sirius.domain.entity.Record;
 import com.sirius.domain.entity.User;
@@ -17,6 +18,7 @@ import com.sirius.enums.AppHttpCodeEnum;
 import com.sirius.enums.RecordType;
 import com.sirius.mapper.ItemMapper;
 import com.sirius.mapper.RecordMapper;
+import com.sirius.service.CompanyService;
 import com.sirius.service.ItemService;
 import com.sirius.service.RecordService;
 import com.sirius.service.UserService;
@@ -44,6 +46,9 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private CompanyService companyService;
 
     @Override
     public ResponseResult initializeItem(InitializeItemDto initializeItemDto) {
@@ -86,7 +91,7 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
     }
 
     @Override
-    public ResponseResult getHistoryRecordByItemId(Long companyId, Long itemId) {
+    public ResponseResult getHistoryRecordByItemIdAndCompanyId(Long companyId, Long itemId) {
         LambdaQueryWrapper<Record> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Record::getCompanyId, companyId);
         queryWrapper.eq(Record::getItemId, itemId);
@@ -149,6 +154,15 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
         }
     }
 
+    @Override
+    public ResponseResult getHistoryRecordByItemId(Long itemId) {
+        LambdaQueryWrapper<Record> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Record::getItemId, itemId);
+        List<Record> list = this.list(queryWrapper);
+        List<HistoryRecordVo> voList = this.getHistoryRecordVoList(list);
+        return ResponseResult.okResult(voList);
+    }
+
     private void setStatistics(List<ItemVo> voList, Long companyId) {
         voList.forEach(itemVo -> {
             itemVo.setTotalCount(0L);
@@ -192,10 +206,16 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
             HistoryRecordVo vo = BeanCopyUtils.beanCopy(record, HistoryRecordVo.class);
             Item item = itemService.getById(record.getItemId());
             User user = userService.getById(record.getUserId());
+            Company company = companyService.getById(record.getCompanyId());
+            this.setVoCompany(vo, company);
             this.setVoItem(vo, item);
             this.setVoUser(vo, user);
             return vo;
         }).collect(Collectors.toList());
+    }
+
+    private void setVoCompany(HistoryRecordVo vo, Company company) {
+        vo.setCompanyName(company.getCompanyName());
     }
 
     private void setVoUser(HistoryRecordVo vo, User user) {

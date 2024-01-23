@@ -46,4 +46,6 @@ public class HistoryRecordVo implements ContainItem {
     private Double unitWeight;
 
     private Boolean isCheck;
+
+    private String companyName;
 }

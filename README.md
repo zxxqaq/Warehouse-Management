@@ -347,7 +347,7 @@ POST http://localhost:7779/management/outputItem
 ## get record list by company Id
 
 ```JSON
-GET http://localhost:7779/historyRecord/${companyId}
+GET http://localhost:7779/historyRecord/companyId/${companyId}
 ```
 
 ### Response
@@ -358,25 +358,15 @@ GET http://localhost:7779/historyRecord/${companyId}
   "msg": "操作成功",
   "data": [
     {
-      "recordId": 1,
-      "itemName": "六角螺栓",
-      "standard": "GB/T 5783-2016",
-      "specification": "M8*15",
-      "material": "铁",
-      "level": "6.8",
-      "surface": "35K 光身",
-      "unitWeight": 16.2,
+      "recordId": 15,
       "type": "Initialization",
-      "date": "2020-01-01",
-      "amount": 200,
+      "date": "2024-01-21",
+      "amount": 10,
       "unit": "个",
-      "totalWeight": 0.0,
+      "totalWeight": null,
       "direction": null,
       "userName": "sjx",
-      "unitPrice": 0.0
-    },
-    {
-      "recordId": 2,
+      "unitPrice": null,
       "itemName": "螺母",
       "standard": "GB6170",
       "specification": "M8*30",
@@ -384,52 +374,87 @@ GET http://localhost:7779/historyRecord/${companyId}
       "level": "5级",
       "surface": "热镀锌",
       "unitWeight": -1.0,
-      "type": "Initialization",
-      "date": "2024-01-19",
-      "amount": 18500,
-      "unit": "个",
-      "totalWeight": 0.0,
-      "direction": null,
-      "userName": "sjx",
-      "unitPrice": 0.0
+      "isCheck": false,
+      "companyName": "嘉兴海豹股份有限公司"
     },
     {
-      "recordId": 3,
-      "itemName": "螺母",
-      "standard": "GB6170",
-      "specification": "M8*31",
-      "material": "-1",
-      "level": "5级",
-      "surface": "热镀锌",
-      "unitWeight": -1.0,
+      "recordId": 17,
       "type": "Initialization",
-      "date": "2024-01-19",
-      "amount": 200,
+      "date": "2024-01-23",
+      "amount": 100,
       "unit": "个",
-      "totalWeight": 0.0,
+      "totalWeight": null,
       "direction": null,
       "userName": "sjx",
-      "unitPrice": 0.0
-    },
-    {
-      "recordId": 4,
-      "itemName": "八角螺栓",
-      "standard": "GB/T 5783-2016",
-      "specification": "M8*35",
-      "material": "铁",
-      "level": "6.8",
+      "unitPrice": null,
+      "itemName": "六角螺栓",
+      "standard": " GB/T 5783-2016",
+      "specification": "M16*40",
+      "material": "锌",
+      "level": "5.6",
       "surface": "35K 光身",
-      "unitWeight": 16.2,
-      "type": "Initialization",
-      "date": "2020-01-01",
-      "amount": 200,
-      "unit": "个",
-      "totalWeight": 0.0,
-      "direction": null,
-      "userName": "sjx",
-      "unitPrice": 0.0
+      "unitWeight": 94.1,
+      "isCheck": false,
+      "companyName": "嘉兴海豹股份有限公司"
     }
   ]
+}
+```
+
+## get record list by item id
+
+```JSON
+GET http://localhost:7779/historyRecord/itemId/${itemId}
+```
+
+### Response Body
+
+```JSON
+{
+    "code": 200,
+    "msg": "操作成功",
+    "data": [
+        {
+            "recordId": 2,
+            "type": "Initialization",
+            "date": "2024-01-19",
+            "amount": 18500,
+            "unit": "个",
+            "totalWeight": 0.0,
+            "direction": null,
+            "userName": "sjx",
+            "unitPrice": 0.0,
+            "itemName": "螺母",
+            "standard": "GB6170",
+            "specification": "M8*30",
+            "material": "-1",
+            "level": "5级",
+            "surface": "热镀锌",
+            "unitWeight": -1.0,
+            "isCheck": false,
+            "companyName": "嘉兴博羽股份有限公司"
+        },
+        {
+            "recordId": 15,
+            "type": "Initialization",
+            "date": "2024-01-21",
+            "amount": 10,
+            "unit": "个",
+            "totalWeight": null,
+            "direction": null,
+            "userName": "sjx",
+            "unitPrice": null,
+            "itemName": "螺母",
+            "standard": "GB6170",
+            "specification": "M8*30",
+            "material": "-1",
+            "level": "5级",
+            "surface": "热镀锌",
+            "unitWeight": -1.0,
+            "isCheck": false,
+            "companyName": "嘉兴海豹股份有限公司"
+        }
+    ]
 }
 ```
 
@@ -448,13 +473,6 @@ GET http://localhost:7779/historyRecord/${companyId}/${itemId}
   "data": [
     {
       "recordId": 1,
-      "itemName": "六角螺栓",
-      "standard": "GB/T 5783-2016",
-      "specification": "M8*15",
-      "material": "铁",
-      "level": "6.8",
-      "surface": "35K 光身",
-      "unitWeight": 16.2,
       "type": "Initialization",
       "date": "2020-01-01",
       "amount": 200,
@@ -462,7 +480,56 @@ GET http://localhost:7779/historyRecord/${companyId}/${itemId}
       "totalWeight": 0.0,
       "direction": null,
       "userName": "sjx",
-      "unitPrice": 0.0
+      "unitPrice": 0.0,
+      "itemName": "六角螺栓",
+      "standard": "GB/T 5783-2016",
+      "specification": "M8*15",
+      "material": "铁",
+      "level": "6.8",
+      "surface": "35K 光身",
+      "unitWeight": 16.2,
+      "isCheck": false,
+      "companyName": "嘉兴博羽股份有限公司"
+    },
+    {
+      "recordId": 7,
+      "type": "Input",
+      "date": "2020-01-02",
+      "amount": 100,
+      "unit": "个",
+      "totalWeight": 1620.0,
+      "direction": null,
+      "userName": "sjx",
+      "unitPrice": 500.0,
+      "itemName": "六角螺栓",
+      "standard": "GB/T 5783-2016",
+      "specification": "M8*15",
+      "material": "铁",
+      "level": "6.8",
+      "surface": "35K 光身",
+      "unitWeight": 16.2,
+      "isCheck": false,
+      "companyName": "嘉兴博羽股份有限公司"
+    },
+    {
+      "recordId": 16,
+      "type": "Input",
+      "date": "2024-01-21",
+      "amount": 10,
+      "unit": "个",
+      "totalWeight": 162.0,
+      "direction": null,
+      "userName": "sjx",
+      "unitPrice": 10.0,
+      "itemName": "六角螺栓",
+      "standard": "GB/T 5783-2016",
+      "specification": "M8*15",
+      "material": "铁",
+      "level": "6.8",
+      "surface": "35K 光身",
+      "unitWeight": 16.2,
+      "isCheck": false,
+      "companyName": "嘉兴博羽股份有限公司"
     }
   ]
 }
@@ -511,86 +578,6 @@ PUT http://localhost:7779/historyRecord/updateRecord
 }
 ```
 
-# Invoice
-
-## add invoice
-
-```JSON
-POST http://localhost:7779/invoice/addInvoice
-```
-
-### Request Body
-
-```JSON
-{
-  "companyId": 1,
-  "invoiceNum": "1234",
-  "invoiceCode": "abcd",
-  "taxRate": 0.45,
-  "comment": "123",
-  "startDate": "2020-1-1",
-  "endDate": "2020-1-5"
-}
-```
-
-### Response
-
-```JSON
-{
-    "code": 200,
-    "msg": "操作成功",
-    "data": 100000.0
-}
-```
-
-## update invoice
-
-```JSON
-PUT http://localhost:7779/invoice/updateInvoice
-```
-
-### Request Body
-
-```JSON
-{
-  "invoiceId": 1,
-  "companyId": 1,
-  "invoiceNum": "1234",
-  "invoiceCode": "abcd",
-  "taxRate": 0.45,
-  "comment": "123",
-  "startDate": "2020-1-1",
-  "endDate": "2020-1-5",
-  "money": 200000.0
-}
-``` 
-
-### Response
-
-```JSON
-{
-    "code": 200,
-    "msg": "操作成功",
-    "data": null
-}
-```
-
-
-## delete invoce
-
-```JSON
-DELETE http://localhost:7779/invoice/${invoiceId}
-``` 
-
-### Response
-
-```JSON
-{
-    "code": 200,
-    "msg": "操作成功",
-    "data": null
-}
-```
 
 Feedback:
 1. 初始化有bug

@@ -21,7 +21,7 @@ public interface RecordService extends IService<Record> {
 
     ResponseResult getHistoryRecordByCompanyId(Long companyId);
 
-    ResponseResult getHistoryRecordByItemId(Long companyId, Long itemId);
+    ResponseResult getHistoryRecordByItemIdAndCompanyId(Long companyId, Long itemId);
 
     ResponseResult getItemList(Long companyId);
 
@@ -32,4 +32,6 @@ public interface RecordService extends IService<Record> {
     ResponseResult deleteRecord(Long recordId);
 
     ResponseResult updateRecord(UpdateRecordDto updateRecordDto);
+
+    ResponseResult getHistoryRecordByItemId(Long itemId);
 }
