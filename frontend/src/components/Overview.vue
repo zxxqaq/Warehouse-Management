@@ -13,7 +13,7 @@
           添加公司
         </a-button>
 
-        <a-table bordered :data-source="dataSource" :columns="columns">
+        <a-table :pagination="pagination" bordered :data-source="dataSource" :columns="columns">
           <template #emptyText>
             <a-skeleton active v-if="isLoading" />
             <div v-else>
@@ -100,6 +100,10 @@ import { useStore} from "vuex";
 import { message } from 'ant-design-vue';
 const store = useStore();
 
+const pagination = ref({
+  defaultPageSize: 50,
+  hideOnSinglePage: false,
+})
 const isLoading = ref<boolean>(false);
 const companyForm = reactive({
   companyName: null,
@@ -186,7 +190,7 @@ const fetchData = async () => {
   }
 };
 
-const edit = (companyId: string) => {
+const edit = (companyId: number) => {
   editableData[companyId] = cloneDeep(dataSource.value.filter(item => companyId === item.companyId)[0]);
 };
 const save = async (companyId: string) => {
@@ -269,5 +273,8 @@ onBeforeUnmount(() => {
 }
 .editable-cell:hover .editable-cell-icon {
   display: inline-block;
+}
+:where(.css-dev-only-do-not-override-1qb1s0s).ant-table-wrapper .ant-table-pagination.ant-pagination {
+  margin: 16px 0 0 0;
 }
 </style>

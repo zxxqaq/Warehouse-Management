@@ -210,7 +210,7 @@
       </template>
     </a-drawer>
     <a-drawer
-        title="入库"
+        title="出库"
         :width="720"
         :open="openOutputForm"
         :body-style="{ paddingBottom: '80px' }"
@@ -311,8 +311,10 @@ import zhCN from "ant-design-vue/es/locale/zh_CN";
 import {paginationConfig} from "ant-design-vue/es/pagination";
 
 const isLoading = ref<boolean>(false);
+
 const pagination = ref({
-  disabled: true,
+  defaultPageSize: 50,
+  hideOnSinglePage: false,
 })
 const fetchCompanyList = async () => {
   try {
@@ -721,5 +723,8 @@ const rules: Record<string, Rule[]> = {
 }
 .editable-cell:hover .editable-cell-icon {
   display: inline-block;
+}
+:where(.css-dev-only-do-not-override-1qb1s0s).ant-table-wrapper .ant-table-pagination.ant-pagination {
+  margin: 16px 0 0 0;
 }
 </style>
