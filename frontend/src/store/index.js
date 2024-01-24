@@ -2,7 +2,7 @@ import { createStore } from 'vuex';
 
 const store = createStore({
     state: {
-        isAuthenticated: false,
+        isAuthenticated: true,
         userName: '',
         selectedMenuItem: 'menu0',
         selectedCompany: null,

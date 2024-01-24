@@ -21,7 +21,7 @@
         </a-button>
 
 
-        <a-table :pagination="pagination" bordered :data-source="dataSource" :columns="columns" :scroll="{x: 1500, y: 500}">
+        <a-table :pagination="pagination" bordered :data-source="dataSource" :columns="columns" :scroll="{x: 1600, y: 600}">
           <template #emptyText>
             <a-skeleton active v-if="isLoading" />
             <div v-else>
@@ -399,7 +399,7 @@ interface ItemSummary {
 }
 
 const columns: TableColumnsType = [
-  { title: '名称', dataIndex: 'itemName', fixed: 'left',},
+  { title: '名称', dataIndex: 'itemName', width: 120, fixed: 'left',},
   { title: '标准', dataIndex: 'standard', fixed: 'left'},
   { title: '规格', dataIndex: 'specification', width: 100},
   { title: '表面处理', dataIndex: 'surface', width: 100},
@@ -411,7 +411,7 @@ const columns: TableColumnsType = [
   { title: '总进库数', dataIndex: 'inCount', width: 100},
   { title: '总出库数', dataIndex: 'outCount', width: 100},
   { title: '初始化数', dataIndex: 'initialCount', width: 100},
-  { title: '总库存数', dataIndex: 'totalCount', fixed: "right"},
+  { title: '总库存数', dataIndex: 'totalCount', width: 120, fixed: "right"},
   { title: '操作', dataIndex: 'operation', fixed: "right",},
 ];
 const dataSource: Ref<ItemSummary[]> = ref([]);

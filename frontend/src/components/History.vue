@@ -19,7 +19,7 @@
 
 
 
-        <a-table  :pagination="pagination" bordered :data-source="dataSource" :columns="columns" :scroll="{x: 1500, y: 600}">
+        <a-table  :pagination="pagination" bordered :data-source="dataSource" :columns="columns" :scroll="{x: 1800, y: 600}">
           <template #emptyText>
             <a-skeleton active v-if="isLoading" />
             <div v-else>
@@ -29,6 +29,9 @@
           </template>
 
           <template #bodyCell="{ column, text, record }" >
+            <template v-if="column.dataIndex === 'isCheck'">
+              {{record.isCheck ? '是' : null}}
+            </template>
 
 
             <template v-if="column.dataIndex === 'type'">
@@ -54,6 +57,15 @@
                         @cancel="cancelDeletion(record.recordId)"
                     >
                       <a style="margin-left: 10px" @click="deleteRecord(record.recordId)" >删除</a>
+                    </a-popconfirm>
+
+                    <a-popconfirm
+                        v-if="dataSource.length"
+                        title="确定已开发票?"
+                        @confirm="saveCheck(record.recordId)"
+                        @cancel="cancelCheck(record.recordId)"
+                    >
+                      <a style="margin-left: 10px" @click="checkRecord(record.recordId)" >发票</a>
                     </a-popconfirm>
                   </a-config-provider>
 
@@ -391,7 +403,6 @@ const onCloseInputDrawer = () => {
 const editRecord = (recordId: number) => {
   const record = dataSource.value.find(item => item.recordId === recordId);
   if (record) {
-    console.log(record.type);
     if (record.type === '入库'){
       showInputDrawer(recordId);
     }else if (record.type === '出库') {
@@ -469,6 +480,7 @@ const handleCompanyChange  = (id: number) => {
 const columns: TableColumnsType = [
   { title: '类型', dataIndex: 'type',width: 80, fixed: 'left',},
   { title: '时间', dataIndex: 'date', fixed: 'left',width: 120},
+  { title: '已发票', dataIndex: 'isCheck',width: 100},
   { title: '出库方向', dataIndex: 'direction',width: 100},
   { title: '名称', dataIndex: 'itemName',width: 110 },
   { title: '标准', dataIndex: 'standard', },
@@ -503,6 +515,7 @@ interface Records {
   userName: string,
   unitPrice: number,
   companyName: string
+  isCheck: boolean,
 }
 const dataSource: Ref<Records[]> = ref([]);
 const fetchItemData = async (companyId: number, itemId:number) => {
@@ -581,12 +594,38 @@ onBeforeUnmount(() => {
   message.destroy(1);
 })
 
-const deleteRecord = (recordId: number) => {
-  editableData[recordId] = cloneDeep(dataSource.value.filter(item => recordId === item.recordId)[0]);
+const deleteRecord = (recordId: number) => {};
+
+const checkRecord = (recordId: number) => {};
+const cancelCheck = (recordId: number) => {};
+
+const saveCheck = async (recordId: number) => {
+  const record = dataSource.value.find(item => item.recordId === recordId);
+  const recordCopy = cloneDeep(dataSource.value.find(item => item.recordId === recordId));
+  if (recordCopy) {
+    recordCopy.isCheck = true;
+    try {
+      const response = await fetch('http://localhost:7779/historyRecord/updateRecord', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(recordCopy)
+      })
+      const data = await response.json();
+      if (data.code === 200) {
+        message.success('已开发票');
+        record.isCheck = true;
+      } else {
+        message.error('开发票失败，请重试');
+      }
+    } catch (error) {
+      console.error('An error occurred in saving edited company:', error);
+    }
+  }
 };
-const cancelDeletion = (recordId: number) => {
-  delete editableData[recordId];
-};
+
+const cancelDeletion = (recordId: number) => {};
 
 const saveDeletion = async (recordId: number) => {
   try {
