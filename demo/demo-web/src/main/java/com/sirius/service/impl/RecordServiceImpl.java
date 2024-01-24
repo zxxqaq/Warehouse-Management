@@ -23,6 +23,7 @@ import com.sirius.service.ItemService;
 import com.sirius.service.RecordService;
 import com.sirius.service.UserService;
 import com.sirius.utils.BeanCopyUtils;
+import com.sirius.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -64,8 +65,7 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
         }
         Record record = BeanCopyUtils.beanCopy(initializeItemDto, Record.class);
         record.setItemId(item.getItemId());
-        //TODO 用户ID设置
-        record.setUserId(1L);
+        record.setUserId(SecurityUtils.getUserId());
         record.setType(RecordType.Initialization);
         this.save(record);
 
@@ -118,8 +118,7 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
     public ResponseResult inputItem(InputItemDto inputItemDto) {
         Record record = BeanCopyUtils.beanCopy(inputItemDto, Record.class);
         record.setType(RecordType.Input);
-        //TODO 用户ID设置
-        record.setUserId(1L);
+        record.setUserId(SecurityUtils.getUserId());
         Item item = itemMapper.selectById(inputItemDto.getItemId());
         record.setAmount((long)(inputItemDto.getTotalWeight()/item.getUnitWeight()));
         save(record);
@@ -130,8 +129,7 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
     public ResponseResult outputItem(OutputItemDto outputItemDto) {
         Record record = BeanCopyUtils.beanCopy(outputItemDto, Record.class);
         record.setType(RecordType.Output);
-        //TODO 用户ID设置
-        record.setUserId(1L);
+        record.setUserId(SecurityUtils.getUserId());
         save(record);
         return ResponseResult.okResult();
     }
@@ -145,8 +143,7 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
     @Override
     public ResponseResult updateRecord(UpdateRecordDto updateRecordDto) {
         Record record = BeanCopyUtils.beanCopy(updateRecordDto, Record.class);
-        //TODO: 用户ID设置
-        record.setUserId(1L);
+        record.setUserId(SecurityUtils.getUserId());
         if(this.updateById(record)){
             return ResponseResult.okResult();
         } else {

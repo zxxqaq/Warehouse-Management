@@ -8,16 +8,55 @@
 POST http://localhost:7779/login
 ```
 
-#### Request body
+## Request body
 
 ```json
 {
-  "name": "sjx",
+  "username": "sjx",
   "password": "123abc"
 }
 ```
 
-#### Response
+## Response
+
+
+```json
+{
+  "code": 200,
+  "msg": "操作成功",
+  "data": "eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiI5OTFjZmU4OTE3NDU0MGE1YjM0NzIxY2I1MjUwNThmMCIsInN1YiI6IjIiLCJpc3MiOiJzZyIsImlhdCI6MTcwNjA3OTY4NSwiZXhwIjoxNzA2MTY2MDg1fQ.Pr0KbSFU90wJdRVztP99Kv4qFo98___tgA1X8HxL3YI"
+}
+
+```
+
+data 中存有该用户的 token，除了 login 和 register 操作以外均需要在请求头中携带 token 字段，如果没有 token 字段则报错如下
+
+```JSON
+{
+  "timestamp": "2024-01-24",
+  "status": 403,
+  "error": "Forbidden",
+  "path": "/historyRecord/1/1"
+}
+```
+
+
+# Register
+
+```
+POST http://localhost:7779/register
+```
+
+## Request body
+
+```json
+{
+  "username": "sjx",
+  "password": "123abc"
+}
+```
+
+## Response
 
 ```json
 {
@@ -25,7 +64,6 @@ POST http://localhost:7779/login
   "msg": "操作成功",
   "data": null
 }
-
 ```
 
 # Company overview

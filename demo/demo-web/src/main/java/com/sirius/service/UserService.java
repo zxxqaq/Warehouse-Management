@@ -7,5 +7,7 @@ import com.sirius.domain.entity.User;
 
 public interface UserService extends IService<User> {
 
-    ResponseResult login(LoginUserDto loginUserDto);
+    ResponseResult login(User user);
+
+    ResponseResult register(User user);
 }
