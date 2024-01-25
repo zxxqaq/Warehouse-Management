@@ -175,6 +175,116 @@ POST http://localhost:7779/overview/addCompany
 ```
 # Management
 
+
+## total item
+
+```JSON
+GET http://localhost:7779/management
+```
+
+### Response Body
+
+```JSON
+{
+  "code": 200,
+  "msg": "操作成功",
+  "data": [
+    {
+      "itemId": 4,
+      "itemName": "六角螺栓",
+      "standard": "GB/T 5783-2016",
+      "specification": "M8*15",
+      "material": "铁",
+      "level": "6.8",
+      "surface": "35K 光身",
+      "unitWeight": 16.2,
+      "unit": "个",
+      "inCount": 110,
+      "outCount": 0,
+      "initialCount": 200,
+      "totalCount": 310
+    },
+    {
+      "itemId": 5,
+      "itemName": "螺母",
+      "standard": "GB6170",
+      "specification": "M8*30",
+      "material": "-1",
+      "level": "5级",
+      "surface": "热镀锌",
+      "unitWeight": -1.0,
+      "unit": "个",
+      "inCount": 0,
+      "outCount": 0,
+      "initialCount": 18510,
+      "totalCount": 18510
+    },
+    {
+      "itemId": 6,
+      "itemName": "螺母",
+      "standard": "GB6170",
+      "specification": "M8*31",
+      "material": "-1",
+      "level": "5级",
+      "surface": "热镀锌",
+      "unitWeight": -1.0,
+      "unit": "个",
+      "inCount": 0,
+      "outCount": 0,
+      "initialCount": 200,
+      "totalCount": 200
+    },
+    {
+      "itemId": 7,
+      "itemName": "八角螺栓",
+      "standard": "GB/T 5783-2016",
+      "specification": "M8*35",
+      "material": "铁",
+      "level": "6.8",
+      "surface": "35K 光身",
+      "unitWeight": 16.2,
+      "unit": "个",
+      "inCount": 30,
+      "outCount": 40,
+      "initialCount": 200,
+      "totalCount": 190
+    },
+    {
+      "itemId": 8,
+      "itemName": "六角螺栓",
+      "standard": " GB/T 5783-2016",
+      "specification": "M16*40",
+      "material": "锌",
+      "level": "5.6",
+      "surface": "35K 光身",
+      "unitWeight": 94.1,
+      "unit": "个",
+      "inCount": 0,
+      "outCount": 0,
+      "initialCount": 100,
+      "totalCount": 100
+    },
+    {
+      "itemId": 9,
+      "itemName": "8.8级外六角螺栓",
+      "standard": " GB/T 5783-2016",
+      "specification": "M16×45",
+      "material": "锌",
+      "level": "40Cr  8.8",
+      "surface": "40Cr 没热处理",
+      "unitWeight": 94.6,
+      "unit": "个",
+      "inCount": 0,
+      "outCount": 0,
+      "initialCount": 0,
+      "totalCount": 0
+    }
+  ]
+}
+
+```
+
+
 1. 向后端发送companyId，查询对应的itemId和信息
 
 需要返回的数据：
@@ -648,7 +758,7 @@ TODO:
 2. Record List（按照公司ID查询，按照itemId+companyId查询）Done
 3. 添加Record（入库+出库）(入库直接用公斤数来算amount) Done
 4. 删除Record（只能删除第一个） Done 
-5. 用户登录
+5. 用户登录 Done
 6. excel导入导出
 7. 潜在的删除数据导致的查询bug
 

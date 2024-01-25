@@ -27,6 +27,7 @@ import com.sirius.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -56,9 +57,9 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
 
         Item item = BeanCopyUtils.beanCopy(initializeItemDto, Item.class);
         Long itemId = itemService.isExist(item);
-        if(itemId == -1){
+        if (itemId == -1) {
             itemMapper.insert(item);
-        } else if (containItem(itemId, initializeItemDto.getCompanyId())){
+        } else if (containItem(itemId, initializeItemDto.getCompanyId())) {
             return ResponseResult.errorResult(AppHttpCodeEnum.ITEM_EXIST);
         } else {
             item.setItemId(itemId);
@@ -120,7 +121,7 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
         record.setType(RecordType.Input);
         record.setUserId(SecurityUtils.getUserId());
         Item item = itemMapper.selectById(inputItemDto.getItemId());
-        record.setAmount((long)(inputItemDto.getTotalWeight()/item.getUnitWeight()));
+        record.setAmount((long) (inputItemDto.getTotalWeight() / item.getUnitWeight()));
         save(record);
         return ResponseResult.okResult();
     }
@@ -144,7 +145,7 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
     public ResponseResult updateRecord(UpdateRecordDto updateRecordDto) {
         Record record = BeanCopyUtils.beanCopy(updateRecordDto, Record.class);
         record.setUserId(SecurityUtils.getUserId());
-        if(this.updateById(record)){
+        if (this.updateById(record)) {
             return ResponseResult.okResult();
         } else {
             return ResponseResult.errorResult(AppHttpCodeEnum.SYSTEM_ERROR);
@@ -157,6 +158,19 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
         queryWrapper.eq(Record::getItemId, itemId);
         List<Record> list = this.list(queryWrapper);
         List<HistoryRecordVo> voList = this.getHistoryRecordVoList(list);
+        return ResponseResult.okResult(voList);
+    }
+
+    @Override
+    public ResponseResult getTotalItemList() {
+        LambdaQueryWrapper<Record> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Record::getType, RecordType.Initialization);
+        List<Record> list = this.list(queryWrapper);
+
+        List<ItemVo> voList = this.getItemVoList(list);
+
+        this.setStatistics(voList);
+
         return ResponseResult.okResult(voList);
     }
 
@@ -187,8 +201,48 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
         });
     }
 
+
+    private void setStatistics(List<ItemVo> voList) {
+        voList.forEach(itemVo -> {
+            itemVo.setTotalCount(0L);
+            itemVo.setInCount(0L);
+            itemVo.setOutCount(0L);
+            LambdaQueryWrapper<Record> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(Record::getItemId, itemVo.getItemId());
+            queryWrapper.eq(Record::getType, RecordType.Input);
+            List<Record> list = this.list(queryWrapper);
+            list.forEach(record -> {
+                itemVo.setInCount(itemVo.getInCount() + record.getAmount());
+            });
+
+            queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(Record::getItemId, itemVo.getItemId());
+            queryWrapper.eq(Record::getType, RecordType.Output);
+            list = this.list(queryWrapper);
+            list.forEach(record -> {
+                itemVo.setOutCount(itemVo.getOutCount() + record.getAmount());
+            });
+
+            itemVo.setTotalCount(itemVo.getInCount() - itemVo.getOutCount() + itemVo.getInitialCount());
+        });
+    }
+
+
     private List<ItemVo> getItemVoList(List<Record> list) {
-        return list.stream().map(record -> {
+
+        HashMap<Long, Record> map = new HashMap<>();
+
+        for (Record record : list) {
+            if (map.containsKey(record.getItemId())) {
+                Record r = map.get(record.getItemId());
+                r.setAmount(r.getAmount() + record.getAmount());
+            } else {
+                map.put(record.getItemId(), record);
+            }
+        }
+
+
+        return map.values().stream().map(record -> {
             ItemVo itemVo = new ItemVo();
             Item item = itemService.getById(record.getItemId());
             itemVo.setItemId(item.getItemId());
@@ -197,6 +251,7 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
             return itemVo;
         }).collect(Collectors.toList());
     }
+
 
     private List<HistoryRecordVo> getHistoryRecordVoList(List<Record> list) {
         return list.stream().map(record -> {
@@ -219,7 +274,7 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
         vo.setUserName(user.getUserName());
     }
 
-    private void setVoItem(ContainItem itemVo, Item item){
+    private void setVoItem(ContainItem itemVo, Item item) {
         itemVo.setItemName(item.getItemName());
         itemVo.setLevel(item.getLevel());
         itemVo.setMaterial(item.getMaterial());

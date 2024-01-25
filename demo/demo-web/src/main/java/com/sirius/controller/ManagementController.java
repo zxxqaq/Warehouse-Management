@@ -25,6 +25,10 @@ public class ManagementController {
         return recordService.getItemList(companyId);
     }
 
+    @GetMapping
+    public ResponseResult getTotalItemList(){
+        return recordService.getTotalItemList();
+    }
 
     @PostMapping("/inputItem")
     public ResponseResult inputItem(@RequestBody InputItemDto inputItemDto) {

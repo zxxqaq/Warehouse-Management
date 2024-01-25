@@ -34,4 +34,6 @@ public interface RecordService extends IService<Record> {
     ResponseResult updateRecord(UpdateRecordDto updateRecordDto);
 
     ResponseResult getHistoryRecordByItemId(Long itemId);
+
+    ResponseResult getTotalItemList();
 }
