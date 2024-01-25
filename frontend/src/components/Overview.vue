@@ -51,9 +51,7 @@
         </a-table>
       </div>
     </a-layout-content>
-    <a-layout-footer style="text-align: center">
-      Ant Design ©2018 Created by Ant UED
-    </a-layout-footer>
+    <Footer></Footer>
     <a-drawer
         title="添加新公司"
         :width="720"
@@ -98,6 +96,7 @@ import {before, cloneDeep} from 'lodash-es';
 import {TableColumnsType} from "ant-design-vue";
 import { useStore} from "vuex";
 import { message } from 'ant-design-vue';
+import Footer from "./Footer.vue";
 const store = useStore();
 
 const pagination = ref({
@@ -127,6 +126,12 @@ const disabled = computed(() => {
   return !(companyForm.companyName && companyForm.taxNum);
 })
 const onSubmitCompany = async () => {
+  onCloseCompany();
+  message.loading({
+    content: () => '加载中',
+    duration: 0,
+    key: 0,
+  })
   try {
     const response = await fetch('http://localhost:7779/overview/addCompany',{
       method: 'POST',
@@ -137,15 +142,15 @@ const onSubmitCompany = async () => {
       body: JSON.stringify(companyForm),
     });
     const data = await response.json();
+    message.destroy(0);
     if (data.code === 200){
       message.success('添加公司成功');
       await fetchData();
-      companyForm.companyName = null;
-      companyForm.taxNum = null;
-      onCloseCompany();
     }else {
       message.error('添加公司失败');
     }
+    companyForm.companyName = null;
+    companyForm.taxNum = null;
   }catch (error){
     console.error('An error occurred during add new company:',error);
   }

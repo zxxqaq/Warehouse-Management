@@ -21,7 +21,7 @@
         </a-button>
 
 
-        <a-table :pagination="pagination" bordered :data-source="dataSource" :columns="columns" :scroll="{x: 1600, y: 600}">
+        <a-table :pagination="pagination" bordered :data-source="dataSource" :columns="columns" :scroll="{x: 1800, y: 600}">
           <template #emptyText>
             <a-skeleton active v-if="isLoading" />
             <div v-else>
@@ -40,7 +40,7 @@
         </a-table>
       </div>
     </a-layout-content>
-
+    <Footer></Footer>
     <a-drawer
         title="初始化/新建"
         :width="720"
@@ -106,13 +106,13 @@
           </a-col>
           <a-col :span="12">
             <a-form-item label="数量" name="amount">
-              <a-input-number v-model:value="initializeForm.amount" placeholder="请输入整数" style="width: 100%" />
+              <a-input v-model:value="initializeForm.amount" placeholder="请输入整数" style="width: 100%" />
             </a-form-item>
           </a-col>
         </a-row>
         <a-row :gutter="16">
           <a-col :span="24">
-            <a-alert message="如果暂无数据，请输入-1" type="warning" show-icon />
+            <a-alert message="数量用于初始化库存，如果只是新建一个零件，数量请输入0" type="warning" show-icon />
           </a-col>
         </a-row>
       </a-form>
@@ -199,8 +199,6 @@
             </a-form-item>
           </a-col>
         </a-row>
-
-
       </a-form>
       <template #extra>
         <a-space>
@@ -300,7 +298,7 @@
 </template>
 <script lang="ts" setup>
 import type {Ref, UnwrapRef} from 'vue';
-import {computed, onMounted, reactive, ref} from 'vue';
+import {computed, onBeforeUnmount, onMounted, reactive, ref} from 'vue';
 import {message, SelectProps, TableColumnsType} from "ant-design-vue";
 import {FallOutlined, InboxOutlined, MoneyCollectOutlined, PlusOutlined} from '@ant-design/icons-vue';
 import type {Rule} from 'ant-design-vue/es/form';
@@ -309,6 +307,7 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
 import zhCN from "ant-design-vue/es/locale/zh_CN";
 import {paginationConfig} from "ant-design-vue/es/pagination";
+import Footer from "./Footer.vue";
 
 const isLoading = ref<boolean>(false);
 
@@ -365,6 +364,12 @@ onMounted( async () => {
     handleCompanyChange(companyId.value)
   }
 })
+const checkHistory = ref<boolean>(false);
+onBeforeUnmount(() => {
+  if (checkHistory.value === false){
+    store.commit('setSelectedCompany',null);
+  }
+})
 
 const handleCompanyChange  = (id: number) => {
   companyId.value = id;
@@ -408,10 +413,10 @@ interface ItemSummary {
 }
 
 const columns: TableColumnsType = [
-  { title: '名称', dataIndex: 'itemName', width: 120, fixed: 'left',},
+  { title: '名称', dataIndex: 'itemName', fixed: 'left',},
   { title: '标准', dataIndex: 'standard', fixed: 'left'},
   { title: '规格', dataIndex: 'specification', width: 100},
-  { title: '表面处理', dataIndex: 'surface', width: 100},
+  { title: '表面处理', dataIndex: 'surface'},
   { title: '材质', dataIndex: 'material', width: 100},
   { title: '等级', dataIndex: 'level', width: 100},
   { title: '单重', dataIndex: 'unitWeight', width: 100},
@@ -420,7 +425,7 @@ const columns: TableColumnsType = [
   { title: '总进库数', dataIndex: 'inCount', width: 100},
   { title: '总出库数', dataIndex: 'outCount', width: 100},
   { title: '初始化数', dataIndex: 'initialCount', width: 100},
-  { title: '总库存数', dataIndex: 'totalCount', width: 120, fixed: "right"},
+  { title: '总库存数', dataIndex: 'totalCount', fixed: "right"},
   { title: '操作', dataIndex: 'operation', fixed: "right",},
 ];
 const dataSource: Ref<ItemSummary[]> = ref([]);
@@ -480,6 +485,12 @@ const submitInitializeDisabled = computed(() => {
   && initializeForm.amount);
 })
 const onSubmitInitializeForm = async () => {
+  onCloseInitializeDrawer();
+  message.loading({
+    content: () => '加载中',
+    duration: 0,
+    key: 0,
+  })
   initializeForm.companyId = companyId.value;
   try {
     const response = await fetch('http://localhost:7779/management/initializeItem',{
@@ -491,24 +502,24 @@ const onSubmitInitializeForm = async () => {
       body: JSON.stringify(initializeForm),
     });
     const data = await response.json();
-    onCloseInitializeDrawer();
-    clearInitializeForm();
+    message.destroy(0);
     if (data.code === 200){
       message.success('初始化/新建成功');
       await fetchData(companyId.value);
-      //TODO get到itemList， 刷新
     }else if (data.code === 501){
       message.error('初始化/新建失败，零件已存在');
     }
     else {
       message.error('初始化/新建失败,请重试');
     }
+    clearInitializeForm();
   }catch (error){
     console.error('An error occurred when submit initialize form:', error)
   }
 }
 
 const checkItemHistory = (itemId: number) =>{
+  checkHistory.value = true;
   store.commit('setItemId',itemId);
   store.commit('setSelectedCompany', companyId.value);
   console.log('company');
@@ -619,6 +630,12 @@ const submitDisabled = computed(() => {
 dayjs.locale('zh-cn')
 const onSubmitInputDrawer = async () => {
   Object.assign(inputSubmitForm, inputForm);
+  onCloseInputDrawer();
+  message.loading({
+    content: () => '加载中',
+    duration: 0,
+    key: 0,
+  })
   try {
     const response = await fetch('http://localhost:7779/management/inputItem', {
       method: 'POST',
@@ -629,22 +646,28 @@ const onSubmitInputDrawer = async () => {
       body: JSON.stringify(inputSubmitForm)
     })
     const data = await response.json();
+    message.destroy(0);
     if (data.code === 200) {
       await fetchData(companyId.value);
-      onCloseInputDrawer();
       message.success('入库成功');
-      //清空两个表
-      clearInputForm();
-      clearInputSubmitForm();
     } else {
       message.error('入库失败，请重试');
     }
+    //清空两个表
+    clearInputForm();
+    clearInputSubmitForm();
   } catch (error) {
     console.error('An error occurred in saving edited company:', error);
   }
 }
 const onSubmitOutputDrawer = async () => {
   Object.assign(outputSubmitForm, outputForm);
+  onCloseOutputDrawer();
+  message.loading({
+    content: () => '加载中',
+    duration: 0,
+    key: 0,
+  })
   try {
     const response = await fetch('http://localhost:7779/management/outputItem', {
       method: 'POST',
@@ -655,16 +678,16 @@ const onSubmitOutputDrawer = async () => {
       body: JSON.stringify(outputSubmitForm)
     })
     const data = await response.json();
+    message.destroy(0);
     if (data.code === 200) {
       await fetchData(companyId.value);
-      onCloseOutputDrawer();
       message.success('出库成功');
-      //清空两个表
-      clearOutputForm();
-      clearOutputSubmitForm();
     } else {
       message.error('出库失败，请重试');
     }
+    //清空两个表
+    clearOutputForm();
+    clearOutputSubmitForm();
   } catch (error) {
     console.error('An error occurred in saving edited company:', error);
   }

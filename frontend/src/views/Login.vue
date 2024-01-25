@@ -38,6 +38,7 @@
 import {computed, reactive} from 'vue';
 import { useStore } from "vuex";
 import router from "../router";
+import {message} from "ant-design-vue";
 
 const store = useStore();
 interface FormState {
@@ -61,6 +62,11 @@ const onFinishFailed = (errorInfo: any) => {
 };
 
 const submitForm = async () => {
+  message.loading({
+    content: () => '登录中',
+    duration: 0,
+    key: 0,
+  })
   try {
     const response = await fetch('http://localhost:7779/login', {
       method: 'POST',
@@ -69,15 +75,17 @@ const submitForm = async () => {
       },
       body: JSON.stringify(formState),
     });
-
     const data = await response.json();
     console.log(data.data);
+    message.destroy(0);
     if (data.code === 200) {
       store.commit('setAuthentication', true);
       store.commit('setToken', data.data);
       await router.push('/home');
+      message.success('登录成功')
     } else {
       console.error('Login failed:', data.message);
+      message.error('登录失败，请重试')
     }
   } catch (error) {
     console.error('An error occurred during login:', error);

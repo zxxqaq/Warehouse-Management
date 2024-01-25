@@ -19,7 +19,7 @@
 
 
 
-        <a-table  :pagination="pagination" bordered :data-source="dataSource" :columns="columns" :scroll="{x: 1800, y: 600}">
+        <a-table  :pagination="pagination" bordered :data-source="dataSource" :columns="columns" :scroll="{x: 2000, y: 600}">
           <template #emptyText>
             <a-skeleton active v-if="isLoading" />
             <div v-else>
@@ -345,6 +345,12 @@ const onCloseOutputDrawer = () => {
 };
 const onSubmitOutputDrawer = async () => {
   Object.assign(outputSubmitForm, outputForm);
+  onCloseOutputDrawer();
+  message.loading({
+    content: () => '加载中',
+    duration: 0,
+    key: 0,
+  })
   try {
     const response = await fetch('http://localhost:7779/historyRecord/updateRecord', {
       method: 'PUT',
@@ -355,23 +361,28 @@ const onSubmitOutputDrawer = async () => {
       body: JSON.stringify(outputSubmitForm)
     })
     const data = await response.json();
+    message.destroy(0);
     if (data.code === 200) {
-      await fetchData(companyId.value);
-      onCloseOutputDrawer();
       message.success('修改历史成功');
-      //清空两个表
-      clearOutputForm();
-      clearOutputSubmitForm();
       await fetchData(companyId.value);
     } else {
       message.error('修改历史失败，请重试');
     }
+    //清空两个表
+    clearOutputForm();
+    clearOutputSubmitForm();
   } catch (error) {
     console.error('An error occurred in saving edited company:', error);
   }
 }
 const onSubmitInputDrawer = async () => {
   Object.assign(inputSubmitForm, inputForm);
+  onCloseInputDrawer();
+  message.loading({
+    content: () => '加载中',
+    duration: 0,
+    key: 0,
+  })
   try {
     const response = await fetch('http://localhost:7779/historyRecord/updateRecord', {
       method: 'PUT',
@@ -382,17 +393,16 @@ const onSubmitInputDrawer = async () => {
       body: JSON.stringify(inputSubmitForm)
     })
     const data = await response.json();
+    message.destroy(0);
     if (data.code === 200) {
-      await fetchData(companyId.value);
-      onCloseInputDrawer();
       message.success('修改历史成功');
-      //清空两个表
-      clearInputForm();
-      clearInputSubmitForm();
       await fetchData(companyId.value);
     } else {
       message.error('修改历史失败，请重试');
     }
+    //清空两个表
+    clearInputForm();
+    clearInputSubmitForm();
   } catch (error) {
     console.error('An error occurred in saving edited company:', error);
   }
@@ -487,19 +497,19 @@ const columns: TableColumnsType = [
   { title: '类型', dataIndex: 'type',width: 80, fixed: 'left',},
   { title: '时间', dataIndex: 'date', fixed: 'left',width: 120},
   { title: '已发票', dataIndex: 'isCheck',width: 100},
-  { title: '出库方向', dataIndex: 'direction',width: 100},
-  { title: '名称', dataIndex: 'itemName',width: 110 },
+  { title: '出库方向', dataIndex: 'direction'},
+  { title: '名称', dataIndex: 'itemName', },
   { title: '标准', dataIndex: 'standard', },
   { title: '规格', dataIndex: 'specification', width: 100},
-  { title: '表面处理', dataIndex: 'surface', width: 100},
-  { title: '材质', dataIndex: 'material', width: 80},
-  { title: '等级', dataIndex: 'level', width: 80},
+  { title: '表面处理', dataIndex: 'surface', },
+  { title: '材质', dataIndex: 'material', width: 100},
+  { title: '等级', dataIndex: 'level', },
   { title: '单重', dataIndex: 'unitWeight', width: 80},
   { title: '单位', dataIndex: 'unit', width: 70},
-  { title: '单价', dataIndex: 'unitPrice', width: 80},
-  { title: '重量', dataIndex: 'totalWeight', width: 80},
-  { title: '操作人', dataIndex: 'userName', width: 80},
-  { title: '数量', dataIndex: 'amount', width: 80,fixed:'right'},
+  { title: '单价', dataIndex: 'unitPrice', width: 100},
+  { title: '重量', dataIndex: 'totalWeight', width: 100},
+  { title: '操作人', dataIndex: 'userName', width: 100},
+  { title: '数量', dataIndex: 'amount',fixed:'right'},
   { title: '操作', dataIndex: 'operation', fixed: "right",},
 ];
 
