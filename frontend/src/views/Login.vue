@@ -1,7 +1,7 @@
 <template>
   <div class="login-form">
     <a-card title="用户登录" style="width: 500px">
-      <template #extra><a href="#">帮助</a></template>
+      <template #extra><a @click="">帮助</a></template>
       <a-form
           :model="formState"
           name="basic"
@@ -35,10 +35,11 @@
   </div>
 </template>
 <script lang="ts" setup>
-import {computed, reactive} from 'vue';
+import {computed, reactive, ref} from 'vue';
 import { useStore } from "vuex";
 import router from "../router";
 import {message} from "ant-design-vue";
+
 
 const store = useStore();
 interface FormState {

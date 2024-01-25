@@ -32,8 +32,8 @@
 
           <template #bodyCell="{ column, text, record }" >
             <template v-if="column.dataIndex === 'operation'">
-              <a @click="showInputDrawer(record.itemId)">入库</a>
-              <a style="margin-left: 10px" @click="showOutputDrawer(record.itemId)">出库</a>
+              <a v-if="showLink"  @click="showInputDrawer(record.itemId)">入库</a>
+              <a v-if="showLink" style="margin-left: 10px" @click="showOutputDrawer(record.itemId)">出库</a>
               <a style="margin-left: 10px" @click="checkItemHistory(record.itemId)">历史</a>
             </template>
           </template>
@@ -297,7 +297,7 @@
 </template>
 <script lang="ts" setup>
 import type {Ref, UnwrapRef} from 'vue';
-import {computed, onBeforeUnmount, onMounted, reactive, ref} from 'vue';
+import {computed, onBeforeUnmount, onMounted, reactive, ref, watch} from 'vue';
 import {message, SelectProps, TableColumnsType} from "ant-design-vue";
 import {FallOutlined, InboxOutlined, MoneyCollectOutlined, PlusOutlined} from '@ant-design/icons-vue';
 import type {Rule} from 'ant-design-vue/es/form';
@@ -309,7 +309,7 @@ import {paginationConfig} from "ant-design-vue/es/pagination";
 import Footer from "./Footer.vue";
 
 const isLoading = ref<boolean>(false);
-
+const showLink = ref<boolean>(false);
 const pagination = ref({
   defaultPageSize: 50,
   hideOnSinglePage: false,
@@ -334,14 +334,20 @@ const fetchCompanyList = async () => {
 };
 const store = useStore();
 let companyList = store.getters.getCompanyList;
-const options = ref<SelectProps['options']>(companyList.map(item => ({
-  value: String(item.companyId),
-  label: item.companyName,
-})));
+const options = ref<SelectProps['options']>([
+  { value: '0', label: '总库存' }, // 额外的选项
+  ...companyList.map(item => ({
+    value: String(item.companyId),
+    label: item.companyName,
+  }))
+]);
 
-let defaultSelectCompany = ref('选择公司');
+
+let defaultSelectCompany = ref('总库存');
 const companyId = ref();
-
+watch(companyId,(newValue) => {
+  showLink.value = newValue !== 0;
+})
 
 
 onMounted( async () => {
@@ -362,23 +368,33 @@ onMounted( async () => {
     }
     handleCompanyChange(companyId.value)
   }
-  store.commit('setSelectedCompany',null);
+  store.commit('setSelectedCompany',0);
 })
 
 
 const handleCompanyChange  = (id: number) => {
+  console.log(id);
   companyId.value = id;
   fetchData(companyId.value);
 }
 
-const fetchData = async (companyId: number) => {
+const fetchData = async (id: number) => {
   try {
     isLoading.value = true;
-    const response = await fetch(`http://localhost:7779/management/${companyId}`,{
-      headers: {
-        'token' : store.getters.getToken,
-      }
-    });
+    let response;
+    if (id == 0){
+      response = await fetch(`http://localhost:7779/management`,{
+        headers: {
+          'token' : store.getters.getToken,
+        }
+      });
+    }else {
+      response = await fetch(`http://localhost:7779/management/${id}`,{
+        headers: {
+          'token' : store.getters.getToken,
+        }
+      });
+    }
     const data = await response.json();
     if (data.code === 200){
       dataSource.value = data.data
