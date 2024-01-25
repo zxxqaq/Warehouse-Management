@@ -40,7 +40,6 @@
         </a-table>
       </div>
     </a-layout-content>
-    <Footer></Footer>
     <a-drawer
         title="初始化/新建"
         :width="720"
@@ -363,13 +362,9 @@ onMounted( async () => {
     }
     handleCompanyChange(companyId.value)
   }
+  store.commit('setSelectedCompany',null);
 })
-const checkHistory = ref<boolean>(false);
-onBeforeUnmount(() => {
-  if (checkHistory.value === false){
-    store.commit('setSelectedCompany',null);
-  }
-})
+
 
 const handleCompanyChange  = (id: number) => {
   companyId.value = id;
@@ -519,7 +514,6 @@ const onSubmitInitializeForm = async () => {
 }
 
 const checkItemHistory = (itemId: number) =>{
-  checkHistory.value = true;
   store.commit('setItemId',itemId);
   store.commit('setSelectedCompany', companyId.value);
   console.log('company');

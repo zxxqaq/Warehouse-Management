@@ -75,7 +75,6 @@
         </a-table>
       </div>
     </a-layout-content>
-
     <a-drawer
         title="入库修改"
         :width="720"
@@ -254,6 +253,7 @@ import type { Ref } from 'vue';
 import {cloneDeep} from "lodash-es";
 import zhCN from "ant-design-vue/es/locale/zh_CN";
 import dayjs, { Dayjs } from 'dayjs';
+import Footer from "./Footer.vue";
 
 const openInputForm = ref<boolean>(false);
 const openOutputForm = ref<boolean>(false);
@@ -482,6 +482,7 @@ onMounted( async () => {
     });
     await fetchItemData(companyId.value, itemId.value);
   }
+  //清空全局中的item和company变量
   store.commit('setItemId', null);
   store.commit('setSelectedCompany', null);
 })

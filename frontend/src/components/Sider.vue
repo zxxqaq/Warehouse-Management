@@ -23,6 +23,7 @@
 import {DesktopOutlined, HistoryOutlined, TeamOutlined, UserOutlined} from "@ant-design/icons-vue";
 import {ref, watch} from "vue";
 import { useStore} from "vuex";
+import Footer from "@/components/Footer.vue";
 
 const store = useStore();
 const collapsed = ref(false);

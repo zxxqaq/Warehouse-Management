@@ -51,7 +51,6 @@
         </a-table>
       </div>
     </a-layout-content>
-    <Footer></Footer>
     <a-drawer
         title="添加新公司"
         :width="720"
