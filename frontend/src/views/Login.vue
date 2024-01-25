@@ -71,10 +71,10 @@ const submitForm = async () => {
     });
 
     const data = await response.json();
-
+    console.log(data.data);
     if (data.code === 200) {
       store.commit('setAuthentication', true);
-      store.commit('setUsername', formState.userName);
+      store.commit('setToken', data.data);
       await router.push('/home');
     } else {
       console.error('Login failed:', data.message);

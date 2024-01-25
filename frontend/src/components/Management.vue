@@ -318,7 +318,12 @@ const pagination = ref({
 })
 const fetchCompanyList = async () => {
   try {
-    const response = await fetch('http://localhost:7779/overview/companyList');
+    const response = await fetch('http://localhost:7779/overview/companyList',{
+      method: 'GET',
+      headers: {
+        'token' : store.getters.getToken,
+      }
+    });
     const data = await response.json();
     if (data.code === 200){
       store.commit('setCompanyList',data.data);
@@ -369,7 +374,11 @@ const handleCompanyChange  = (id: number) => {
 const fetchData = async (companyId: number) => {
   try {
     isLoading.value = true;
-    const response = await fetch(`http://localhost:7779/management/${companyId}`);
+    const response = await fetch(`http://localhost:7779/management/${companyId}`,{
+      headers: {
+        'token' : store.getters.getToken,
+      }
+    });
     const data = await response.json();
     if (data.code === 200){
       dataSource.value = data.data
@@ -477,6 +486,7 @@ const onSubmitInitializeForm = async () => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'token' : store.getters.getToken,
       },
       body: JSON.stringify(initializeForm),
     });
@@ -614,6 +624,7 @@ const onSubmitInputDrawer = async () => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'token' : store.getters.getToken,
       },
       body: JSON.stringify(inputSubmitForm)
     })
@@ -639,6 +650,7 @@ const onSubmitOutputDrawer = async () => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'token' : store.getters.getToken,
       },
       body: JSON.stringify(outputSubmitForm)
     })

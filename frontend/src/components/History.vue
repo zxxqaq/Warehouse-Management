@@ -350,6 +350,7 @@ const onSubmitOutputDrawer = async () => {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
+        'token' : store.getters.getToken,
       },
       body: JSON.stringify(outputSubmitForm)
     })
@@ -376,6 +377,7 @@ const onSubmitInputDrawer = async () => {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
+        'token' : store.getters.getToken,
       },
       body: JSON.stringify(inputSubmitForm)
     })
@@ -419,7 +421,11 @@ const store = useStore();
 const editableData: UnwrapRef<Record<string, Records>> = reactive({});
 const fetchCompanyList = async () => {
   try {
-    const response = await fetch('http://localhost:7779/overview/companyList');
+    const response = await fetch('http://localhost:7779/overview/companyList',{
+      headers: {
+        'token' : store.getters.getToken,
+      }
+    });
     const data = await response.json();
     if (data.code === 200){
       store.commit('setCompanyList',data.data);
@@ -521,7 +527,11 @@ const dataSource: Ref<Records[]> = ref([]);
 const fetchItemData = async (companyId: number, itemId:number) => {
   try {
     isLoading.value = true;
-    const response = await fetch(`http://localhost:7779/historyRecord/${companyId}/${itemId}`);
+    const response = await fetch(`http://localhost:7779/historyRecord/${companyId}/${itemId}`,{
+      headers: {
+        'token' : store.getters.getToken,
+      }
+    });
     const data = await response.json();
     if (data.code === 200){
       dataSource.value = data.data.map(item => {
@@ -552,7 +562,11 @@ const fetchItemData = async (companyId: number, itemId:number) => {
 const fetchData = async (companyId: number) => {
   try {
     isLoading.value = true;
-    const response = await fetch(`http://localhost:7779/historyRecord/companyId/${companyId}`);
+    const response = await fetch(`http://localhost:7779/historyRecord/companyId/${companyId}`,{
+      headers: {
+        'token' : store.getters.getToken,
+      }
+    });
     const data = await response.json();
     if (data.code === 200){
       dataSource.value = data.data.map(item => {
@@ -609,6 +623,7 @@ const saveCheck = async (recordId: number) => {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          'token' : store.getters.getToken,
         },
         body: JSON.stringify(recordCopy)
       })
@@ -633,6 +648,7 @@ const saveDeletion = async (recordId: number) => {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
+        'token' : store.getters.getToken,
       },
     })
     const data = await response.json();

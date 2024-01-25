@@ -132,6 +132,7 @@ const onSubmitCompany = async () => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'token' : store.getters.getToken,
       },
       body: JSON.stringify(companyForm),
     });
@@ -175,8 +176,14 @@ const editableData: UnwrapRef<Record<string, Company>> = reactive({});
 
 const fetchData = async () => {
   try {
+    console.log(store.getters.getToken)
     isLoading.value = true;
-    const response = await fetch('http://localhost:7779/overview/companyList');
+    const response = await fetch('http://localhost:7779/overview/companyList',{
+      method: 'GET',
+      headers: {
+        'token' : store.getters.getToken,
+      }
+    });
     const data = await response.json();
     if (data.code === 200){
       dataSource.value = data.data;
@@ -199,6 +206,7 @@ const save = async (companyId: string) => {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
+        'token' : store.getters.getToken,
       },
       body:JSON.stringify(editableData[companyId])
     })

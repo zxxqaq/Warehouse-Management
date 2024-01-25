@@ -2,8 +2,8 @@ import { createStore } from 'vuex';
 
 const store = createStore({
     state: {
-        isAuthenticated: true,
-        userName: '',
+        isAuthenticated: false,
+        token: null,
         selectedMenuItem: 'menu0',
         selectedCompany: null,
         itemId: null,
@@ -11,7 +11,7 @@ const store = createStore({
     },
     getters: {
         isAuthenticated: state => state.isAuthenticated,
-        getUserFullName: state => state.userName,
+        getToken: state => state.token,
         getSelectedMenuItem(state) {
             return state.selectedMenuItem;
         },
@@ -20,8 +20,8 @@ const store = createStore({
         getItemId: state => state.itemId,
     },
     mutations: {
-        setUsername(state, userName) {
-            state.userName = userName;
+        setToken(state, token) {
+            state.token = token;
         },
         setAuthentication(state, isAuthenticated) {
             state.isAuthenticated = isAuthenticated;
