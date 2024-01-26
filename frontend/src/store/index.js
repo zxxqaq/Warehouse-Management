@@ -5,7 +5,7 @@ const store = createStore({
         isAuthenticated: false,
         token: null,
         selectedMenuItem: 'menu0',
-        selectedCompany: null,
+        selectedCompany: 0,
         itemId: null,
         companyList: [],
     },

@@ -19,7 +19,7 @@
 
 
 
-        <a-table  :pagination="pagination" bordered :data-source="dataSource" :columns="columns" :scroll="{x: 2000, y: 600}">
+        <a-table  :pagination="pagination" bordered :data-source="dataSource" :columns="columns" :scroll="{x: 2500, y: 600}">
           <template #emptyText>
             <a-skeleton active v-if="isLoading" />
             <div v-else>
@@ -467,13 +467,20 @@ onMounted( async () => {
   itemId.value = store.getters.getItemId;
   if (itemId.value !== null) {
     companyId.value = store.getters.getSelectedCompany
-    for (const company of companyList) {
-      if (companyId.value == company.companyId) {
-        defaultSelectCompany.value = company.companyName;
+    let msg;
+    if (companyId.value === 0){
+      msg = '现在显示的是您刚刚点击的零件，在不同公司的历史记录。点击关闭这条提示信息'
+    }else {
+      for (const company of companyList) {
+        if (companyId.value == company.companyId) {
+          defaultSelectCompany.value = company.companyName;
+        }
       }
+      msg = '现在显示的是您刚刚点击的零件，在该公司的历史记录。点击关闭这条提示信息'
     }
+
     message.warning({
-      content: () => '现在显示的是您刚刚点击的零件，在该公司的历史记录。点击关闭这条提示信息',
+      content: () => msg,
       duration: 0,
       key: 1,
       onClick: e => {
@@ -484,7 +491,7 @@ onMounted( async () => {
   }
   //清空全局中的item和company变量
   store.commit('setItemId', null);
-  store.commit('setSelectedCompany', null);
+  store.commit('setSelectedCompany', 0);
 })
 
 
@@ -497,20 +504,21 @@ const handleCompanyChange  = (id: number) => {
 const columns: TableColumnsType = [
   { title: '类型', dataIndex: 'type',width: 80, fixed: 'left',},
   { title: '时间', dataIndex: 'date', fixed: 'left',width: 120},
-  { title: '已发票', dataIndex: 'isCheck',width: 100},
+  { title: '已发票', dataIndex: 'isCheck',width: 80},
   { title: '出库方向', dataIndex: 'direction'},
   { title: '名称', dataIndex: 'itemName', },
   { title: '标准', dataIndex: 'standard', },
   { title: '规格', dataIndex: 'specification', width: 100},
-  { title: '表面处理', dataIndex: 'surface', },
+  { title: '表面处理', dataIndex: 'surface', width: 150},
   { title: '材质', dataIndex: 'material', width: 100},
-  { title: '等级', dataIndex: 'level', },
+  { title: '等级', dataIndex: 'level', width: 150},
   { title: '单重', dataIndex: 'unitWeight', width: 80},
   { title: '单位', dataIndex: 'unit', width: 70},
   { title: '单价', dataIndex: 'unitPrice', width: 100},
   { title: '重量', dataIndex: 'totalWeight', width: 100},
   { title: '操作人', dataIndex: 'userName', width: 100},
-  { title: '数量', dataIndex: 'amount',fixed:'right'},
+  { title: '公司', dataIndex: 'companyName', },
+  { title: '数量', dataIndex: 'amount',width: 150, fixed:'right'},
   { title: '操作', dataIndex: 'operation', fixed: "right",},
 ];
 
@@ -538,11 +546,21 @@ const dataSource: Ref<Records[]> = ref([]);
 const fetchItemData = async (companyId: number, itemId:number) => {
   try {
     isLoading.value = true;
-    const response = await fetch(`http://localhost:7779/historyRecord/${companyId}/${itemId}`,{
-      headers: {
-        'token' : store.getters.getToken,
-      }
-    });
+    let response;
+    if (companyId == 0){
+      response = await fetch(`http://localhost:7779/historyRecord/itemId/${itemId}`,{
+        headers: {
+          'token' : store.getters.getToken,
+        }
+      });
+    }else {
+      response = await fetch(`http://localhost:7779/historyRecord/${companyId}/${itemId}`,{
+        headers: {
+          'token' : store.getters.getToken,
+        }
+      });
+    }
+
     const data = await response.json();
     if (data.code === 200){
       dataSource.value = data.data.map(item => {

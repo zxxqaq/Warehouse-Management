@@ -735,12 +735,11 @@ Feedback:
 4. 分页 done
 8. 发票check done
 10. :scroll="{x: 1800, y: 600} done
-
+9. loading效果（登录，修改的时候）done
 
 ---
 5. 一种零件可以看到从哪些公司进货(所有都要加一个公司字段) 
 7. item可以编辑
-9. loading效果（登录，修改的时候）
 10. Management 所有item的库存
 ---
 1. 部署
