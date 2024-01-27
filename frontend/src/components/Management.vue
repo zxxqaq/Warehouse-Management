@@ -316,7 +316,7 @@ const pagination = ref({
 })
 const fetchCompanyList = async () => {
   try {
-    const response = await fetch('http://localhost:7779/overview/companyList',{
+    const response = await fetch('http://192.168.1.17:7779/overview/companyList',{
       method: 'GET',
       headers: {
         'token' : store.getters.getToken,
@@ -383,13 +383,13 @@ const fetchData = async (id: number) => {
     isLoading.value = true;
     let response;
     if (id == 0){
-      response = await fetch(`http://localhost:7779/management`,{
+      response = await fetch(`http://192.168.1.17:7779/management`,{
         headers: {
           'token' : store.getters.getToken,
         }
       });
     }else {
-      response = await fetch(`http://localhost:7779/management/${id}`,{
+      response = await fetch(`http://192.168.1.17:7779/management/${id}`,{
         headers: {
           'token' : store.getters.getToken,
         }
@@ -504,7 +504,7 @@ const onSubmitInitializeForm = async () => {
   })
   initializeForm.companyId = companyId.value;
   try {
-    const response = await fetch('http://localhost:7779/management/initializeItem',{
+    const response = await fetch('http://192.168.1.17:7779/management/initializeItem',{
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -647,7 +647,7 @@ const onSubmitInputDrawer = async () => {
     key: 0,
   })
   try {
-    const response = await fetch('http://localhost:7779/management/inputItem', {
+    const response = await fetch('http://192.168.1.17:7779/management/inputItem', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -679,7 +679,7 @@ const onSubmitOutputDrawer = async () => {
     key: 0,
   })
   try {
-    const response = await fetch('http://localhost:7779/management/outputItem', {
+    const response = await fetch('http://192.168.1.17:7779/management/outputItem', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

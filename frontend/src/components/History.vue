@@ -352,7 +352,7 @@ const onSubmitOutputDrawer = async () => {
     key: 0,
   })
   try {
-    const response = await fetch('http://localhost:7779/historyRecord/updateRecord', {
+    const response = await fetch('http://192.168.1.17:7779/historyRecord/updateRecord', {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -384,7 +384,7 @@ const onSubmitInputDrawer = async () => {
     key: 0,
   })
   try {
-    const response = await fetch('http://localhost:7779/historyRecord/updateRecord', {
+    const response = await fetch('http://192.168.1.17:7779/historyRecord/updateRecord', {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -431,7 +431,7 @@ const store = useStore();
 const editableData: UnwrapRef<Record<string, Records>> = reactive({});
 const fetchCompanyList = async () => {
   try {
-    const response = await fetch('http://localhost:7779/overview/companyList',{
+    const response = await fetch('http://192.168.1.17:7779/overview/companyList',{
       headers: {
         'token' : store.getters.getToken,
       }
@@ -548,13 +548,13 @@ const fetchItemData = async (companyId: number, itemId:number) => {
     isLoading.value = true;
     let response;
     if (companyId == 0){
-      response = await fetch(`http://localhost:7779/historyRecord/itemId/${itemId}`,{
+      response = await fetch(`http://192.168.1.17:7779/historyRecord/itemId/${itemId}`,{
         headers: {
           'token' : store.getters.getToken,
         }
       });
     }else {
-      response = await fetch(`http://localhost:7779/historyRecord/${companyId}/${itemId}`,{
+      response = await fetch(`http://192.168.1.17:7779/historyRecord/${companyId}/${itemId}`,{
         headers: {
           'token' : store.getters.getToken,
         }
@@ -591,7 +591,7 @@ const fetchItemData = async (companyId: number, itemId:number) => {
 const fetchData = async (companyId: number) => {
   try {
     isLoading.value = true;
-    const response = await fetch(`http://localhost:7779/historyRecord/companyId/${companyId}`,{
+    const response = await fetch(`http://192.168.1.17:7779/historyRecord/companyId/${companyId}`,{
       headers: {
         'token' : store.getters.getToken,
       }
@@ -648,7 +648,7 @@ const saveCheck = async (recordId: number) => {
   if (recordCopy) {
     recordCopy.isCheck = true;
     try {
-      const response = await fetch('http://localhost:7779/historyRecord/updateRecord', {
+      const response = await fetch('http://192.168.1.17:7779/historyRecord/updateRecord', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -673,7 +673,7 @@ const cancelDeletion = (recordId: number) => {};
 
 const saveDeletion = async (recordId: number) => {
   try {
-    const response = await fetch(`http://localhost:7779/historyRecord/${recordId}`, {
+    const response = await fetch(`http://192.168.1.17:7779/historyRecord/${recordId}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
