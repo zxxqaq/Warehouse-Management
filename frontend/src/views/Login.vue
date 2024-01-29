@@ -109,7 +109,7 @@ const register = async () => {
       key: 0,
     })
     try {
-      const response = await fetch('http://192.168.1.17:7779/register', {
+      const response = await fetch('http://192.168.101.33:7779/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -140,7 +140,7 @@ const submitForm = async () => {
     key: 0,
   })
   try {
-    const response = await fetch('http://192.168.1.17:7779/login', {
+    const response = await fetch('http://192.168.101.33:7779/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
