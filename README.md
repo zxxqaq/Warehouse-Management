@@ -140,7 +140,6 @@ POST http://localhost:7779/overview/addCompany
 ```
 ### Response
 
-在成功后还要传回来新建公司的companyId，不然前端怎么知道
 
 ```json
 {
@@ -285,29 +284,6 @@ GET http://localhost:7779/management
 ```
 
 
-1. 向后端发送companyId，查询对应的itemId和信息
-
-需要返回的数据：
-
-```json
-const columns: TableColumnsType = [
-{ title: '名称', dataIndex: 'itemName', fixed: 'left',},
-{ title: '标准', dataIndex: 'standard', fixed: 'left'},
-{ title: '规格', dataIndex: 'specification', width: 100},
-{ title: '表面处理', dataIndex: 'surface', width: 100},
-{ title: '材质', dataIndex: 'material', width: 100},
-{ title: '等级', dataIndex: 'level', width: 100},
-{ title: '单重', dataIndex: 'unitWeight', width: 100},
-{ title: '单位', dataIndex: 'unit', width: 80},
-
-{ title: '总进库数', dataIndex: 'inCount', width: 100},
-{ title: '总出库数', dataIndex: 'outCount', width: 100},
-{ title: '初始化数', dataIndex: 'initialCount', width: 100},
-{ title: '总库存数', dataIndex: 'totalCount', fixed: "right"},
-
-];
-```
-
 ## get item list
 
 ```JSON
@@ -424,7 +400,7 @@ POST http://localhost:7779/management/initializeItem
 }
 ```
 #### 零件重复
-零件重复是根据哪几个数据决定的？
+
 ```JSON
 {
   "code": 501,
@@ -727,39 +703,28 @@ PUT http://localhost:7779/historyRecord/updateRecord
 ```
 
 
-Feedback:
+# Feedback:
 
 1. 初始化有bug done
 2. 出库/入库可以改（自己输入的数据）done
 3. 历史可以删除 done
 4. 分页 done
-8. 发票check done
-10. :scroll="{x: 1800, y: 600} done
-9. loading效果（登录，修改的时候）done
+5. 发票check done
+6. :scroll="{x: 1800, y: 600} done
+7. loading效果（登录，修改的时候）done
+8. 部署 done
+9. 一种零件可以看到从哪些公司进货(所有都要加一个公司字段) done
+10. Management 所有item的库存 done
 
----
-5. 一种零件可以看到从哪些公司进货(所有都要加一个公司字段) 
-7. item可以编辑
-10. Management 所有item的库存
----
-1. 部署
-2. 前端接口封装
-3. 代码规范(变量，实例，函数等)
-4. 写readme，发布到github
-5. 学一些新的东西升级（比如说组件，响应式布局等）
-5. 用react重构
+# TODO
+1. item可以编辑
+2. excel导入导出
+3. 前端接口封装
+4. 重构
+5. 代码规范
+6. react
+7. 组件和响应式布局
 
-
-
-
-TODO:
-1. 初始化入库（创建Item+创建Record） Done
-2. Record List（按照公司ID查询，按照itemId+companyId查询）Done
-3. 添加Record（入库+出库）(入库直接用公斤数来算amount) Done
-4. 删除Record（只能删除第一个） Done 
-5. 用户登录 Done
-6. excel导入导出
-7. 潜在的删除数据导致的查询bug
 
 
 
