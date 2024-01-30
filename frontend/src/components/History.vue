@@ -252,8 +252,9 @@ import 'dayjs/locale/zh-cn';
 import type { Ref } from 'vue';
 import {cloneDeep} from "lodash-es";
 import zhCN from "ant-design-vue/es/locale/zh_CN";
-import dayjs, { Dayjs } from 'dayjs';
-import Footer from "./Footer.vue";
+import type {TableColumnType, TableProps} from "ant-design-vue";
+import defaultProps from "ant-design-vue/es/vc-slick/default-props";
+import type = defaultProps.accessibility.type;
 
 const openInputForm = ref<boolean>(false);
 const openOutputForm = ref<boolean>(false);
@@ -500,10 +501,45 @@ const handleCompanyChange  = (id: number) => {
   companyId.value = id;
   fetchData(id);
 }
-
-const columns: TableColumnsType = [
-  { title: '类型', dataIndex: 'type',width: 80, fixed: 'left',},
-  { title: '时间', dataIndex: 'date', fixed: 'left',width: 120},
+type TableDataType = {
+  recordId: number
+  itemName: string,
+  standard: string,
+  specification: string,
+  material: string,
+  level: string,
+  surface: string,
+  unitWeight: number,
+  type: string,
+  date: string,
+  amount: number,
+  unit: string,
+  totalWeight: number,
+  direction: string,
+  userName: string,
+  unitPrice: number,
+  companyName: string
+  isCheck: boolean,
+}
+const columns: TableColumnType<TableDataType>[] = [
+  { title: '类型', dataIndex: 'type',width: 80,
+    filters:[
+      {
+        text: '入库',
+        value: '入库',
+      },
+      {
+        text: '出库',
+        value: '出库',
+      },
+    ],
+    filterMultiple: false,
+    onFilter: (value: string, record: Records) => record.type.indexOf(value) === 0,
+  },
+  { title: '时间', dataIndex: 'date', width: 120,
+    sorter: (a: Records, b: Records) => a.date - b.date,
+    sortDirections: ['descend', 'ascend'],
+  },
   { title: '已发票', dataIndex: 'isCheck',width: 80},
   { title: '出库方向', dataIndex: 'direction'},
   { title: '名称', dataIndex: 'itemName', },

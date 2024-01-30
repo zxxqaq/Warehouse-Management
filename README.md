@@ -717,8 +717,11 @@ PUT http://localhost:7779/historyRecord/updateRecord
 10. Management 所有item的库存 done
 
 # TODO
-1. item可以编辑
+0. 服务器开机自动执行命令行，启动后端和nginx代理
+1. 表格筛选和排序（需要后端把仓库里的切换回开发环境）
 2. excel导入导出
+3. 不同用户授权（需要再问清楚一下需求）
+1. item可以编辑
 3. 前端接口封装
 4. 重构
 5. 代码规范
