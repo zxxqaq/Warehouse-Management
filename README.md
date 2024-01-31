@@ -705,16 +705,9 @@ PUT http://localhost:7779/historyRecord/updateRecord
 
 # Feedback:
 
-1. 初始化有bug done
-2. 出库/入库可以改（自己输入的数据）done
-3. 历史可以删除 done
-4. 分页 done
-5. 发票check done
-6. :scroll="{x: 1800, y: 600} done
-7. loading效果（登录，修改的时候）done
-8. 部署 done
-9. 一种零件可以看到从哪些公司进货(所有都要加一个公司字段) done
-10. Management 所有item的库存 done
+1. 入库可以选入库数量还是重量
+2. 出库是从总库存里出库
+3. 排序和筛选
 
 # TODO
 0. 服务器开机自动执行命令行，启动后端和nginx代理

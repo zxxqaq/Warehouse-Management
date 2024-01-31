@@ -132,7 +132,7 @@ const onSubmitCompany = async () => {
     key: 0,
   })
   try {
-    const response = await fetch('http://192.168.101.33:7779/overview/addCompany',{
+    const response = await fetch('http://192.168.2.43:7779/overview/addCompany',{
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -182,7 +182,7 @@ const fetchData = async () => {
   try {
     console.log(store.getters.getToken)
     isLoading.value = true;
-    const response = await fetch('http://192.168.101.33:7779/overview/companyList',{
+    const response = await fetch('http://192.168.2.43:7779/overview/companyList',{
       method: 'GET',
       headers: {
         'token' : store.getters.getToken,
@@ -206,7 +206,7 @@ const edit = (companyId: number) => {
 };
 const save = async (companyId: string) => {
   try {
-    const response = await fetch('http://192.168.101.33:7779/overview/updateCompany', {
+    const response = await fetch('http://192.168.2.43:7779/overview/updateCompany', {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
