@@ -352,7 +352,7 @@ const onSubmitOutputDrawer = async () => {
     key: 0,
   })
   try {
-    const response = await fetch('http://192.168.1.17:7779/historyRecord/updateRecord', {
+    const response = await fetch('http://localhost:7779/historyRecord/updateRecord', {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -384,7 +384,7 @@ const onSubmitInputDrawer = async () => {
     key: 0,
   })
   try {
-    const response = await fetch('http://192.168.1.17:7779/historyRecord/updateRecord', {
+    const response = await fetch('http://localhost:7779/historyRecord/updateRecord', {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -431,7 +431,7 @@ const store = useStore();
 const editableData: UnwrapRef<Record<string, Records>> = reactive({});
 const fetchCompanyList = async () => {
   try {
-    const response = await fetch('http://192.168.1.17:7779/overview/companyList',{
+    const response = await fetch('http://localhost:7779/overview/companyList',{
       headers: {
         'token' : store.getters.getToken,
       }
@@ -465,20 +465,22 @@ onMounted( async () => {
     }));
   }
   itemId.value = store.getters.getItemId;
-  if (itemId.value !== null) {
-    companyId.value = store.getters.getSelectedCompany
-    let msg;
-    if (companyId.value === 0){
-      msg = '现在显示的是您刚刚点击的零件，在不同公司的历史记录。点击关闭这条提示信息'
-    }else {
-      for (const company of companyList) {
-        if (companyId.value == company.companyId) {
-          defaultSelectCompany.value = company.companyName;
-        }
-      }
-      msg = '现在显示的是您刚刚点击的零件，在该公司的历史记录。点击关闭这条提示信息'
-    }
+  companyId.value = store.getters.getSelectedCompany
+  let msg;
 
+  if (itemId.value !== null) {
+    msg = '现在显示的是您刚刚点击的零件，入库/出库的历史记录。点击关闭这条提示信息'
+    await fetchItemData(0, itemId.value);
+  }
+  if ( companyId.value !== 0 ){
+    for (const company of companyList) {
+      if (companyId.value == company.companyId) {
+        defaultSelectCompany.value = company.companyName;
+      }
+    }
+    msg = '现在显示的是该公司的入库记录。点击关闭这条提示信息'
+    await fetchData(companyId.value);
+  }
     message.warning({
       content: () => msg,
       duration: 0,
@@ -487,8 +489,8 @@ onMounted( async () => {
         message.destroy(1)
       }
     });
-    await fetchItemData(companyId.value, itemId.value);
-  }
+
+
   //清空全局中的item和company变量
   store.commit('setItemId', null);
   store.commit('setSelectedCompany', 0);
@@ -517,7 +519,7 @@ const columns: TableColumnsType = [
   { title: '单价', dataIndex: 'unitPrice', width: 100},
   { title: '重量', dataIndex: 'totalWeight', width: 100},
   { title: '操作人', dataIndex: 'userName', width: 100},
-  { title: '公司', dataIndex: 'companyName', },
+  { title: '入库公司', dataIndex: 'companyName', },
   { title: '数量', dataIndex: 'amount',width: 150, fixed:'right'},
   { title: '操作', dataIndex: 'operation', fixed: "right",},
 ];
@@ -548,13 +550,13 @@ const fetchItemData = async (companyId: number, itemId:number) => {
     isLoading.value = true;
     let response;
     if (companyId == 0){
-      response = await fetch(`http://192.168.1.17:7779/historyRecord/itemId/${itemId}`,{
+      response = await fetch(`http://localhost:7779/historyRecord/itemId/${itemId}`,{
         headers: {
           'token' : store.getters.getToken,
         }
       });
     }else {
-      response = await fetch(`http://192.168.1.17:7779/historyRecord/${companyId}/${itemId}`,{
+      response = await fetch(`http://localhost:7779/historyRecord/${companyId}/${itemId}`,{
         headers: {
           'token' : store.getters.getToken,
         }
@@ -588,10 +590,11 @@ const fetchItemData = async (companyId: number, itemId:number) => {
     console.error('An error occurred during fetch:', error);
   }
 }
+
 const fetchData = async (companyId: number) => {
   try {
     isLoading.value = true;
-    const response = await fetch(`http://192.168.1.17:7779/historyRecord/companyId/${companyId}`,{
+    const response = await fetch(`http://localhost:7779/historyRecord/companyId/${companyId}`,{
       headers: {
         'token' : store.getters.getToken,
       }
@@ -648,7 +651,7 @@ const saveCheck = async (recordId: number) => {
   if (recordCopy) {
     recordCopy.isCheck = true;
     try {
-      const response = await fetch('http://192.168.1.17:7779/historyRecord/updateRecord', {
+      const response = await fetch('http://localhost:7779/historyRecord/updateRecord', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -673,7 +676,7 @@ const cancelDeletion = (recordId: number) => {};
 
 const saveDeletion = async (recordId: number) => {
   try {
-    const response = await fetch(`http://192.168.1.17:7779/historyRecord/${recordId}`, {
+    const response = await fetch(`http://localhost:7779/historyRecord/${recordId}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',

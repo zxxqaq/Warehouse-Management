@@ -284,30 +284,6 @@ GET http://localhost:7779/management
 
 ```
 
-
-1. 向后端发送companyId，查询对应的itemId和信息
-
-需要返回的数据：
-
-```json
-const columns: TableColumnsType = [
-{ title: '名称', dataIndex: 'itemName', fixed: 'left',},
-{ title: '标准', dataIndex: 'standard', fixed: 'left'},
-{ title: '规格', dataIndex: 'specification', width: 100},
-{ title: '表面处理', dataIndex: 'surface', width: 100},
-{ title: '材质', dataIndex: 'material', width: 100},
-{ title: '等级', dataIndex: 'level', width: 100},
-{ title: '单重', dataIndex: 'unitWeight', width: 100},
-{ title: '单位', dataIndex: 'unit', width: 80},
-
-{ title: '总进库数', dataIndex: 'inCount', width: 100},
-{ title: '总出库数', dataIndex: 'outCount', width: 100},
-{ title: '初始化数', dataIndex: 'initialCount', width: 100},
-{ title: '总库存数', dataIndex: 'totalCount', fixed: "right"},
-
-];
-```
-
 ## get item list
 
 ```JSON
@@ -389,7 +365,6 @@ GET http://localhost:7779/management/${companyId}
 
 ## initialize item
 
-TODO LIST 1
 
 ```JSON
 POST http://localhost:7779/management/initializeItem
@@ -399,7 +374,7 @@ POST http://localhost:7779/management/initializeItem
 
 ```JSON
 {
-  "companyId": 1,
+  "companyId": 1, // 这个删掉了
   "itemName": "六角螺栓",
   "standard": "GB/T 5783-2016",
   "specification": "M8*35",
@@ -725,41 +700,40 @@ PUT http://localhost:7779/historyRecord/updateRecord
     "data": null
 }
 ```
+# 修改
+
+1. 新建的时候新建一个零件，不用companyId （后端改一下）
+2. 锁死总库存 done
+3. 在操作显示入库 出库栏 done
+4. 在入库加入选择公司 done
+5. 在入库可以选择数量还是质量 done
+6. 如果是数量的话先把重量输成0，再调用update的接口 （不行 - 后端给一个入库用数量的接口）
+7. 出库不用companyId （后端改一下） 
+8. 要总的所有操作历史的接口（后端提供）
+9. item可以编辑 （后端）
+9. initialize类型的在History的不用返回（后端提供）
+10. 总览点击详情，跳转的是操作历史该companyId的所有入库记录（因为出库没有记companyId）
+
+# Feedback:
+
+1. 入库可以选入库数量还是重量
+2. 出库是从总库存里出库
+3. 排序和筛选（所有）
+4. 库存管理： （分类tag） 原材料、包装物、半成品、成品
+5. excel导出/导入
 
 
-Feedback:
-
-1. 初始化有bug done
-2. 出库/入库可以改（自己输入的数据）done
-3. 历史可以删除 done
-4. 分页 done
-8. 发票check done
-10. :scroll="{x: 1800, y: 600} done
-9. loading效果（登录，修改的时候）done
-
----
-5. 一种零件可以看到从哪些公司进货(所有都要加一个公司字段) 
-7. item可以编辑
-10. Management 所有item的库存
----
-1. 部署
-2. 前端接口封装
-3. 代码规范(变量，实例，函数等)
-4. 写readme，发布到github
-5. 学一些新的东西升级（比如说组件，响应式布局等）
-5. 用react重构
-
-
-
-
-TODO:
-1. 初始化入库（创建Item+创建Record） Done
-2. Record List（按照公司ID查询，按照itemId+companyId查询）Done
-3. 添加Record（入库+出库）(入库直接用公斤数来算amount) Done
-4. 删除Record（只能删除第一个） Done 
-5. 用户登录 Done
-6. excel导入导出
-7. 潜在的删除数据导致的查询bug
+# TODO
+0. 服务器开机自动执行命令行，启动后端和nginx代理
+1. 表格筛选和排序（需要后端把仓库里的切换回开发环境）
+2. excel导入导出
+3. 不同用户授权（需要再问清楚一下需求）
+1. item可以编辑
+3. 前端接口封装
+4. 重构
+5. 代码规范
+6. react
+7. 组件和响应式布局
 
 
 

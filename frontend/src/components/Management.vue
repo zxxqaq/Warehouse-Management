@@ -9,11 +9,10 @@
       <div :style="{ padding: '24px', background: '#fff', minHeight: '360px' }">
         <a-space direction="vertical" style="margin-bottom: 10px">
           <a-select
-              v-model:value="defaultSelectCompany"
+              v-model:value="defaultSelection"
               size="middle"
               style="width: 250px"
-              :options="options"
-              @select="handleCompanyChange"
+              disabled
           ></a-select>
         </a-space>
         <a-button class="editable-add-btn" style="margin-left: 20px" @click="initializeItem">
@@ -32,8 +31,8 @@
 
           <template #bodyCell="{ column, text, record }" >
             <template v-if="column.dataIndex === 'operation'">
-              <a v-if="showLink"  @click="showInputDrawer(record.itemId)">入库</a>
-              <a v-if="showLink" style="margin-left: 10px" @click="showOutputDrawer(record.itemId)">出库</a>
+              <a   @click="showInputDrawer(record.itemId)">入库</a>
+              <a  style="margin-left: 10px" @click="showOutputDrawer(record.itemId)">出库</a>
               <a style="margin-left: 10px" @click="checkItemHistory(record.itemId)">历史</a>
             </template>
           </template>
@@ -83,7 +82,7 @@
             </a-form-item>
           </a-col>
           <a-col :span="6">
-            <a-form-item label="单重" name="unitWeight" >
+            <a-form-item label="单重(kg)" name="unitWeight" >
               <a-input  v-model:value="initializeForm.unitWeight" ></a-input>
             </a-form-item>
           </a-col>
@@ -193,8 +192,34 @@
         </a-row>
         <a-row :gutter="16">
           <a-col :span="12">
-            <a-form-item label="重量（kg）" name="totalWeight">
+            <a-form-item label="选择入库形式" name=" ">
+              <a-radio-group   v-model:value="inputForm.type" button-style="solid">
+                <a-radio-button value="0">重量（kg）</a-radio-button>
+                <a-radio-button value="1">数量（个）  </a-radio-button>
+              </a-radio-group>
+            </a-form-item>
+          </a-col>
+          <a-col :span="12">
+            <a-form-item v-if="inputForm.type === '0'" label="重量（kg）" name="totalWeight">
               <a-input v-model:value="inputForm.totalWeight" style="width: 100%" />
+            </a-form-item>
+            <a-form-item v-if="inputForm.type === '1'" label="数量（个）" name="amount">
+              <a-input v-model:value="inputForm.amount" style="width: 100%" />
+            </a-form-item>
+          </a-col>
+        </a-row>
+        <a-row :gutter="16">
+          <a-col :span="12">
+            <a-form-item label="公司" name="companyId">
+              <a-space direction="vertical" >
+                <a-select
+                    v-model:value="inputForm.companyId"
+                    size="middle"
+                    style="width: 20.5rem"
+                    :options="options"
+                    @select="handleCompanyChange"
+                ></a-select>
+              </a-space>
             </a-form-item>
           </a-col>
         </a-row>
@@ -309,14 +334,13 @@ import {paginationConfig} from "ant-design-vue/es/pagination";
 import Footer from "./Footer.vue";
 
 const isLoading = ref<boolean>(false);
-const showLink = ref<boolean>(false);
 const pagination = ref({
   defaultPageSize: 50,
   hideOnSinglePage: false,
 })
 const fetchCompanyList = async () => {
   try {
-    const response = await fetch('http://192.168.1.17:7779/overview/companyList',{
+    const response = await fetch('http://localhost:7779/overview/companyList',{
       method: 'GET',
       headers: {
         'token' : store.getters.getToken,
@@ -334,20 +358,14 @@ const fetchCompanyList = async () => {
 };
 const store = useStore();
 let companyList = store.getters.getCompanyList;
-const options = ref<SelectProps['options']>([
-  { value: '0', label: '总库存' }, // 额外的选项
-  ...companyList.map(item => ({
-    value: String(item.companyId),
-    label: item.companyName,
-  }))
-]);
-
-
-let defaultSelectCompany = ref('总库存');
-const companyId = ref();
-watch(companyId,(newValue) => {
-  showLink.value = newValue !== 0;
-})
+const options = ref<SelectProps['options']>(companyList.map(item => ({
+  value: String(item.companyId),
+  label: item.companyName,
+})));
+let defaultSelection = ref('总库存');
+const handleCompanyChange  = (id: number) => {
+  console.log(inputForm.companyId)
+}
 
 
 onMounted( async () => {
@@ -359,37 +377,25 @@ onMounted( async () => {
       label: item.companyName,
     }));
   }
-  companyId.value = store.getters.getSelectedCompany
-  if (companyId.value !== null) {
-    for (const company of companyList) {
-      if (company.companyId === companyId.value) {
-        defaultSelectCompany.value = company.companyName;
-      }
-    }
-    handleCompanyChange(companyId.value)
-  }
+  await fetchData(0) // 加载总库存页面
   store.commit('setSelectedCompany',0);
 })
 
 
-const handleCompanyChange  = (id: number) => {
-  console.log(id);
-  companyId.value = id;
-  fetchData(companyId.value);
-}
+
 
 const fetchData = async (id: number) => {
   try {
     isLoading.value = true;
     let response;
     if (id == 0){
-      response = await fetch(`http://192.168.1.17:7779/management`,{
+      response = await fetch(`http://localhost:7779/management`,{
         headers: {
           'token' : store.getters.getToken,
         }
       });
     }else {
-      response = await fetch(`http://192.168.1.17:7779/management/${id}`,{
+      response = await fetch(`http://localhost:7779/management/${id}`,{
         headers: {
           'token' : store.getters.getToken,
         }
@@ -446,7 +452,6 @@ const dataSource: Ref<ItemSummary[]> = ref([]);
 
 
 const initializeForm = reactive({
-  companyId: null,
   itemName: null,
   standard: null,
   specification: null,
@@ -460,7 +465,6 @@ const initializeForm = reactive({
 });
 
 const clearInitializeForm = () => {
-  initializeForm.companyId = null;
   initializeForm.itemName = null;
   initializeForm.standard = null;
   initializeForm.specification = null;
@@ -476,11 +480,7 @@ const clearInitializeForm = () => {
 
 
 const initializeItem = () =>{
-  if (defaultSelectCompany.value === '选择公司'){
-    message.warn("请先选择公司");
-  }else {
     showInitializeDrawer();
-  }
 }
 const openInitializeForm = ref<boolean>(false);
 const onCloseInitializeDrawer = () =>{
@@ -502,9 +502,8 @@ const onSubmitInitializeForm = async () => {
     duration: 0,
     key: 0,
   })
-  initializeForm.companyId = companyId.value;
   try {
-    const response = await fetch('http://192.168.1.17:7779/management/initializeItem',{
+    const response = await fetch('http://localhost:7779/management/initializeItem',{
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -516,7 +515,7 @@ const onSubmitInitializeForm = async () => {
     message.destroy(0);
     if (data.code === 200){
       message.success('初始化/新建成功');
-      await fetchData(companyId.value);
+      await fetchData(0);
     }else if (data.code === 501){
       message.error('初始化/新建失败，零件已存在');
     }
@@ -531,9 +530,7 @@ const onSubmitInitializeForm = async () => {
 
 const checkItemHistory = (itemId: number) =>{
   store.commit('setItemId',itemId);
-  store.commit('setSelectedCompany', companyId.value);
   console.log('company');
-  console.log(companyId.value);
   store.commit('setSelectedMenuItem', 'menu2');
 }
 
@@ -545,7 +542,7 @@ const inputForm = reactive({
   date: null,
   unitPrice: null,
   totalWeight: null,
-
+  amount: null,
   itemId: null,
   itemName: null,
   standard: null,
@@ -555,13 +552,12 @@ const inputForm = reactive({
   level: null,
   unitWeight: null,
   unit: null,
+  type: null,
 });
 const outputForm = reactive({
-  companyId: null,
   date: null,
   direction: null,
   amount: null,
-
   itemId: null,
   itemName: null,
   standard: null,
@@ -590,7 +586,6 @@ const inputSubmitForm = reactive({
   date: null,
 })
 const outputSubmitForm = reactive({
-  companyId: null,
   itemId: null,
   amount: null,
   direction: null,
@@ -615,7 +610,6 @@ const showInputDrawer = (itemId: number) => {
   for (const key in firstItem) {
     if (Object.prototype.hasOwnProperty.call(firstItem, key)) {
       inputForm[key] = firstItem[key];
-      inputForm["companyId"] = companyId.value;
     }
   }
   openInputForm.value = true;
@@ -626,7 +620,6 @@ const showOutputDrawer = (itemId: number) => {
   for (const key in firstItem) {
     if (Object.prototype.hasOwnProperty.call(firstItem, key)) {
       outputForm[key] = firstItem[key];
-      outputForm["companyId"] = companyId.value;
     }
   }
   openOutputForm.value = true;
@@ -635,11 +628,15 @@ const submitOutputDisabled = computed(() => {
   return !(outputForm.date && outputForm.amount && outputForm.direction);
 })
 const submitDisabled = computed(() => {
-  return !(inputForm.date && inputForm.unitPrice && inputForm.totalWeight);
+  return !(inputForm.date && inputForm.unitPrice && inputForm.companyId && (inputForm.totalWeight || inputForm.amount));
 })
 dayjs.locale('zh-cn')
-const onSubmitInputDrawer = async () => {
+const verifyType = () => {
   Object.assign(inputSubmitForm, inputForm);
+  if (inputForm.type === '1'){}
+}
+const onSubmitInputDrawer = async () => {
+  verifyType(); // TODO 判断是不是数量还是重量，调用对应的要提交的表格和入库接口
   onCloseInputDrawer();
   message.loading({
     content: () => '加载中',
@@ -647,7 +644,7 @@ const onSubmitInputDrawer = async () => {
     key: 0,
   })
   try {
-    const response = await fetch('http://192.168.1.17:7779/management/inputItem', {
+    const response = await fetch('http://localhost:7779/management/inputItem', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -658,12 +655,11 @@ const onSubmitInputDrawer = async () => {
     const data = await response.json();
     message.destroy(0);
     if (data.code === 200) {
-      await fetchData(companyId.value);
+      await fetchData(0);
       message.success('入库成功');
     } else {
       message.error('入库失败，请重试');
     }
-    //清空两个表
     clearInputForm();
     clearInputSubmitForm();
   } catch (error) {
@@ -679,7 +675,7 @@ const onSubmitOutputDrawer = async () => {
     key: 0,
   })
   try {
-    const response = await fetch('http://192.168.1.17:7779/management/outputItem', {
+    const response = await fetch('http://localhost:7779/management/outputItem', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -690,7 +686,7 @@ const onSubmitOutputDrawer = async () => {
     const data = await response.json();
     message.destroy(0);
     if (data.code === 200) {
-      await fetchData(companyId.value);
+      await fetchData(0);
       message.success('出库成功');
     } else {
       message.error('出库失败，请重试');
@@ -703,9 +699,13 @@ const onSubmitOutputDrawer = async () => {
   }
 }
 const onCloseInputDrawer = () => {
+  clearInputForm();
+  clearInputSubmitForm();
   openInputForm.value = false;
 };
 const onCloseOutputDrawer = () => {
+  clearOutputForm();
+  clearOutputSubmitForm();
   openOutputForm.value = false;
 };
 const count = computed(() => dataSource.value.length + 1);
