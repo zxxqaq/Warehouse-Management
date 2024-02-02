@@ -464,6 +464,7 @@ onMounted( async () => {
       label: item.companyName,
     }));
   }
+
   itemId.value = store.getters.getItemId;
   companyId.value = store.getters.getSelectedCompany
   let msg;
@@ -471,6 +472,14 @@ onMounted( async () => {
   if (itemId.value !== null) {
     msg = '现在显示的是您刚刚点击的零件，入库/出库的历史记录。点击关闭这条提示信息'
     await fetchItemData(0, itemId.value);
+    message.warning({
+      content: () => msg,
+      duration: 0,
+      key: 1,
+      onClick: e => {
+        message.destroy(1)
+      }
+    });
   }
   if ( companyId.value !== 0 ){
     for (const company of companyList) {
@@ -480,7 +489,6 @@ onMounted( async () => {
     }
     msg = '现在显示的是该公司的入库记录。点击关闭这条提示信息'
     await fetchData(companyId.value);
-  }
     message.warning({
       content: () => msg,
       duration: 0,
@@ -489,9 +497,11 @@ onMounted( async () => {
         message.destroy(1)
       }
     });
+  }
 
+  // TODO 获取所有的操作历史
 
-  //清空全局中的item和company变量
+  // 清空全局中的item和company变量
   store.commit('setItemId', null);
   store.commit('setSelectedCompany', 0);
 })
@@ -502,6 +512,8 @@ const handleCompanyChange  = (id: number) => {
   companyId.value = id;
   fetchData(id);
 }
+
+
 
 const columns: TableColumnsType = [
   { title: '类型', dataIndex: 'type',width: 80, fixed: 'left',},

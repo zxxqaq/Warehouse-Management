@@ -700,6 +700,16 @@ PUT http://localhost:7779/historyRecord/updateRecord
     "data": null
 }
 ```
+
+# 后端待修改
+1. Management 新建一个零件的时候不用不用companyId
+2. Management 入库的时候如果是数量的话先把重量输成0，再调用update的接口 （不行 - 后端给一个入库用'数量'的接口）
+3. Management 出库不用companyId
+4. Management item可以编辑
+5. History initialize类型的不用返回
+6. History 要总的所有操作历史的接口
+7. excel 导入/导出
+
 # 修改
 
 1. 新建的时候新建一个零件，不用companyId （后端改一下）
@@ -713,7 +723,8 @@ PUT http://localhost:7779/historyRecord/updateRecord
 9. item可以编辑 （后端）
 9. initialize类型的在History的不用返回（后端提供）
 10. 总览点击详情，跳转的是操作历史该companyId的所有入库记录（因为出库没有记companyId）
-11. 全部的筛选排序
+11. 全部的筛选排序management done
+12. history的筛选排序 
 
 # Feedback:
 

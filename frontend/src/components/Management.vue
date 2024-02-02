@@ -35,7 +35,7 @@
             <div style="padding: 8px">
               <a-input
                   ref="searchInput"
-                  :placeholder="`Search ${column.dataIndex}`"
+                  :placeholder="`请输入搜索内容`"
                   :value="selectedKeys[0]"
                   style="width: 188px; margin-bottom: 8px; display: block"
                   @change="e => setSelectedKeys(e.target.value ? [e.target.value] : [])"
@@ -373,7 +373,7 @@
 <script lang="ts" setup>
 import type {Ref, UnwrapRef} from 'vue';
 import {computed, onBeforeUnmount, onMounted, reactive, ref, watch} from 'vue';
-import {message, SelectProps} from "ant-design-vue";
+import {message, SelectProps, TableColumnsType} from "ant-design-vue";
 import {SearchOutlined, InboxOutlined, MoneyCollectOutlined, PlusOutlined} from '@ant-design/icons-vue';
 import type {Rule} from 'ant-design-vue/es/form';
 import {useStore} from "vuex";
@@ -498,7 +498,7 @@ const handleReset = clearFilters => {
   state.searchText = '';
 };
 
-const columns = [
+const columns: any[] = [
   { title: '名称', dataIndex: 'itemName', fixed: 'left',
     customFilterDropdown: true,
     onFilter: (value, record) =>  record.itemName.toString().toLowerCase().includes(value.toLowerCase()),
@@ -510,12 +510,72 @@ const columns = [
       }
     },
   },
-  { title: '标准', dataIndex: 'standard', fixed: 'left'},
-  { title: '规格', dataIndex: 'specification', width: 100},
-  { title: '表面处理', dataIndex: 'surface'},
-  { title: '材质', dataIndex: 'material', width: 100},
-  { title: '等级', dataIndex: 'level', width: 100},
-  { title: '单重', dataIndex: 'unitWeight', width: 100},
+  { title: '标准', dataIndex: 'standard', fixed: 'left',
+    customFilterDropdown: true,
+    onFilter: (value, record) =>  record.standard.toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownOpenChange: visible => {
+      if (visible) {
+        setTimeout(() => {
+          searchInput.value.focus();
+        }, 100);
+      }
+    },
+  },
+  { title: '规格', dataIndex: 'specification', width: 100,
+    customFilterDropdown: true,
+    onFilter: (value, record) =>  record.specification.toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownOpenChange: visible => {
+      if (visible) {
+        setTimeout(() => {
+          searchInput.value.focus();
+        }, 100);
+      }
+    },
+  },
+  { title: '表面处理', dataIndex: 'surface',
+    customFilterDropdown: true,
+    onFilter: (value, record) =>  record.surface.toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownOpenChange: visible => {
+      if (visible) {
+        setTimeout(() => {
+          searchInput.value.focus();
+        }, 100);
+      }
+    },
+  },
+  { title: '材质', dataIndex: 'material', width: 100,
+    customFilterDropdown: true,
+    onFilter: (value, record) =>  record.material.toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownOpenChange: visible => {
+      if (visible) {
+        setTimeout(() => {
+          searchInput.value.focus();
+        }, 100);
+      }
+    },
+  },
+  { title: '等级', dataIndex: 'level', width: 100,
+    customFilterDropdown: true,
+    onFilter: (value, record) =>  record.level.toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownOpenChange: visible => {
+      if (visible) {
+        setTimeout(() => {
+          searchInput.value.focus();
+        }, 100);
+      }
+    },
+  },
+  { title: '单重', dataIndex: 'unitWeight', width: 100,
+    customFilterDropdown: true,
+    onFilter: (value, record) =>  record.unitWeight.toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownOpenChange: visible => {
+      if (visible) {
+        setTimeout(() => {
+          searchInput.value.focus();
+        }, 100);
+      }
+    },
+  },
   { title: '单位', dataIndex: 'unit', width: 80},
 
   { title: '总进库数', dataIndex: 'inCount', width: 100},
@@ -803,6 +863,10 @@ const rules: Record<string, Rule[]> = {
 </script>
 
 <style lang="less" scoped>
+.highlight {
+  background-color: rgb(255, 192, 105);
+  padding: 0;
+}
 .btn-group{
   display: flex;
   align-items: center;
