@@ -707,12 +707,13 @@ PUT http://localhost:7779/historyRecord/updateRecord
 3. 在操作显示入库 出库栏 done
 4. 在入库加入选择公司 done
 5. 在入库可以选择数量还是质量 done
-6. 如果是数量的话先把重量输成0，再调用update的接口 （不行 - 后端给一个入库用数量的接口）
+6. 入库的时候如果是数量的话先把重量输成0，再调用update的接口 （不行 - 后端给一个入库用数量的接口）
 7. 出库不用companyId （后端改一下） 
 8. 要总的所有操作历史的接口（后端提供）
 9. item可以编辑 （后端）
 9. initialize类型的在History的不用返回（后端提供）
 10. 总览点击详情，跳转的是操作历史该companyId的所有入库记录（因为出库没有记companyId）
+11. 全部的筛选排序
 
 # Feedback:
 

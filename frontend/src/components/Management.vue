@@ -29,7 +29,57 @@
             </div>
           </template>
 
+          <template
+              #customFilterDropdown="{ setSelectedKeys, selectedKeys, confirm, clearFilters, column }"
+          >
+            <div style="padding: 8px">
+              <a-input
+                  ref="searchInput"
+                  :placeholder="`Search ${column.dataIndex}`"
+                  :value="selectedKeys[0]"
+                  style="width: 188px; margin-bottom: 8px; display: block"
+                  @change="e => setSelectedKeys(e.target.value ? [e.target.value] : [])"
+                  @pressEnter="handleSearch(selectedKeys, confirm, column.dataIndex)"
+              />
+              <a-button
+                  type="primary"
+                  size="small"
+                  style="width: 90px; margin-right: 8px"
+                  @click="handleSearch(selectedKeys, confirm, column.dataIndex)"
+              >
+                <template #icon><SearchOutlined /></template>
+                搜索
+              </a-button>
+              <a-button size="small" style="width: 90px" @click="handleReset(clearFilters)">
+                重置
+              </a-button>
+            </div>
+          </template>
+
+          <template #customFilterIcon="{ filtered }">
+            <SearchOutlined :style="{ color: filtered ? '#108ee9' : undefined }" />
+          </template>
+
+
+
           <template #bodyCell="{ column, text, record }" >
+            <span v-if="state.searchText && state.searchedColumn === column.dataIndex">
+              <template
+                  v-for="(fragment, i) in text
+                  .toString()
+                  .split(new RegExp(`(?<=${state.searchText})|(?=${state.searchText})`, 'i'))"
+              >
+                <mark
+                    v-if="fragment.toLowerCase() === state.searchText.toLowerCase()"
+                    :key="i"
+                    class="highlight"
+                >
+                  {{ fragment }}
+                </mark>
+                <template v-else>{{ fragment }}</template>
+              </template>
+            </span>
+
             <template v-if="column.dataIndex === 'operation'">
               <a   @click="showInputDrawer(record.itemId)">入库</a>
               <a  style="margin-left: 10px" @click="showOutputDrawer(record.itemId)">出库</a>
@@ -323,8 +373,8 @@
 <script lang="ts" setup>
 import type {Ref, UnwrapRef} from 'vue';
 import {computed, onBeforeUnmount, onMounted, reactive, ref, watch} from 'vue';
-import {message, SelectProps, TableColumnsType} from "ant-design-vue";
-import {FallOutlined, InboxOutlined, MoneyCollectOutlined, PlusOutlined} from '@ant-design/icons-vue';
+import {message, SelectProps} from "ant-design-vue";
+import {SearchOutlined, InboxOutlined, MoneyCollectOutlined, PlusOutlined} from '@ant-design/icons-vue';
 import type {Rule} from 'ant-design-vue/es/form';
 import {useStore} from "vuex";
 import dayjs from 'dayjs';
@@ -332,6 +382,8 @@ import 'dayjs/locale/zh-cn';
 import zhCN from "ant-design-vue/es/locale/zh_CN";
 import {paginationConfig} from "ant-design-vue/es/pagination";
 import Footer from "./Footer.vue";
+
+
 
 const isLoading = ref<boolean>(false);
 const pagination = ref({
@@ -429,8 +481,35 @@ interface ItemSummary {
   totalCount: number;
 }
 
-const columns: TableColumnsType = [
-  { title: '名称', dataIndex: 'itemName', fixed: 'left',},
+const state = reactive({
+  searchText: '',
+  searchedColumn: '',
+});
+
+const searchInput = ref();
+const handleSearch = (selectedKeys, confirm, dataIndex) => {
+  confirm();
+  state.searchText = selectedKeys[0];
+  state.searchedColumn = dataIndex;
+};
+
+const handleReset = clearFilters => {
+  clearFilters({ confirm: true });
+  state.searchText = '';
+};
+
+const columns = [
+  { title: '名称', dataIndex: 'itemName', fixed: 'left',
+    customFilterDropdown: true,
+    onFilter: (value, record) =>  record.itemName.toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownOpenChange: visible => {
+      if (visible) {
+        setTimeout(() => {
+          searchInput.value.focus();
+        }, 100);
+      }
+    },
+  },
   { title: '标准', dataIndex: 'standard', fixed: 'left'},
   { title: '规格', dataIndex: 'specification', width: 100},
   { title: '表面处理', dataIndex: 'surface'},
@@ -446,6 +525,7 @@ const columns: TableColumnsType = [
   { title: '操作', dataIndex: 'operation', fixed: "right",},
 ];
 const dataSource: Ref<ItemSummary[]> = ref([]);
+
 
 
 
