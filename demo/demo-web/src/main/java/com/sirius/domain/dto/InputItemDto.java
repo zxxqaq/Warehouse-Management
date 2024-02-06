@@ -21,5 +21,7 @@ public class InputItemDto {
 
     private Double totalWeight;
 
+    private Long amount;
+
     private Double unitPrice;
 }

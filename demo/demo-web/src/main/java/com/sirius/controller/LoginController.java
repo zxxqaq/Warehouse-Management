@@ -1,10 +1,8 @@
 package com.sirius.controller;
 
 import com.sirius.domain.ResponseResult;
-import com.sirius.domain.dto.LoginUserDto;
 import com.sirius.domain.entity.User;
 import com.sirius.service.UserService;
-import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;

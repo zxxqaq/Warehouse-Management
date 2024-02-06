@@ -121,7 +121,11 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
         record.setType(RecordType.Input);
         record.setUserId(SecurityUtils.getUserId());
         Item item = itemMapper.selectById(inputItemDto.getItemId());
-        record.setAmount((long) (inputItemDto.getTotalWeight() / item.getUnitWeight()));
+        if (inputItemDto.getAmount() == null){
+            record.setAmount((long) (inputItemDto.getTotalWeight() / item.getUnitWeight()));
+        } else {
+            record.setAmount(inputItemDto.getAmount());
+        }
         save(record);
         return ResponseResult.okResult();
     }

@@ -15,8 +15,6 @@ public class OutputItemDto {
     //Record
     private Date date;
 
-    private Long companyId;
-
     private Long amount;
 
     private String direction;
