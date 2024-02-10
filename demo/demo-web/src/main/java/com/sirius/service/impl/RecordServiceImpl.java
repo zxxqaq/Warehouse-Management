@@ -4,10 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sirius.domain.ContainItem;
 import com.sirius.domain.ResponseResult;
-import com.sirius.domain.dto.InitializeItemDto;
-import com.sirius.domain.dto.InputItemDto;
-import com.sirius.domain.dto.OutputItemDto;
-import com.sirius.domain.dto.UpdateRecordDto;
+import com.sirius.domain.dto.*;
 import com.sirius.domain.entity.Company;
 import com.sirius.domain.entity.Item;
 import com.sirius.domain.entity.Record;
@@ -59,10 +56,8 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
         Long itemId = itemService.isExist(item);
         if (itemId == -1) {
             itemMapper.insert(item);
-        } else if (containItem(itemId, initializeItemDto.getCompanyId())) {
-            return ResponseResult.errorResult(AppHttpCodeEnum.ITEM_EXIST);
         } else {
-            item.setItemId(itemId);
+            return ResponseResult.errorResult(AppHttpCodeEnum.ITEM_EXIST);
         }
         Record record = BeanCopyUtils.beanCopy(initializeItemDto, Record.class);
         record.setItemId(item.getItemId());
@@ -73,14 +68,13 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
         return ResponseResult.okResult();
     }
 
-    private boolean containItem(Long itemId, Long companyId) {
-        LambdaQueryWrapper<Record> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(Record::getItemId, itemId);
-        queryWrapper.eq(Record::getCompanyId, companyId);
-        queryWrapper.eq(Record::getType, RecordType.Initialization);
-        Record record = this.getOne(queryWrapper);
-        return record != null;
-    }
+//    private boolean containItem(Long itemId) {
+//        LambdaQueryWrapper<Record> queryWrapper = new LambdaQueryWrapper<>();
+//        queryWrapper.eq(Record::getItemId, itemId);
+//        queryWrapper.eq(Record::getType, RecordType.Initialization);
+//        Record record = this.getOne(queryWrapper);
+//        return record != null;
+//    }
 
     @Override
     public ResponseResult getHistoryRecordByCompanyId(Long companyId) {
@@ -178,6 +172,20 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
         return ResponseResult.okResult(voList);
     }
 
+    @Override
+    public ResponseResult updateItem(UpdateItemDto updateItemDto) {
+        Item item = BeanCopyUtils.beanCopy(updateItemDto, Item.class);
+        itemMapper.updateById(item);
+        return ResponseResult.okResult();
+    }
+
+    @Override
+    public ResponseResult getHistoryRecordList() {
+        List<Record> list = this.list();
+        List<HistoryRecordVo> voList = this.getHistoryRecordVoList(list);
+        return ResponseResult.okResult(voList);
+    }
+
     private void setStatistics(List<ItemVo> voList, Long companyId) {
         voList.forEach(itemVo -> {
             itemVo.setTotalCount(0L);
@@ -262,8 +270,10 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
             HistoryRecordVo vo = BeanCopyUtils.beanCopy(record, HistoryRecordVo.class);
             Item item = itemService.getById(record.getItemId());
             User user = userService.getById(record.getUserId());
-            Company company = companyService.getById(record.getCompanyId());
-            this.setVoCompany(vo, company);
+            if (record.getCompanyId() != null) {
+                Company company = companyService.getById(record.getCompanyId());
+                this.setVoCompany(vo, company);
+            }
             this.setVoItem(vo, item);
             this.setVoUser(vo, user);
             return vo;

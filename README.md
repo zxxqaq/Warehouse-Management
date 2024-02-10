@@ -702,12 +702,12 @@ PUT http://localhost:7779/historyRecord/updateRecord
 ```
 
 # 后端待修改
-1. Management 新建一个零件的时候不用不用companyId 什么叫不用不用？
+1. Management 新建一个零件的时候不用companyId 什么叫不用不用？ done
 2. Management 入库的时候如果是数量的话先把重量输成0，再调用update的接口 （不行 - 后端给一个入库用'数量'的接口）done
 3. Management 出库不用companyId done
-4. Management item可以编辑
-5. History initialize类型的不用返回 哪里不用返回？
-6. History 要总的所有操作历史的接口 都需要返回什么？
+4. Management item可以编辑 done
+5. History initialize类型的不用返回 哪里不用返回？ 分公司查询record的时候不用返回
+6. History 要总的所有操作历史的接口 都需要返回什么？done
 7. excel 导入/导出
 
 # 修改

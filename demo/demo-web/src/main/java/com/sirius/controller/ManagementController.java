@@ -4,6 +4,7 @@ import com.sirius.domain.ResponseResult;
 import com.sirius.domain.dto.InitializeItemDto;
 import com.sirius.domain.dto.InputItemDto;
 import com.sirius.domain.dto.OutputItemDto;
+import com.sirius.domain.dto.UpdateItemDto;
 import com.sirius.service.RecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -38,5 +39,10 @@ public class ManagementController {
     @PostMapping("/outputItem")
     public ResponseResult outputItem(@RequestBody OutputItemDto outputItemDto) {
         return recordService.outputItem(outputItemDto);
+    }
+
+    @PutMapping("/updateItem")
+    public ResponseResult updateItem(@RequestBody UpdateItemDto updateItemDto) {
+        return recordService.updateItem(updateItemDto);
     }
 }

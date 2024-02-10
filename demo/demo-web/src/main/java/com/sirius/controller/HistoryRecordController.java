@@ -13,6 +13,11 @@ public class HistoryRecordController {
     @Autowired
     private RecordService recordService;
 
+    @GetMapping
+    public ResponseResult getHistoryRecordList() {
+        return recordService.getHistoryRecordList();
+    }
+
     @GetMapping("/companyId/{companyId}")
     public ResponseResult getHistoryRecordByCompanyId(@PathVariable("companyId") Long companyId) {
         return recordService.getHistoryRecordByCompanyId(companyId);

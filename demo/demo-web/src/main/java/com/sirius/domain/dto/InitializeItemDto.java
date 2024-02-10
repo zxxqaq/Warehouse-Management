@@ -36,8 +36,6 @@ public class InitializeItemDto {
 
     private Date date;
 
-    private Long companyId;
-
     private Long amount;
 
 }
