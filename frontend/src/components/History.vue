@@ -7,15 +7,14 @@
       </a-breadcrumb>
 
       <div :style="{ padding: '24px', background: '#fff', minHeight: '360px' }">
-        <a-space direction="horizontal" style="margin-bottom: 10px">
-          <a-select
-              v-model:value="defaultSelectCompany"
-              size="middle"
-              style="width: 250px"
-              :options="options"
-              @select="handleCompanyChange"
-          ></a-select>
-        </a-space>
+
+        <a-button class="editable-add-btn" style="margin-bottom: 10px" @click="fetchData(0)">
+          总历史
+        </a-button>
+
+        <a-button class="editable-add-btn" style="margin-left: 10px" @click="convertXLSX">
+          excel导出
+        </a-button>
 
 
 
@@ -28,10 +27,54 @@
             </div>
           </template>
 
+          <template
+              #customFilterDropdown="{ setSelectedKeys, selectedKeys, confirm, clearFilters, column }"
+          >
+            <div style="padding: 8px">
+              <a-input
+                  ref="searchInput"
+                  :placeholder="`请输入搜索内容`"
+                  :value="selectedKeys[0]"
+                  style="width: 188px; margin-bottom: 8px; display: block"
+                  @change="e => setSelectedKeys(e.target.value ? [e.target.value] : [])"
+                  @pressEnter="handleSearch(selectedKeys, confirm, column.dataIndex)"
+              />
+              <a-button
+                  type="primary"
+                  size="small"
+                  style="width: 90px; margin-right: 8px"
+                  @click="handleSearch(selectedKeys, confirm, column.dataIndex)"
+              >
+                <template #icon><SearchOutlined /></template>
+                搜索
+              </a-button>
+              <a-button size="small" style="width: 90px" @click="handleReset(clearFilters)">
+                重置
+              </a-button>
+            </div>
+          </template>
+
+          <template #customFilterIcon="{ filtered }">
+            <SearchOutlined :style="{ color: filtered ? '#108ee9' : undefined }" />
+          </template>
+
           <template #bodyCell="{ column, text, record }" >
-            <template v-if="column.dataIndex === 'isCheck'">
-              {{record.isCheck ? '是' : null}}
-            </template>
+            <span v-if="state.searchText && state.searchedColumn === column.dataIndex">
+              <template
+                  v-for="(fragment, i) in text
+                  .toString()
+                  .split(new RegExp(`(?<=${state.searchText})|(?=${state.searchText})`, 'i'))"
+              >
+                <mark
+                    v-if="fragment.toLowerCase() === state.searchText.toLowerCase()"
+                    :key="i"
+                    class="highlight"
+                >
+                  {{ fragment }}
+                </mark>
+                <template v-else>{{ fragment }}</template>
+              </template>
+            </span>
 
 
             <template v-if="column.dataIndex === 'type'">
@@ -246,7 +289,7 @@
 <script lang="ts" setup>
 import {onBeforeUnmount, onMounted, reactive, ref, UnwrapRef} from 'vue';
 import {message, SelectProps, TableColumnsType} from "ant-design-vue";
-import {InboxOutlined} from '@ant-design/icons-vue';
+import {InboxOutlined, SearchOutlined} from '@ant-design/icons-vue';
 import {useStore} from "vuex";
 import 'dayjs/locale/zh-cn';
 import type { Ref } from 'vue';
@@ -254,7 +297,60 @@ import {cloneDeep} from "lodash-es";
 import zhCN from "ant-design-vue/es/locale/zh_CN";
 import dayjs, { Dayjs } from 'dayjs';
 import Footer from "./Footer.vue";
+import * as XLSX from 'xlsx';
 
+const convertXLSX = () => {
+
+  let data = dataSource.value;
+  data = data.map(item => {
+    return {
+      "类型": item.type,
+      "时间": item.date,
+      "已发票": item.isCheck,
+      "出库方向": item.direction,
+      "名称": item.itemName,
+      "标准": item.standard,
+      "规格": item.specification,
+      "表面处理": item.surface,
+      "材质": item.material,
+      "等级": item.level,
+      "单重": item.unitWeight,
+      "单位": item.unit,
+      "单价": item.unitPrice,
+      "重量": item.totalWeight,
+      "操作人": item.userName,
+      "入库公司": item.companyName,
+      "数量": item.amount,
+    };
+  })
+
+  // 创建一个工作簿
+  const workbook: XLSX.WorkBook = XLSX.utils.book_new();
+  // 将数据转换为工作表
+  const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+
+  // 将工作表添加到工作簿中
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+
+  // 导出工作簿为 Excel 文件
+  XLSX.writeFile(workbook, '操作历史.xlsx');
+  message.success("导出成功")
+}
+
+const state = reactive({
+  searchText: '',
+  searchedColumn: '',
+});
+const searchInput = ref();
+const handleSearch = (selectedKeys, confirm, dataIndex) => {
+  confirm();
+  state.searchText = selectedKeys[0];
+  state.searchedColumn = dataIndex;
+};
+const handleReset = clearFilters => {
+  clearFilters({ confirm: true });
+  state.searchText = '';
+};
 const openInputForm = ref<boolean>(false);
 const openOutputForm = ref<boolean>(false);
 const inputForm = reactive({
@@ -455,6 +551,8 @@ const options = ref<SelectProps['options']>(companyList.map(item => ({
 
 const companyId = ref();
 const itemId = ref();
+
+
 onMounted( async () => {
   if (companyList.length === 0) {
     await fetchCompanyList();
@@ -480,7 +578,11 @@ onMounted( async () => {
         message.destroy(1)
       }
     });
+  }else {
+    // TODO 获取所有的操作历史
+    fetchData(0);
   }
+
   if ( companyId.value !== 0 ){
     for (const company of companyList) {
       if (companyId.value == company.companyId) {
@@ -499,7 +601,7 @@ onMounted( async () => {
     });
   }
 
-  // TODO 获取所有的操作历史
+
 
   // 清空全局中的item和company变量
   store.commit('setItemId', null);
@@ -515,23 +617,175 @@ const handleCompanyChange  = (id: number) => {
 
 
 
-const columns: TableColumnsType = [
-  { title: '类型', dataIndex: 'type',width: 80, fixed: 'left',},
-  { title: '时间', dataIndex: 'date', fixed: 'left',width: 120},
-  { title: '已发票', dataIndex: 'isCheck',width: 80},
-  { title: '出库方向', dataIndex: 'direction'},
-  { title: '名称', dataIndex: 'itemName', },
-  { title: '标准', dataIndex: 'standard', },
-  { title: '规格', dataIndex: 'specification', width: 100},
-  { title: '表面处理', dataIndex: 'surface', width: 150},
-  { title: '材质', dataIndex: 'material', width: 100},
-  { title: '等级', dataIndex: 'level', width: 150},
-  { title: '单重', dataIndex: 'unitWeight', width: 80},
+const columns: any[] = [
+  { title: '类型', dataIndex: 'type',width: 80, fixed: 'left',
+    filters: [
+      {
+        text: '入库',
+        value: '入库',
+      },
+      {
+        text: '出库',
+        value: '出库',
+      },
+    ],
+    onFilter: (value: string, record: Records) => record.type.indexOf(value) === 0,
+    sortDirections: ['descend'],
+  },
+  { title: '时间', dataIndex: 'date', fixed: 'left',width: 120,
+    sorter: (a: Records, b: Records) => {
+     const dateA = new Date(a.date);
+     const dateB = new Date(b.date);
+     return dateA - dateB;
+    },
+  },
+  { title: '已发票', dataIndex: 'isCheck',width: 100,
+    filters: [
+      {
+        text: '是',
+        value: true,
+      },
+      {
+        text: '否',
+        value: false,
+      },
+    ],
+    onFilter: (value: boolean, record: Records) => record.isCheck == value,
+    sortDirections: ['descend'],
+  },
+  { title: '出库方向', dataIndex: 'direction',
+    customFilterDropdown: true,
+    onFilter: (value, record) =>  record.direction.toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownOpenChange: visible => {
+      if (visible) {
+        setTimeout(() => {
+          searchInput.value.focus();
+        }, 100);
+      }
+    },
+  },
+  { title: '名称', dataIndex: 'itemName',
+    customFilterDropdown: true,
+    onFilter: (value, record) =>  record.itemName.toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownOpenChange: visible => {
+      if (visible) {
+        setTimeout(() => {
+          searchInput.value.focus();
+        }, 100);
+      }
+    },
+  },
+  { title: '标准', dataIndex: 'standard',
+    customFilterDropdown: true,
+    onFilter: (value, record) =>  record.standard.toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownOpenChange: visible => {
+      if (visible) {
+        setTimeout(() => {
+          searchInput.value.focus();
+        }, 100);
+      }
+    },
+  },
+  { title: '规格', dataIndex: 'specification', width: 100,
+    customFilterDropdown: true,
+    onFilter: (value, record) =>  record.specification.toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownOpenChange: visible => {
+      if (visible) {
+        setTimeout(() => {
+          searchInput.value.focus();
+        }, 100);
+      }
+    },
+  },
+  { title: '表面处理', dataIndex: 'surface', width: 150,
+    customFilterDropdown: true,
+    onFilter: (value, record) =>  record.surface.toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownOpenChange: visible => {
+      if (visible) {
+        setTimeout(() => {
+          searchInput.value.focus();
+        }, 100);
+      }
+    },
+  },
+  { title: '材质', dataIndex: 'material', width: 100,
+    customFilterDropdown: true,
+    onFilter: (value, record) =>  record.material.toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownOpenChange: visible => {
+      if (visible) {
+        setTimeout(() => {
+          searchInput.value.focus();
+        }, 100);
+      }
+    },
+  },
+  { title: '等级', dataIndex: 'level', width: 150,
+    customFilterDropdown: true,
+    onFilter: (value, record) =>  record.level.toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownOpenChange: visible => {
+      if (visible) {
+        setTimeout(() => {
+          searchInput.value.focus();
+        }, 100);
+      }
+    },
+  },
+  { title: '单重', dataIndex: 'unitWeight', width: 80,
+    customFilterDropdown: true,
+    onFilter: (value, record) =>  record.unitWeight.toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownOpenChange: visible => {
+      if (visible) {
+        setTimeout(() => {
+          searchInput.value.focus();
+        }, 100);
+      }
+    },
+  },
   { title: '单位', dataIndex: 'unit', width: 70},
-  { title: '单价', dataIndex: 'unitPrice', width: 100},
-  { title: '重量', dataIndex: 'totalWeight', width: 100},
-  { title: '操作人', dataIndex: 'userName', width: 100},
-  { title: '入库公司', dataIndex: 'companyName', },
+  { title: '单价', dataIndex: 'unitPrice', width: 100,
+    customFilterDropdown: true,
+    onFilter: (value, record) =>  record.unitPrice.toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownOpenChange: visible => {
+      if (visible) {
+        setTimeout(() => {
+          searchInput.value.focus();
+        }, 100);
+      }
+    },
+  },
+  { title: '重量', dataIndex: 'totalWeight', width: 100,
+    customFilterDropdown: true,
+    onFilter: (value, record) =>  record.totalWeight.toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownOpenChange: visible => {
+      if (visible) {
+        setTimeout(() => {
+          searchInput.value.focus();
+        }, 100);
+      }
+    },
+  },
+  { title: '操作人', dataIndex: 'userName', width: 100,
+    customFilterDropdown: true,
+    onFilter: (value, record) =>  record.userName.toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownOpenChange: visible => {
+      if (visible) {
+        setTimeout(() => {
+          searchInput.value.focus();
+        }, 100);
+      }
+    },
+  },
+  { title: '入库公司', dataIndex: 'companyName',
+    customFilterDropdown: true,
+    onFilter: (value, record) =>  record.companyName.toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownOpenChange: visible => {
+      if (visible) {
+        setTimeout(() => {
+          searchInput.value.focus();
+        }, 100);
+      }
+    },
+  },
   { title: '数量', dataIndex: 'amount',width: 150, fixed:'right'},
   { title: '操作', dataIndex: 'operation', fixed: "right",},
 ];
@@ -556,7 +810,7 @@ interface Records {
   companyName: string
   isCheck: boolean,
 }
-const dataSource: Ref<Records[]> = ref([]);
+const dataSource = ref([]);
 const fetchItemData = async (companyId: number, itemId:number) => {
   try {
     isLoading.value = true;
@@ -606,11 +860,21 @@ const fetchItemData = async (companyId: number, itemId:number) => {
 const fetchData = async (companyId: number) => {
   try {
     isLoading.value = true;
-    const response = await fetch(`http://localhost:7779/historyRecord/companyId/${companyId}`,{
-      headers: {
-        'token' : store.getters.getToken,
-      }
-    });
+    let response;
+    if (companyId == 0){
+      response = await fetch(`http://localhost:7779/historyRecord`,{
+        headers: {
+          'token' : store.getters.getToken,
+        }
+      });
+    }else {
+      response = await fetch(`http://localhost:7779/historyRecord/companyId/${companyId}`,{
+        headers: {
+          'token' : store.getters.getToken,
+        }
+      });
+    }
+
     const data = await response.json();
     if (data.code === 200){
       dataSource.value = data.data.map(item => {
@@ -627,6 +891,12 @@ const fetchData = async (companyId: number) => {
         }
         if (item.unitPrice === 0.0) {
           item.unitPrice = null;
+        }
+
+        if (item.isCheck === false){
+          item.isCheck = null;
+        }else if (item.isCheck === true){
+          item.isCheck = '是';
         }
         return item;
       });

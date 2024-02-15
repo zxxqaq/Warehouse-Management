@@ -43,7 +43,7 @@
                 </span>
                 <span v-else>
                   <a @click="edit(record.companyId)">编辑</a>
-                  <a style="margin-left: 10px" @click="handleCompanyClick(record.companyId)">详情</a>
+<!--                  <a style="margin-left: 10px" @click="handleCompanyClick(record.companyId)">详情</a>-->
                 </span>
               </div>
             </template>

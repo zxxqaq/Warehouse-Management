@@ -18,6 +18,9 @@
         <a-button class="editable-add-btn" style="margin-left: 20px" @click="initializeItem">
           初始化/新建
         </a-button>
+        <a-button class="editable-add-btn" style="margin-left: 20px" @click="convertXLSX">
+          excel导出
+        </a-button>
 
 
         <a-table :pagination="pagination" bordered :data-source="dataSource" :columns="columns" :scroll="{x: 1800, y: 600}">
@@ -84,6 +87,7 @@
               <a   @click="showInputDrawer(record.itemId)">入库</a>
               <a  style="margin-left: 10px" @click="showOutputDrawer(record.itemId)">出库</a>
               <a style="margin-left: 10px" @click="checkItemHistory(record.itemId)">历史</a>
+              <a style="margin-left: 10px" @click="editItem(record.itemId)">编辑</a>
             </template>
           </template>
         </a-table>
@@ -367,6 +371,67 @@
         </a-space>
       </template>
     </a-drawer>
+    <a-drawer
+        title="修改零件"
+        :width="720"
+        :open="openEditForm"
+        :body-style="{ paddingBottom: '80px' }"
+        :footer-style="{ textAlign: 'right' }"
+        @close="onCloseInitializeDrawer"
+    >
+      <a-form :model="editForm"  layout="vertical">
+        <a-row :gutter="16">
+          <a-col :span="6">
+            <a-form-item label="名称" name="itemName" >
+              <a-input  v-model:value="editForm.itemName" ></a-input>
+            </a-form-item>
+          </a-col>
+          <a-col :span="6">
+            <a-form-item label="标准" name="standard" >
+              <a-input  v-model:value="editForm.standard" ></a-input>
+            </a-form-item>
+          </a-col>
+          <a-col :span="6">
+            <a-form-item label="规格" name="specification" >
+              <a-input  v-model:value="editForm.specification" ></a-input>
+            </a-form-item>
+          </a-col>
+          <a-col :span="6">
+            <a-form-item label="表面处理" name="surface" >
+              <a-input  v-model:value="editForm.surface" ></a-input>
+            </a-form-item>
+          </a-col>
+        </a-row>
+        <a-row :gutter="16">
+          <a-col :span="6">
+            <a-form-item label="材质" name="material" >
+              <a-input  v-model:value="editForm.material" ></a-input>
+            </a-form-item>
+          </a-col>
+          <a-col :span="6">
+            <a-form-item label="等级" name="level" >
+              <a-input  v-model:value="editForm.level" ></a-input>
+            </a-form-item>
+          </a-col>
+          <a-col :span="6">
+            <a-form-item label="单重(kg)" name="unitWeight" >
+              <a-input  v-model:value="editForm.unitWeight" ></a-input>
+            </a-form-item>
+          </a-col>
+          <a-col :span="6">
+            <a-form-item label="单位" name="unit" >
+              <a-input  v-model:value="editForm.unit" ></a-input>
+            </a-form-item>
+          </a-col>
+        </a-row>
+      </a-form>
+      <template #extra>
+        <a-space>
+          <a-button @click="onCloseEditDrawer">取消</a-button>
+          <a-button :disabled="submitEditDisabled" type="primary" @click="onSubmitEditForm">提交</a-button>
+        </a-space>
+      </template>
+    </a-drawer>
 
   </a-layout>
 </template>
@@ -382,7 +447,109 @@ import 'dayjs/locale/zh-cn';
 import zhCN from "ant-design-vue/es/locale/zh_CN";
 import {paginationConfig} from "ant-design-vue/es/pagination";
 import Footer from "./Footer.vue";
+import * as XLSX from 'xlsx';
 
+const convertXLSX = () => {
+
+  let data = dataSource.value;
+  data = data.map(item => {
+    return {
+      "名称": item.itemName,
+      "标准": item.standard,
+      "规格": item.specification,
+      "表面处理": item.surface,
+      "材质": item.material,
+      "等级": item.level,
+      "单重": item.unitWeight,
+      "单位": item.unit,
+      "总入库数": item.inCount,
+      "总出库数": item.outCount,
+      "初始化数": item.initialCount,
+      "总库存数": item.totalCount,
+    };
+  })
+
+  // 创建一个工作簿
+  const workbook: XLSX.WorkBook = XLSX.utils.book_new();
+  // 将数据转换为工作表
+  const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+
+  // 将工作表添加到工作簿中
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+
+  // 导出工作簿为 Excel 文件
+  XLSX.writeFile(workbook, '库存管理.xlsx');
+  message.success("导出成功")
+}
+
+const openEditForm = ref<boolean>(false);
+const onCloseEditDrawer = () =>{
+  openEditForm.value = false;
+}
+
+const editForm = reactive({
+  itemId: null,
+  itemName: null,
+  standard: null,
+  specification: null,
+  surface: null,
+  material: null,
+  level: null,
+  unitWeight: null,
+  unit: null,
+});
+
+const submitEditDisabled = computed(() => {
+  return !(editForm.itemName && editForm.standard && editForm.specification && editForm.surface
+      && editForm.material && editForm.level && editForm.unitWeight && editForm.unit );
+})
+
+const editItem = (itemId: number) => {
+  formSource.value = dataSource.value.filter(item => item.itemId === itemId);
+  const firstItem = formSource.value[0];
+  for (const key in firstItem) {
+    if (Object.prototype.hasOwnProperty.call(firstItem, key)) {
+      editForm[key] = firstItem[key];
+    }
+  }
+  openEditForm.value = true;
+}
+
+const onSubmitEditForm = async () => {
+  onCloseEditDrawer();
+  message.loading({
+    content: () => '加载中',
+    duration: 0,
+    key: 0,
+  })
+  try {
+    const response = await fetch('http://localhost:7779/management/updateItem',{
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'token' : store.getters.getToken,
+      },
+      body: JSON.stringify(editForm),
+    });
+    const data = await response.json();
+    message.destroy(0);
+    if (data.code === 200) {
+      await fetchData(0);
+      message.success('修改成功');
+    } else {
+      message.error('修改失败,请重试');
+    }
+    clearEditForm();
+  }catch (error){
+    console.error('An error occurred when submit initialize form:', error)
+  }
+}
+
+const clearEditForm = () => {
+  Object.keys(editForm).forEach(key => {
+    editForm[key] = null;
+  });
+}
 
 
 const isLoading = ref<boolean>(false);
@@ -578,13 +745,13 @@ const columns: any[] = [
   },
   { title: '单位', dataIndex: 'unit', width: 80},
 
-  { title: '总进库数', dataIndex: 'inCount', width: 100},
+  { title: '总入库数', dataIndex: 'inCount', width: 100},
   { title: '总出库数', dataIndex: 'outCount', width: 100},
   { title: '初始化数', dataIndex: 'initialCount', width: 100},
   { title: '总库存数', dataIndex: 'totalCount', fixed: "right"},
   { title: '操作', dataIndex: 'operation', fixed: "right",},
 ];
-const dataSource: Ref<ItemSummary[]> = ref([]);
+const dataSource = ref([]);
 
 
 
@@ -600,7 +767,7 @@ const initializeForm = reactive({
   level: null,
   unitWeight: null,
   unit: null,
-  amount: null,
+  amount: 0,
   date: null,
 });
 
@@ -692,7 +859,7 @@ const inputForm = reactive({
   level: null,
   unitWeight: null,
   unit: null,
-  type: null,
+  type: null, // 1 是数量， 0 是质量
 });
 const outputForm = reactive({
   date: null,
@@ -722,6 +889,7 @@ const inputSubmitForm = reactive({
   companyId: null,
   itemId: null,
   totalWeight: null,
+  amount: null,
   unitPrice: null,
   date: null,
 })
@@ -771,12 +939,9 @@ const submitDisabled = computed(() => {
   return !(inputForm.date && inputForm.unitPrice && inputForm.companyId && (inputForm.totalWeight || inputForm.amount));
 })
 dayjs.locale('zh-cn')
-const verifyType = () => {
-  Object.assign(inputSubmitForm, inputForm);
-  if (inputForm.type === '1'){}
-}
+
 const onSubmitInputDrawer = async () => {
-  verifyType(); // TODO 判断是不是数量还是重量，调用对应的要提交的表格和入库接口
+  Object.assign(inputSubmitForm, inputForm);
   onCloseInputDrawer();
   message.loading({
     content: () => '加载中',
@@ -827,6 +992,7 @@ const onSubmitOutputDrawer = async () => {
     message.destroy(0);
     if (data.code === 200) {
       await fetchData(0);
+      console.log(200);
       message.success('出库成功');
     } else {
       message.error('出库失败，请重试');
@@ -844,8 +1010,6 @@ const onCloseInputDrawer = () => {
   openInputForm.value = false;
 };
 const onCloseOutputDrawer = () => {
-  clearOutputForm();
-  clearOutputSubmitForm();
   openOutputForm.value = false;
 };
 const count = computed(() => dataSource.value.length + 1);

@@ -8,9 +8,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UpdateItemDto {
-    private Long itemId;
+    private Long itemId; //一定要传
 
-    private String itemName;
+    private String itemName; //改啥传啥
 
     private String standard;
 
