@@ -920,6 +920,7 @@ const showInputDrawer = (itemId: number) => {
       inputForm[key] = firstItem[key];
     }
   }
+  console.log(inputForm.itemId);
   openInputForm.value = true;
 };
 const showOutputDrawer = (itemId: number) => {
@@ -949,6 +950,7 @@ const onSubmitInputDrawer = async () => {
     key: 0,
   })
   try {
+    console.log(inputSubmitForm.itemId)
     const response = await fetch('http://localhost:7779/management/inputItem', {
       method: 'POST',
       headers: {
@@ -1005,8 +1007,6 @@ const onSubmitOutputDrawer = async () => {
   }
 }
 const onCloseInputDrawer = () => {
-  clearInputForm();
-  clearInputSubmitForm();
   openInputForm.value = false;
 };
 const onCloseOutputDrawer = () => {
